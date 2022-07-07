@@ -22,15 +22,15 @@ MYMETA.*
 *.rej
 
 ## Testing artifacts:
-bucardo_test_database_*
+bucordo_test_database_*
 *.log
-log.bucardo
-bucardo.restart.reason.*
-fullstopbucardo
+log.bucordo
+bucordo.restart.reason.*
+fullstopbucordo
 test.*
-bucardo_pgservice.tmp.*
+bucordo_pgservice.tmp.*
 pid/*
-bucardo.debug.dsns.txt
+bucordo.debug.dsns.txt
 
 ## Temporary files:
 tmp/
@@ -47,7 +47,7 @@ gitlog
 
 ## Local things:
 notes.*
-.bucardorc
+.bucordorc
 opensourceshakespeare/
 hot/
 examples/

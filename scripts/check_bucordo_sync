@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 # -*-mode:cperl; indent-tabs-mode: nil-*-
 
-## Check the status of Bucardo through the stats page
+## Check the status of bucordo through the stats page
 ##
 ## Copyright 2007 Greg Sabino Mullane <greg@turnstep.com>
 
@@ -48,7 +48,7 @@ $opt{url} or print "ERROR: No URL was passed in\n$USAGE" and exit $ERRORS{'UNKNO
 
 ## Special url shortcuts
 if ($opt{url} eq 'all') {
-    $opt{url} = 'http://www.example.com/cgi-bin/bucardo-report?host=all';
+    $opt{url} = 'http://www.example.com/cgi-bin/bucordo-report?host=all';
 }
 
 my $MAX_DELTA = $opt{delta} || 50_000;
@@ -67,8 +67,8 @@ if ($opt{debug}) {
   }
 }
 else {
-  ($tempfh, $tempfile) = tempfile('/tmp/nagios_bucardocheck_XXXXXX', UNLINK => 1, SUFFIX => '.tmp');
-  my ($errfh, $errfile) = tempfile('/tmp/nagios_bucardocheck_XXXXXX', UNLINK => 1, SUFFIX => '.tmp');
+  ($tempfh, $tempfile) = tempfile('/tmp/nagios_bucordocheck_XXXXXX', UNLINK => 1, SUFFIX => '.tmp');
+  my ($errfh, $errfile) = tempfile('/tmp/nagios_bucordocheck_XXXXXX', UNLINK => 1, SUFFIX => '.tmp');
 
   my $COM = qq{$WGET --output-document=$tempfile --output-file=$errfile --timeout=$opt{timeout} "$opt{url}"};
 
@@ -115,7 +115,7 @@ while (<$tempfh>) {
   elsif (/(Expired|Overdue|Death): (\d+)/) {
     $bc{$host}{lc $1} = $2;
   }
-  elsif (/bucardo_(delta|track) rows: (\d+)/) {
+  elsif (/bucordo_(delta|track) rows: (\d+)/) {
     $bc{$host}{$1} = $2;
   }
   elsif (/(Expired|Overdue|Death) (\w+) \| (\w+) \| (.+)/) {
@@ -182,19 +182,19 @@ for my $host (sort keys %bc) {
   }
   ## Check for bloat in the support tables
   if ($B->{delta} > $MAX_DELTA) {
-    $wmsg .= "$host bucardo_delta bloat: $B->{delta} ";
+    $wmsg .= "$host bucordo_delta bloat: $B->{delta} ";
   }
   if ($B->{track} > $MAX_TRACK) {
-    $wmsg .= "$host bucardo_track bloat: $B->{track} ";
+    $wmsg .= "$host bucordo_track bloat: $B->{track} ";
   }
 }
 
 if (!$wmsg and !$emsg) {
-  print "All bucardo syncs are running normally\n";
+  print "All bucordo syncs are running normally\n";
   exit $ERRORS{'OK'};
 }
 
-print "ERROR: Bucardo $emsg$wmsg$edetail$wdetail$ddetail\n";
+print "ERROR: bucordo $emsg$wmsg$edetail$wdetail$ddetail\n";
 
 $emsg or exit $ERRORS{'WARNING'};
 

@@ -1,12 +1,12 @@
 #!/bin/bash
 #
-#   /etc/rc.d/init.d/bucardo
+#   /etc/rc.d/init.d/bucordo
 #
-# Starts / stops the bucardo daemon
+# Starts / stops the bucordo daemon
 #
 # chkconfig: - 65 35
-# description: Bucardo replication service
-# processname: bucardo
+# description: bucordo replication service
+# processname: bucordo
 
 # Source function library.
 . /etc/init.d/functions
@@ -27,8 +27,8 @@ else
 fi
 
 SYSUSER=${SYSUSER-postgres}
-DBNAME=${DBNAME-bucardo}
-DBUSER=${DBUSER-bucardo}
+DBNAME=${DBNAME-bucordo}
+DBUSER=${DBUSER-bucordo}
 LOGDEST=${LOGDEST-/var/log/${NAME}}
 PIDDIR=${PIDDIR-/var/run/${NAME}}
 
@@ -38,19 +38,19 @@ if [ ! -x $PIDDIR ]; then
     chmod 0660 $PIDDIR
 fi
 
-# Override defaults from /etc/sysconfig/bucardo, if file is present:
+# Override defaults from /etc/sysconfig/bucordo, if file is present:
 [ -f /etc/sysconfig/${NAME} ] && . /etc/sysconfig/${NAME}
 
 if [ -z "$DBHOST" ]; then hostopt=""; else hostopt="--db-host $DBHOST"; fi
 if [ -z "$DBPORT" ]; then portopt=""; else portopt="--db-port $DBPORT"; fi
 DESTOPTS=$(printf ' \055-log-dest %s ' "${LOGDEST[@]}")
 
-bucardo_flags="--quiet ${hostopt} ${portopt} --db-name ${DBNAME} --db-user ${DBUSER} ${DESTOPTS} --pid-dir ${PIDDIR}"
+bucordo_flags="--quiet ${hostopt} ${portopt} --db-name ${DBNAME} --db-user ${DBUSER} ${DESTOPTS} --pid-dir ${PIDDIR}"
 RETVAL=0
 
 start() {
-     # Make sure that bucardo is not already running:
-     if [ -f "${PIDDIR}/bucardo.mc.pid" ]; then
+     # Make sure that bucordo is not already running:
+     if [ -f "${PIDDIR}/bucordo.mc.pid" ]; then
          echo -n "${NAME} is already running"
      echo_success
      echo
@@ -58,7 +58,7 @@ start() {
      fi
 
     echo -n $"Starting ${NAME} service: "
-    $SU $SYSUSER -c "bucardo ${bucardo_flags} start 'Started by init script'"
+    $SU $SYSUSER -c "bucordo ${bucordo_flags} start 'Started by init script'"
     RETVAL=$?
     if [ $RETVAL -eq 0 ]; then
     echo_success
@@ -72,7 +72,7 @@ start() {
 
 stop(){
     echo -n $"Stopping ${NAME} service: "
-    $SU $SYSUSER -c "bucardo ${bucardo_flags} stop 'Stopped by init script'"
+    $SU $SYSUSER -c "bucordo ${bucordo_flags} stop 'Stopped by init script'"
     RETVAL=$?
     if [ $RETVAL -eq 0 ]; then
     echo_success
@@ -87,7 +87,7 @@ stop(){
 reload(){
     echo -n $"Reloading ${NAME} config: "
 
-    $SU $SYSUSER -c "bucardo $bucardo_flags reload_config"
+    $SU $SYSUSER -c "bucordo $bucordo_flags reload_config"
     RETVAL=$?
     if [ $RETVAL -eq 0 ]; then
     echo_success
@@ -102,7 +102,7 @@ reload(){
 status(){
     echo -n $"Checking ${NAME} status: "
 
-    $SU $SYSUSER -c "bucardo $bucardo_flags status"
+    $SU $SYSUSER -c "bucordo $bucordo_flags status"
     RETVAL=$?
     if [ $RETVAL -eq 0 ]; then
     echo_success

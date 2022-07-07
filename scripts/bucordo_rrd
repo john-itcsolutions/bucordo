@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 # -*-mode:cperl; indent-tabs-mode: nil-*-
 
-## Grab a bunch of Bucardo stats for cacti
+## Grab a bunch of bucordo stats for cacti
 ##
 ## Copyright 2007 Greg Sabino Mullane <greg@turnstep.com>
 
@@ -11,14 +11,14 @@ use DBI;
 
 our $VERSION = '1.0.1'; 
 
-my $DBUSER = 'bucardo_readonly';
+my $DBUSER = 'bucordo_readonly';
 my $DBOPT = {AutoCommit=>0,RaiseError=>1,PrintError=>0};
 my $verbose = 0;
 
 my $dbh =
   {
    dbname1 => DBI->connect('dbi:Pg:dbname=dbname1', $DBUSER, '', $DBOPT),
-   bucardo => DBI->connect('dbi:Pg:dbname=bucardo', $DBUSER, '', $DBOPT),
+   bucordo => DBI->connect('dbi:Pg:dbname=bucordo', $DBUSER, '', $DBOPT),
   };
 
 ## Specialized due to constraint exclusion funkiness:
@@ -26,9 +26,9 @@ my $minutesback = 5;
 my $SQL = "SELECT now()-'$minutesback minutes'::interval";
 my $ARG =
   {
-   TS => $dbh->{bucardo}->selectall_arrayref($SQL)->[0][0],
+   TS => $dbh->{bucordo}->selectall_arrayref($SQL)->[0][0],
 };
-$dbh->{bucardo}->do('SET constraint_exclusion = true');
+$dbh->{bucordo}->do('SET constraint_exclusion = true');
 
 my $info = {};
 my $query;
@@ -73,7 +73,7 @@ $info->{total_syncs} = $info->{swap_syncs} + $info->{fullcopy_syncs} + $info->{p
 ## Track each type of abort error
 $query = qq{
 SELECT whydie
-FROM   bucardo.q
+FROM   bucordo.q
 WHERE  cdate >= '$ARG->{TS}'
 AND    aborted IS NOT NULL
 UNION ALL
@@ -87,7 +87,7 @@ for (qw/ deadlock serialize route killed unknown/) {
   $abort{$_} = 0;
 }
 $info->{aborts} = 0;
-for my $row (@{$dbh->{bucardo}->selectall_arrayref($query)}) {
+for my $row (@{$dbh->{bucordo}->selectall_arrayref($query)}) {
   my $reason = $row->[0];
   $info->{aborts}++;
   $reason ||= '';
@@ -126,51 +126,51 @@ __DATA__
 
 ## Number of delta rows awaitin'
 DB:bcs
-SELECT count(*) AS deltarows FROM bucardo.bucardo_delta
+SELECT count(*) AS deltarows FROM bucordo.bucordo_delta
 
 ## Number of track rows awaitin'
 DB:bcs
-SELECT count(*) AS trackrows FROM bucardo.bucardo_track
+SELECT count(*) AS trackrows FROM bucordo.bucordo_track
 
 ## Number of transactions yet to be synced
 DB:bcs
-SELECT count(distinct txntime) AS deltatxns FROM bucardo.bucardo_delta
+SELECT count(distinct txntime) AS deltatxns FROM bucordo.bucordo_delta
 
 ## Number of swap inserts, updates, deletes in the last 5 minutes
-DB:bucardo
+DB:bucordo
 SELECT coalesce(qi,0)+coalesce(fi,0) AS swap_inserts,
        coalesce(qd,0)+coalesce(fd,0) AS swap_deletes,
        coalesce(qu,0)+coalesce(fu,0) AS swap_updates
 FROM 
-  (SELECT sum(inserts) AS qi, sum(updates) AS qu, sum(deletes) AS qd FROM bucardo.q
+  (SELECT sum(inserts) AS qi, sum(updates) AS qu, sum(deletes) AS qd FROM bucordo.q
    WHERE cdate >= 'ARG{TS}' AND synctype = 'swap') AS a,
   (SELECT sum(inserts) AS fi, sum(updates) AS fu, sum(deletes) AS fd FROM freezer.master_q 
    WHERE cdate >= 'ARG{TS}' AND synctype = 'swap') AS b;
 
 ## Number of fullcopy rows (always inserts) in last 5 minutes
-DB:bucardo
+DB:bucordo
 SELECT coalesce(x,0)+coalesce(y,0) AS fullcopy_rows
 FROM 
-  (SELECT sum(inserts) AS x FROM bucardo.q
+  (SELECT sum(inserts) AS x FROM bucordo.q
    WHERE cdate >= 'ARG{TS}' AND synctype = 'fullcopy') AS a,
   (SELECT sum(inserts) AS y FROM freezer.master_q 
    WHERE cdate >= 'ARG{TS}' AND synctype = 'fullcopy') AS b;
 
 ## Number of pushdelta rows (always inserts) in last 5 minutes
-DB:bucardo
+DB:bucordo
 SELECT coalesce(x,0)+coalesce(y,0) AS pushdelta_rows
 FROM 
-  (SELECT sum(inserts) AS x FROM bucardo.q
+  (SELECT sum(inserts) AS x FROM bucordo.q
    WHERE cdate >= 'ARG{TS}' AND synctype = 'pushdelta') AS a,
   (SELECT sum(inserts) AS y FROM freezer.master_q 
    WHERE cdate >= 'ARG{TS}' AND synctype = 'pushdelta') AS b;
 
 ## Number of swap syncs run in the last 5 minutes
-DB:bucardo
+DB:bucordo
 SELECT x+y AS swap_syncs
 FROM
   (SELECT count(*) AS x
-   FROM   bucardo.q
+   FROM   bucordo.q
    WHERE  cdate >= 'ARG{TS}'
    AND    synctype = 'swap'
    AND    ended IS NOT NULL) AS a,
@@ -181,11 +181,11 @@ FROM
    AND    ended IS NOT NULL) AS b
 
 ## Number of fullcopy syncs run in the last 5 minutes
-DB:bucardo
+DB:bucordo
 SELECT x+y AS fullcopy_syncs
 FROM
   (SELECT count(*) AS x
-   FROM   bucardo.q
+   FROM   bucordo.q
    WHERE  cdate >= 'ARG{TS}'
    AND    synctype = 'fullcopy'
    AND    ended IS NOT NULL) AS a,
@@ -197,11 +197,11 @@ FROM
 
 
 ## Number of swap sync run in the last 5 minutes
-DB:bucardo
+DB:bucordo
 SELECT x+y AS pushdelta_syncs
 FROM
   (SELECT count(*) AS x
-   FROM   bucardo.q
+   FROM   bucordo.q
    WHERE  cdate >= 'ARG{TS}'
    AND    synctype = 'pushdelta'
    AND    ended IS NOT NULL) AS a,
@@ -212,6 +212,6 @@ FROM
    AND    ended IS NOT NULL) AS b
 
 ## Number of PIDs created in last 5 minutes
-DB:bucardo
+DB:bucordo
 SELECT count(*) AS pids
-FROM bucardo.audit_pid WHERE birthdate >= 'ARG{TS}'
+FROM bucordo.audit_pid WHERE birthdate >= 'ARG{TS}'

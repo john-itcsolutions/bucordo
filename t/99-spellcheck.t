@@ -28,11 +28,11 @@ else {
 
 	@textfiles = qw{README Changes TODO README.dev INSTALL UPGRADE META.yml scripts/README};
 
-	@podfiles = qw{Bucardo.pm bucardo};
+	@podfiles = qw{bucordo.pm bucordo};
 
-	@commentfiles = qw{Makefile.PL Bucardo.pm bucardo};
+	@commentfiles = qw{Makefile.PL bucordo.pm bucordo};
 
-	push @commentfiles => qw{scripts/bucardo_rrd scripts/bucardo-report scripts/check_bucardo_sync dist/bucardo.rc};
+	push @commentfiles => qw{scripts/bucordo_rrd scripts/bucordo-report scripts/check_bucordo_sync dist/bucordo.rc};
 
 	plan tests => @textfiles + @testfiles + @podfiles + @commentfiles;
 }
@@ -144,8 +144,8 @@ addall
 arg
 args
 autostart
-Bucardo
-bucardorc
+bucordo
+bucordorc
 combinations
 customcols
 Customcols
@@ -198,7 +198,7 @@ whitespace
 
 ## README
 
-bucardo
+bucordo
 DBD
 greg
 listinfo
@@ -222,7 +222,7 @@ Bahlai
 Boes
 boolean
 BSD's
-BUCARDODIR
+bucordoDIR
 Busquets
 bytea
 checktime
@@ -383,10 +383,10 @@ truncations
 txntime
 wildcard
 
-## bucardo
+## bucordo
 
-bucardo
-Bucardo's
+bucordo
+bucordo's
 cleandebugs
 cronjob
 CTL
@@ -432,7 +432,7 @@ vate
 
 Bugzilla
 tarball
-BucardoTesting
+bucordoTesting
 Checksum
 DBIx
 Facebook
@@ -516,7 +516,7 @@ libera
 syslog
 wiki
 
-## Bucardo.pm
+## bucordo.pm
 
 Backcountry
 multi
@@ -568,7 +568,7 @@ YAML
 YAMLiciousness
 yml
 
-## Bucardo.pm
+## bucordo.pm
 
 HUP
 PID
@@ -613,7 +613,7 @@ url
 
 rrd
 
-## scripts/check_bucardo_sync
+## scripts/check_bucordo_sync
 
 Nagios
 nagios
@@ -621,7 +621,7 @@ ourself
 prepend
 utils
 
-## scripts/bucardo-report
+## scripts/bucordo-report
 
 hidetime
 hostname
@@ -678,7 +678,7 @@ xabc
 
 trelgroup
 
-## t/customcode.exception.bucardotest.pl
+## t/customcode.exception.bucordotest.pl
 
 FK
 JSON

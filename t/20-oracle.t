@@ -41,11 +41,11 @@ if (!$evalok) {
     plan (skip_all =>  "Cannot test Oracle as we cannot connect to a running Oracle database: $@");
 }
 
-use BucardoTesting;
+use bucordoTesting;
 
 ## For now, remove some tables that don't work
 for my $num (3,5,6,8,10) {
-    delete $tabletype{"bucardo_test$num"};
+    delete $tabletype{"bucordo_test$num"};
 }
 
 my $numtabletypes = keys %tabletype;
@@ -82,13 +82,13 @@ for my $table (sort keys %tabletype) {
 
 }
 
-$bct = BucardoTesting->new() or BAIL_OUT "Creation of BucardoTesting object failed\n";
+$bct = bucordoTesting->new() or BAIL_OUT "Creation of bucordoTesting object failed\n";
 $location = 'oracle';
 
 pass("*** Beginning oracle tests");
 
 END {
-    $bct and $bct->stop_bucardo($dbhX);
+    $bct and $bct->stop_bucordo($dbhX);
     $dbhX and  $dbhX->disconnect();
     $dbhA and $dbhA->disconnect();
     $dbhB and $dbhB->disconnect();
@@ -100,60 +100,60 @@ $dbhA = $bct->repopulate_cluster('A');
 $dbhB = $bct->repopulate_cluster('B');
 $dbhC = $bct->repopulate_cluster('C');
 
-## Create a bucardo database, and install Bucardo into it
-$dbhX = $bct->setup_bucardo('A');
+## Create a bucordo database, and install bucordo into it
+$dbhX = $bct->setup_bucordo('A');
 
-## Tell Bucardo about these databases
+## Tell bucordo about these databases
 
 ## Three Postgres databases will be source, source, and target
 for my $name (qw/ A B C /) {
     $t = "Adding database from cluster $name works";
     my ($dbuser,$dbport,$dbhost) = $bct->add_db_args($name);
-    $command = "bucardo add db $name dbname=bucardo_test user=$dbuser port=$dbport host=$dbhost";
+    $command = "bucordo add db $name dbname=bucordo_test user=$dbuser port=$dbport host=$dbhost";
     $res = $bct->ctl($command);
     like ($res, qr/Added database "$name"/, $t);
 }
 
 $t = 'Adding oracle database Q works';
 $command =
-"bucardo add db Q dbname=$dbuser type=oracle dbuser=$dbuser dbhost=$host conn=sid=$sid dbpass=$pass";
+"bucordo add db Q dbname=$dbuser type=oracle dbuser=$dbuser dbhost=$host conn=sid=$sid dbpass=$pass";
 $res = $bct->ctl($command);
 like ($res, qr/Added database "Q"/, $t);
 
-## Teach Bucardo about all pushable tables, adding them to a new relgroup named "therd"
+## Teach bucordo about all pushable tables, adding them to a new relgroup named "therd"
 $t = q{Adding all tables on the master works};
 $command =
-"bucardo add tables all db=A relgroup=therd pkonly";
+"bucordo add tables all db=A relgroup=therd pkonly";
 $res = $bct->ctl($command);
 like ($res, qr/Creating relgroup: therd.*New tables added: \d/s, $t);
 
 ## Add all sequences, and add them to the newly created relgroup
 $t = q{Adding all sequences on the master works};
 $command =
-"bucardo add sequences all db=A relgroup=therd";
+"bucordo add sequences all db=A relgroup=therd";
 $res = $bct->ctl($command);
 like ($res, qr/New sequences added: \d/, $t);
 
 ## Create a new dbgroup
 $t = q{Created a new dbgroup};
 $command =
-"bucardo add dbgroup qx A:source B:source C Q";
+"bucordo add dbgroup qx A:source B:source C Q";
 $res = $bct->ctl($command);
 like ($res, qr/Created dbgroup "qx"/, $t);
 
 ## Create a new sync
 $t = q{Created a new sync};
 $command =
-"bucardo add sync oracle relgroup=therd dbs=qx autokick=false";
+"bucordo add sync oracle relgroup=therd dbs=qx autokick=false";
 $res = $bct->ctl($command);
 like ($res, qr/Added sync "oracle"/, $t);
 
 ## Create a second sync, solely for multi-sync interaction issues
-$bct->ctl('bucardo add dbgroup t1 A:source B C');
-$bct->ctl('bucardo add sync tsync1 relgroup=therd dbs=t1 autokick=false status=inactive');
+$bct->ctl('bucordo add dbgroup t1 A:source B C');
+$bct->ctl('bucordo add sync tsync1 relgroup=therd dbs=t1 autokick=false status=inactive');
 
-## Start up Bucardo with these new syncs
-$bct->restart_bucardo($dbhX);
+## Start up bucordo with these new syncs
+$bct->restart_bucordo($dbhX);
 
 ## Get the statement handles ready for each table type
 for my $table (sort keys %tabletype) {
@@ -209,8 +209,8 @@ for my $table (sort keys %tabletype) {
 
 ## Commit, then kick off the sync
 $dbhA->commit();
-$bct->ctl('bucardo kick oracle 0');
-$bct->ctl('bucardo kick oracle 0');
+$bct->ctl('bucordo kick oracle 0');
+$bct->ctl('bucordo kick oracle 0');
 
 ## Check B and C for the new rows
 for my $table (sort keys %tabletype) {
@@ -259,7 +259,7 @@ for my $table (keys %tabletype) {
     $sth{update}{$table}{A}->execute(42);
 }
 $dbhA->commit();
-$bct->ctl('bucardo kick oracle 0');
+$bct->ctl('bucordo kick oracle 0');
 
 for my $table (keys %tabletype) {
     $t = "Oracle table $table has correct number of rows after update";
@@ -278,7 +278,7 @@ for my $table (keys %tabletype) {
     $sth{deleteall}{$table}{A}->execute();
 }
 $dbhA->commit();
-$bct->ctl('bucardo kick oracle 0');
+$bct->ctl('bucordo kick oracle 0');
 
 for my $table (keys %tabletype) {
     $t = "Oracle table $table has correct number of rows after delete";
@@ -299,7 +299,7 @@ for my $table (keys %tabletype) {
     $sth{insert}{2}{$table}{A}->execute($val2);
 }
 $dbhA->commit();
-$bct->ctl('bucardo kick oracle 0');
+$bct->ctl('bucordo kick oracle 0');
 
 for my $table (keys %tabletype) {
     $t = "Oracle table $table has correct number of rows after double insert";
@@ -315,7 +315,7 @@ for my $table (keys %tabletype) {
     $sth{deleteone}{$table}{A}->execute(2); ## inty = 2
 }
 $dbhA->commit();
-$bct->ctl('bucardo kick oracle 0');
+$bct->ctl('bucordo kick oracle 0');
 
 for my $table (keys %tabletype) {
     $t = "Oracle table $table has correct number of rows after single deletion";
@@ -335,7 +335,7 @@ for my $table (keys %tabletype) {
     $sth{insert}{4}{$table}{A}->execute($val4);
 }
 $dbhA->commit();
-$bct->ctl('bucardo kick oracle 0');
+$bct->ctl('bucordo kick oracle 0');
 
 for my $table (keys %tabletype) {
     $t = "Oracle table $table has correct number of rows after more inserts";

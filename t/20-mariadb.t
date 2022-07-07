@@ -45,16 +45,16 @@ if ($ver !~ /MariaDB/) {
     plan (skip_all =>  "Cannot test MariaDB: MySQL port is being used by MySQL");
 }
 
-use BucardoTesting;
+use bucordoTesting;
 
 ## For now, remove the bytea table type as we don't have full support yet
-delete $tabletypemariadb{bucardo_test8};
+delete $tabletypemariadb{bucordo_test8};
 
 my $numtabletypes = keys %tabletypemariadb;
 plan tests => 151;
 
 ## Drop the test database if it exists
-my $dbname = 'bucardo_test';
+my $dbname = 'bucordo_test';
 
 eval {
     $dbh->do("DROP DATABASE $dbname");
@@ -95,13 +95,13 @@ for my $table (sort keys %tabletypemariadb) {
 
 }
 
-$bct = BucardoTesting->new() or BAIL_OUT "Creation of BucardoTesting object failed\n";
+$bct = bucordoTesting->new() or BAIL_OUT "Creation of bucordoTesting object failed\n";
 $location = 'mariadb';
 
 pass("*** Beginning MariaDB tests");
 
 END {
-    $bct and $bct->stop_bucardo($dbhX);
+    $bct and $bct->stop_bucordo($dbhX);
     $dbhX and  $dbhX->disconnect();
     $dbhA and $dbhA->disconnect();
     $dbhB and $dbhB->disconnect();
@@ -114,60 +114,60 @@ $dbhA = $bct->repopulate_cluster('A');
 $dbhB = $bct->repopulate_cluster('B');
 $dbhC = $bct->repopulate_cluster('C');
 
-## Create a bucardo database, and install Bucardo into it
-$dbhX = $bct->setup_bucardo('A');
+## Create a bucordo database, and install bucordo into it
+$dbhX = $bct->setup_bucordo('A');
 
-## Tell Bucardo about these databases
+## Tell bucordo about these databases
 
 ## Three Postgres databases will be source, source, and target
 for my $name (qw/ A B C /) {
     $t = "Adding database from cluster $name works";
     my ($dbuser,$dbport,$dbhost) = $bct->add_db_args($name);
-    $command = "bucardo add db $name dbname=bucardo_test user=$dbuser port=$dbport host=$dbhost";
+    $command = "bucordo add db $name dbname=bucordo_test user=$dbuser port=$dbport host=$dbhost";
     $res = $bct->ctl($command);
     like ($res, qr/Added database "$name"/, $t);
 }
 
 $t = 'Adding mariadb database Q works';
 $command =
-"bucardo add db Q dbname=$dbname type=mariadb dbuser=$dbuser password=$dbpass";
+"bucordo add db Q dbname=$dbname type=mariadb dbuser=$dbuser password=$dbpass";
 $res = $bct->ctl($command);
 like ($res, qr/Added database "Q"/, $t);
 
-## Teach Bucardo about all pushable tables, adding them to a new relgroup named "therd"
+## Teach bucordo about all pushable tables, adding them to a new relgroup named "therd"
 $t = q{Adding all tables on the master works};
 $command =
-"bucardo add tables all db=A relgroup=therd pkonly";
+"bucordo add tables all db=A relgroup=therd pkonly";
 $res = $bct->ctl($command);
 like ($res, qr/Creating relgroup: therd.*New tables added: \d/s, $t);
 
 ## Add all sequences, and add them to the newly created relgroup
 $t = q{Adding all sequences on the master works};
 $command =
-"bucardo add sequences all db=A relgroup=therd";
+"bucordo add sequences all db=A relgroup=therd";
 $res = $bct->ctl($command);
 like ($res, qr/New sequences added: \d/, $t);
 
 ## Create a new dbgroup
 $t = q{Created a new dbgroup};
 $command =
-"bucardo add dbgroup qx A:source B:source C Q";
+"bucordo add dbgroup qx A:source B:source C Q";
 $res = $bct->ctl($command);
 like ($res, qr/Created dbgroup "qx"/, $t);
 
 ## Create a new sync
 $t = q{Created a new sync};
 $command =
-"bucardo add sync mariadb relgroup=therd dbs=qx autokick=false";
+"bucordo add sync mariadb relgroup=therd dbs=qx autokick=false";
 $res = $bct->ctl($command);
 like ($res, qr/Added sync "mariadb"/, $t);
 
 ## Create a second sync, solely for multi-sync interaction issues
-$bct->ctl('bucardo add dbgroup t1 A:source B C');
-$bct->ctl('bucardo add sync tsync1 relgroup=therd dbs=t1 autokick=false status=inactive');
+$bct->ctl('bucordo add dbgroup t1 A:source B C');
+$bct->ctl('bucordo add sync tsync1 relgroup=therd dbs=t1 autokick=false status=inactive');
 
-## Start up Bucardo with these new syncs
-$bct->restart_bucardo($dbhX);
+## Start up bucordo with these new syncs
+$bct->restart_bucordo($dbhX);
 
 ## Boolean values
 my (@boolys) = qw( xxx true false null false true null );
@@ -227,8 +227,8 @@ for my $table (sort keys %tabletypemariadb) {
 
 ## Commit, then kick off the sync
 $dbhA->commit();
-$bct->ctl('bucardo kick mariadb 0');
-$bct->ctl('bucardo kick mariadb 0');
+$bct->ctl('bucordo kick mariadb 0');
+$bct->ctl('bucordo kick mariadb 0');
 
 ## Check B and C for the new rows
 for my $table (sort keys %tabletypemariadb) {
@@ -281,7 +281,7 @@ for my $table (keys %tabletypemariadb) {
     $sth{update}{$table}{A}->execute(42);
 }
 $dbhA->commit();
-$bct->ctl('bucardo kick mariadb 0');
+$bct->ctl('bucordo kick mariadb 0');
 
 for my $table (keys %tabletypemariadb) {
     $t = "MariaDB table $table has correct number of rows after update";
@@ -300,7 +300,7 @@ for my $table (keys %tabletypemariadb) {
     $sth{deleteall}{$table}{A}->execute();
 }
 $dbhA->commit();
-$bct->ctl('bucardo kick mariadb 0');
+$bct->ctl('bucordo kick mariadb 0');
 
 for my $table (keys %tabletypemariadb) {
     $t = "MariaDB table $table has correct number of rows after delete";
@@ -321,7 +321,7 @@ for my $table (keys %tabletypemariadb) {
     $sth{insert}{2}{$table}{A}->execute($val2);
 }
 $dbhA->commit();
-$bct->ctl('bucardo kick mariadb 0');
+$bct->ctl('bucordo kick mariadb 0');
 
 for my $table (keys %tabletypemariadb) {
     $t = "MariaDB table $table has correct number of rows after double insert";
@@ -337,7 +337,7 @@ for my $table (keys %tabletypemariadb) {
     $sth{deleteone}{$table}{A}->execute(2); ## inty = 2
 }
 $dbhA->commit();
-$bct->ctl('bucardo kick mariadb 0');
+$bct->ctl('bucordo kick mariadb 0');
 
 for my $table (keys %tabletypemariadb) {
     $t = "MariaDB table $table has correct number of rows after single deletion";
@@ -357,7 +357,7 @@ for my $table (keys %tabletypemariadb) {
     $sth{insert}{4}{$table}{A}->execute($val4);
 }
 $dbhA->commit();
-$bct->ctl('bucardo kick mariadb 0');
+$bct->ctl('bucordo kick mariadb 0');
 
 for my $table (keys %tabletypemariadb) {
     $t = "MariaDB table $table has correct number of rows after more inserts";

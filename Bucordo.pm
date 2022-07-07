@@ -1,15 +1,15 @@
 #!perl
 # -*-mode:cperl; indent-tabs-mode: nil; cperl-indent-level: 4-*-
 
-## The main Bucardo program
+## The main bucordo program
 ##
-## This script should only be called via the 'bucardo' program
+## This script should only be called via the 'bucordo' program
 ##
 ## Copyright 2006-2022 Greg Sabino Mullane <greg@turnstep.com>
 ##
-## Please visit https://bucardo.org for more information
+## Please visit https://bucordo.org for more information
 
-package Bucardo;
+package bucordo;
 use 5.008003;
 use strict;
 use warnings;
@@ -40,7 +40,7 @@ use Time::HiRes   qw( sleep gettimeofday
                                             ## and for timing of events
 
 ## Formatting of Data::Dumper() calls:
-$Data::Dumper::Varname = 'BUCARDO';
+$Data::Dumper::Varname = 'bucordo';
 $Data::Dumper::Indent = 1;
 
 ## Common variables we don't want to declare over and over:
@@ -71,7 +71,7 @@ for (split(' ', $Config{sig_name})) {
 
 ## Configuration of DBIx::Safe
 ## Specify exactly what database handles are allowed to do within custom code
-## Here, 'strict' means 'inside the main transaction that Bucardo uses to make changes'
+## Here, 'strict' means 'inside the main transaction that bucordo uses to make changes'
 my $strict_allow = 'SELECT INSERT UPDATE DELETE quote quote_identifier';
 my $nostrict_allow = "$strict_allow COMMIT ROLLBACK NOTIFY SET pg_savepoint pg_release pg_rollback_to";
 
@@ -112,7 +112,7 @@ my $hostname = hostname;
 my $shorthost = $hostname;
 $shorthost =~ s/^(.+?)\..*/$1/;
 
-## Items pulled from bucardo_config and shared everywhere:
+## Items pulled from bucordo_config and shared everywhere:
 our %config;
 our %config_about;
 
@@ -215,7 +215,7 @@ $lang = substr($lang,0,2);
 
 sub new {
 
-    ## Create a new Bucardo object and return it
+    ## Create a new bucordo object and return it
     ## Takes a hashref of options as the only argument
 
     my $class = shift;
@@ -240,7 +240,7 @@ sub new {
         listening    => {},
         pidmap       => {},
         exit_on_nosync => 0,
-        sqlprefix    => "/* Bucardo $VERSION */",
+        sqlprefix    => "/* bucordo $VERSION */",
     };
 
     ## Add any passed-in parameters to our hash:
@@ -248,7 +248,7 @@ sub new {
         $self->{$_} = $params->{$_};
     }
 
-    ## Transform our hash into a genuine 'Bucardo' object:
+    ## Transform our hash into a genuine 'bucordo' object:
     bless $self, $class;
 
     ## Remove any previous log files if requested
@@ -258,8 +258,8 @@ sub new {
         ## If the dir does not exists, silently proceed
         for my $dir (@dirs) {
             opendir my $dh, $dir or next;
-            ## We look for any files that start with 'log.bucardo' plus another dot
-            for my $file (grep { /^log\.bucardo\./ } readdir $dh) {
+            ## We look for any files that start with 'log.bucordo' plus another dot
+            for my $file (grep { /^log\.bucordo\./ } readdir $dh) {
                 my $fullfile = File::Spec->catfile( $dir => $file );
                 unlink $fullfile or warn qq{Could not remove "$fullfile": $!\n};
             }
@@ -273,7 +273,7 @@ sub new {
     ## Basically, dryrun does a rollback instead of a commit at the final sync step
     ## This is not 100% safe, if (for example) you have custom code that reaches
     ## outside the database to do things.
-    if (exists $ENV{BUCARDO_DRYRUN}) {
+    if (exists $ENV{bucordo_DRYRUN}) {
         $self->{dryrun} = 1;
     }
     if ($self->{dryrun}) {
@@ -285,17 +285,17 @@ sub new {
         $self->{extraname} = " ($self->{extraname})";
     }
 
-    ## Connect to the main Bucardo database
+    ## Connect to the main bucordo database
     $self->{masterdbh} = $self->connect_database();
 
     ## Load in the configuration information
     $self->reload_config_database();
 
     ## Figure out if we are writing emails to a file
-    $self->{sendmail_file} = $ENV{BUCARDO_EMAIL_DEBUG_FILE} || $config{email_debug_file} || '';
+    $self->{sendmail_file} = $ENV{bucordo_EMAIL_DEBUG_FILE} || $config{email_debug_file} || '';
 
     ## Where to store our PID:
-    $self->{pid_file} = File::Spec->catfile( $config{piddir} => 'bucardo.mcp.pid' );
+    $self->{pid_file} = File::Spec->catfile( $config{piddir} => 'bucordo.mcp.pid' );
 
     ## The file to ask all processes to stop:
     $self->{stop_file} = File::Spec->catfile( $config{piddir} => $config{stopfile} );
@@ -304,7 +304,7 @@ sub new {
     $self->{warning_file} ||= $config{warning_file};
 
     ## Make sure we are running where we are supposed to be
-    ## This prevents items in bucardo.db that reference production
+    ## This prevents items in bucordo.db that reference production
     ## systems from getting run on QA!
     ## ...or at least makes sure people have to work a lot harder
     ## to shoot themselves in the foot.
@@ -332,10 +332,10 @@ sub new {
 
         if (! $ok) {
             warn qq{Cannot start: configured to only run on "$osafe". This is "$hostname"\n};
-            warn qq{  This is usually done to prevent a configured Bucardo from running\n};
+            warn qq{  This is usually done to prevent a configured bucordo from running\n};
             warn qq{  on the wrong host. Please verify the 'db' settings by doing:\n};
-            warn qq{bucardo list dbs\n};
-            warn qq{  Once you are sure the bucardo.db table has the correct values,\n};
+            warn qq{bucordo list dbs\n};
+            warn qq{  Once you are sure the bucordo.db table has the correct values,\n};
             warn qq{  you can adjust the 'host_safety_check' value\n};
             exit 2;
         }
@@ -348,7 +348,7 @@ sub new {
 
 sub start_mcp {
 
-    ## Start the Bucardo daemon. Called by bucardo after setsid()
+    ## Start the bucordo daemon. Called by bucordo after setsid()
     ## Arguments: one
     ## 1. Arrayref of command-line options.
     ## Returns: never (exit 0 or exit 1)
@@ -358,7 +358,7 @@ sub start_mcp {
     ## Store the original invocation string, then modify it
     my $old0 = $0;
     ## May not work on all platforms, of course, but we're gonna try
-    $0 = "Bucardo Master Control Program v$VERSION.$self->{extraname}";
+    $0 = "bucordo Master Control Program v$VERSION.$self->{extraname}";
 
     ## Prefix all lines in the log file with this TLA (until overriden by a forked child)
     $self->{logprefix} = 'MCP';
@@ -410,7 +410,7 @@ sub start_mcp {
     }
 
     ## We are clear to start. Output a quick hello and version to the logfile
-    $self->glog("Starting Bucardo version $VERSION", LOG_WARN);
+    $self->glog("Starting bucordo version $VERSION", LOG_WARN);
     $self->glog("Log level: $config{log_level}", LOG_WARN);
 
     ## Close unused file handles.
@@ -444,7 +444,7 @@ sub start_mcp {
         Args: $old0
         Version: $VERSION
         };
-        my $subject = qq{Bucardo $VERSION started on $shorthost};
+        my $subject = qq{bucordo $VERSION started on $shorthost};
 
         ## If someone left a message in the reason file, append it, then delete the file
         my $reason = get_reason('delete');
@@ -501,8 +501,8 @@ sub start_mcp {
     $self->show_db_version_and_time($masterdbh, $self->{mcp_backend}, 'Master DB ');
     $self->glog("PID: $$", LOG_WARN);
     $self->glog('Postgres library version: ' . $masterdbh->{pg_lib_version}, LOG_WARN);
-    $self->glog("bucardo: $old0", LOG_WARN);
-    $self->glog('Bucardo.pm: ' . $INC{'Bucardo.pm'}, LOG_WARN);
+    $self->glog("bucordo: $old0", LOG_WARN);
+    $self->glog('bucordo.pm: ' . $INC{'bucordo.pm'}, LOG_WARN);
     $self->glog((sprintf 'OS: %s  Perl: %s %vd', $^O, $^X, $^V), LOG_WARN);
 
     ## Get an integer version of the DBD::Pg version, for later comparisons
@@ -529,7 +529,7 @@ sub start_mcp {
 
     ## Store some PIDs for later debugging use
     $self->{pidmap}{$$} = 'MCP';
-    $self->{pidmap}{$self->{mcp_backend}} = 'Bucardo DB';
+    $self->{pidmap}{$self->{mcp_backend}} = 'bucordo DB';
 
     ## Get the maximum key length of the "self" hash for pretty formatting
     my $maxlen = 5;
@@ -541,7 +541,7 @@ sub start_mcp {
     ## Yes, this prints things like HASH(0x8fbfc84), but we're okay with that
     $Data::Dumper::Indent = 0;
     $Data::Dumper::Terse = 1;
-    my $objdump = "Bucardo object:\n";
+    my $objdump = "bucordo object:\n";
     for my $key (sort keys %$self) {
         my $value = $key eq 'dbpass' ? '<not shown>' : $self->{$key};
         $objdump .= sprintf " %-*s => %s\n", $maxlen, $key,
@@ -562,7 +562,7 @@ sub start_mcp {
     opendir my $dh, $piddir or die qq{Could not opendir "$piddir": $!\n};
 
     ## Nothing else should really be in here, but we will limit with a regex anyway
-    my @pidfiles = grep { /^bucardo.*\.pid$/ } readdir $dh;
+    my @pidfiles = grep { /^bucordo.*\.pid$/ } readdir $dh;
     closedir $dh or warn qq{Could not closedir "$piddir" $!\n};
 
     ## Loop through and remove each file found, making a note in the log
@@ -655,7 +655,7 @@ sub start_mcp {
                 my $changes = $self->check_sync_health();
                 if ($changes) {
                     ## If we already made a MCP label, go there
-                    ## Else fallthrough and assume our bucardo.sync changes stick!
+                    ## Else fallthrough and assume our bucordo.sync changes stick!
                     if ($self->{mcp_loop_started}) {
                         $self->glog('Going to restart the MCP loop, as syncs have changed', LOG_VERBOSE);
                         die 'We are going to redo the MCP loop'; ## goes to end of mcp main eval
@@ -677,7 +677,7 @@ sub start_mcp {
         }
 
         ## Create some output for the mail message
-        my $diesubject = "Bucardo MCP $$ was killed";
+        my $diesubject = "bucordo MCP $$ was killed";
         my $diebody = "MCP $$ was killed: $msg";
 
         ## Most times we *do* want to respawn
@@ -721,7 +721,7 @@ sub start_mcp {
             exit 0;
         }
 
-        ## We assume this is bucardo, and that we are in same directory as when called
+        ## We assume this is bucordo, and that we are in same directory as when called
         my $RUNME = $old0;
         ## Check to see if $RUNME is executable as is, before we assume we're in the same directory
         if (! -x $RUNME) {
@@ -792,7 +792,7 @@ sub start_mcp {
     ## Because a sync may have gotten a notice while we were down,
     ## we auto-kick all eligible syncs
     ## We also need to see if we can prevent the VAC daemon from running,
-    ## if there are no databases with bucardo schemas
+    ## if there are no databases with bucordo schemas
     $self->{needsvac} = 0;
     for my $syncname (keys %{ $self->{sync} }) {
 
@@ -915,13 +915,13 @@ sub mcp_main {
 
         ## Startup the VAC daemon as needed
         ## May be off via user configuration, or because of no valid databases
-        if ($config{bucardo_vac} and $self->{needsvac}) {
+        if ($config{bucordo_vac} and $self->{needsvac}) {
 
             ## Check on it occasionally (different than the running time)
             if (time() - $lastvaccheck >= $config{mcp_vactime}) {
 
                 ## Is it alive? If not, spawn
-                my $pidfile = "$config{piddir}/bucardo.vac.pid";
+                my $pidfile = "$config{piddir}/bucordo.vac.pid";
                 if (! -e $pidfile) {
                     $self->fork_vac();
                 }
@@ -930,7 +930,7 @@ sub mcp_main {
 
             } ## end of time to check vac
 
-        } ## end if bucardo_vac
+        } ## end if bucordo_vac
 
         ## Every once in a while, make sure our database connections are still there
         if (time() - $lastpingcheck >= $config{mcp_pingtime}) {
@@ -1161,14 +1161,14 @@ sub mcp_main {
             ## Request that we parse and empty the log message table
             elsif ('log_message' eq $name) {
                 $self->glog('Checking for log messages', LOG_DEBUG);
-                $SQL = 'SELECT msg,cdate FROM bucardo_log_message ORDER BY cdate';
+                $SQL = 'SELECT msg,cdate FROM bucordo_log_message ORDER BY cdate';
                 my $sth = $maindbh->prepare_cached($SQL);
                 $count = $sth->execute();
                 if ($count ne '0E0') {
                     for my $row (@{$sth->fetchall_arrayref()}) {
                         $self->glog("MESSAGE ($row->[1]): $row->[0]", LOG_TERSE);
                     }
-                    $maindbh->do('DELETE FROM bucardo_log_message');
+                    $maindbh->do('DELETE FROM bucordo_log_message');
                     $maindbh->commit();
                 }
                 else {
@@ -1203,7 +1203,7 @@ sub mcp_main {
                     $SQL = q{SELECT *, }
                         . q{COALESCE(EXTRACT(epoch FROM checktime),0) AS checksecs, }
                             . q{COALESCE(EXTRACT(epoch FROM lifetime),0) AS lifetimesecs }
-                                . q{FROM bucardo.sync WHERE name = ?};
+                                . q{FROM bucordo.sync WHERE name = ?};
                     my $sth = $maindbh->prepare($SQL);
                     $count = $sth->execute($syncname);
                     if ($count eq '0E0') {
@@ -1413,7 +1413,7 @@ sub mcp_main {
 
             ## Make sure there is nothing out there already running
             my $syncname = $s->{name};
-            my $pidfile = "$config{piddir}/bucardo.ctl.sync.$syncname.pid";
+            my $pidfile = "$config{piddir}/bucordo.ctl.sync.$syncname.pid";
             if ($s->{mcp_changed}) {
                 $self->glog(qq{Checking for existing controllers for sync "$syncname"}, LOG_VERBOSE);
             }
@@ -1463,7 +1463,7 @@ sub mcp_main {
                     next SYNC;
                 }
                 $self->glog("No active pid $oldpid found. Killing just in case, and removing file", LOG_TERSE);
-                $self->kill_bucardo_pid($oldpid => 'normal');
+                $self->kill_bucordo_pid($oldpid => 'normal');
                 unlink $pidfile or $self->glog("Warning! Failed to unlink $pidfile", LOG_WARN);
                 $s->{mcp_changed} = 1;
             } ## end if pidfile found for this sync
@@ -1591,7 +1591,7 @@ sub check_sync_health {
                 if ($sync->{status} ne 'stalled') {
                     $self->glog("Marked sync $syncname as stalled", LOG_NORMAL);
                     $sync->{status} = 'stalled';
-                    $SQL = 'UPDATE bucardo.sync SET status = ? WHERE name = ?';
+                    $SQL = 'UPDATE bucordo.sync SET status = ? WHERE name = ?';
                     eval {
                         my $sth = $self->{masterdbh}->prepare($SQL);
                         $sth->execute('stalled',$syncname);
@@ -1601,7 +1601,7 @@ sub check_sync_health {
                         $self->{masterdbh}->rollback();
                     }
                 }
-                $SQL = 'UPDATE bucardo.db SET status = ? WHERE name = ?';
+                $SQL = 'UPDATE bucordo.db SET status = ? WHERE name = ?';
                 my $sth = $self->{masterdbh}->prepare($SQL);
                 eval {
                     $sth->execute('stalled',$dbname);
@@ -1678,7 +1678,7 @@ sub restore_syncs {
 
             if (defined $dbinfo->{dbh}) {
                 $dbinfo->{status} = 'active';
-                $SQL = 'UPDATE bucardo.db SET status = ? WHERE name = ?';
+                $SQL = 'UPDATE bucordo.db SET status = ? WHERE name = ?';
                 my $sth = $self->{masterdbh}->prepare($SQL);
                 $sth->execute('active',$dbname);
                 $self->{masterdbh}->commit();
@@ -1691,7 +1691,7 @@ sub restore_syncs {
         ## If any databases were restored, restore the sync too
         if ($restored_dbs) {
             $sync->{status} = 'stalled';
-            $SQL = 'UPDATE bucardo.sync SET status = ? WHERE name = ?';
+            $SQL = 'UPDATE bucordo.sync SET status = ? WHERE name = ?';
             my $sth = $self->{masterdbh}->prepare($SQL);
             $sth->execute('active',$syncname);
             $self->{masterdbh}->commit();
@@ -1730,7 +1730,7 @@ sub start_controller {
            name    kidsalive  dbs     kick_on_startup)};
 
     ## Set our process name
-    $0 = qq{Bucardo Controller.$self->{extraname} Sync "$syncname" for relgroup "$sync->{herd}" to dbs "$sync->{dbs}"};
+    $0 = qq{bucordo Controller.$self->{extraname} Sync "$syncname" for relgroup "$sync->{herd}" to dbs "$sync->{dbs}"};
 
     ## Upgrade any specific sync configs to global configs
     if (exists $config{sync}{$syncname}) {
@@ -1742,7 +1742,7 @@ sub start_controller {
 
     ## Store our PID into a file
     ## Save the complete returned name for later cleanup
-    $self->{ctlpidfile} = $self->store_pid( "bucardo.ctl.sync.$syncname.pid" );
+    $self->{ctlpidfile} = $self->store_pid( "bucordo.ctl.sync.$syncname.pid" );
 
     ## Start normal log output for this controller: basic facts
     my $msg = qq{New controller for sync "$syncname". Relgroup is "$sync->{herd}", dbs is "$sync->{dbs}". PID=$$};
@@ -1827,7 +1827,7 @@ sub start_controller {
 
             ## Send the mail, but not for a normal shutdown
             if ($moresub !~ /stopfile/) {
-                my $subject = qq{Bucardo "$syncname" controller killed on $shorthost$moresub};
+                my $subject = qq{bucordo "$syncname" controller killed on $shorthost$moresub};
                 $self->send_mail({ body => "$body\n", subject => $subject });
             }
 
@@ -1846,11 +1846,11 @@ sub start_controller {
     ## Connect to the master database
     ($self->{master_backend}, $self->{masterdbh}) = $self->connect_database();
     my $maindbh = $self->{masterdbh};
-    $self->glog("Bucardo database backend PID: $self->{master_backend}", LOG_VERBOSE);
+    $self->glog("bucordo database backend PID: $self->{master_backend}", LOG_VERBOSE);
 
     ## Map the PIDs to common names for better log output
     $self->{pidmap}{$$} = 'CTL';
-    $self->{pidmap}{$self->{master_backend}} = 'Bucardo DB';
+    $self->{pidmap}{$self->{master_backend}} = 'bucordo DB';
 
     ## Listen for kick requests from the MCP for this sync
     my $kicklisten = "kick_$syncname";
@@ -1869,7 +1869,7 @@ sub start_controller {
     ## custom codes. If we reintroduce the multi-kid 'gang' concept,
     ## that changes things radically as well.
     $SQL = q{
-        UPDATE bucardo.syncrun
+        UPDATE bucordo.syncrun
         SET    status=?
         WHERE  sync=?
         AND    ended IS NULL
@@ -1879,7 +1879,7 @@ sub start_controller {
     ## SQL to update the syncrun table on startup
     ## Returns the insert (start) time
     $SQL = q{
-        UPDATE    bucardo.syncrun
+        UPDATE    bucordo.syncrun
         SET       ended=now(), status=?
         WHERE     sync=?
         AND       ended IS NULL
@@ -1929,7 +1929,7 @@ sub start_controller {
         ## The handy syncrun table tells us the time of the last good run
         $SQL = q{
             SELECT CEIL(EXTRACT(epoch FROM ended))
-            FROM bucardo.syncrun
+            FROM bucordo.syncrun
             WHERE sync=?
             AND lastgood IS TRUE
             OR  lastempty IS TRUE
@@ -1979,31 +1979,31 @@ sub start_controller {
     ## Adjust the target table names as needed and store in the goat hash
 
     ## New table name regardless of syncs or databases
-    $SQL = 'SELECT newname FROM bucardo.customname WHERE goat=? AND db IS NULL and sync IS NULL';
+    $SQL = 'SELECT newname FROM bucordo.customname WHERE goat=? AND db IS NULL and sync IS NULL';
     my $sth_custom1 = $maindbh->prepare($SQL);
     ## New table name for this sync only
-    $SQL = 'SELECT newname FROM bucardo.customname WHERE goat=? AND sync=? AND db IS NULL';
+    $SQL = 'SELECT newname FROM bucordo.customname WHERE goat=? AND sync=? AND db IS NULL';
     my $sth_custom2 = $maindbh->prepare($SQL);
     ## New table name for a specific database only
-    $SQL = 'SELECT newname FROM bucardo.customname WHERE goat=? AND db=? AND sync IS NULL';
+    $SQL = 'SELECT newname FROM bucordo.customname WHERE goat=? AND db=? AND sync IS NULL';
     my $sth_custom3 = $maindbh->prepare($SQL);
     ## New table name for this sync and a specific database
-    $SQL = 'SELECT newname FROM bucardo.customname WHERE goat=? AND sync=? AND db=?';
+    $SQL = 'SELECT newname FROM bucordo.customname WHERE goat=? AND sync=? AND db=?';
     my $sth_custom4 = $maindbh->prepare($SQL);
 
     ## Adjust the target table columns as needed and store in the goat hash
 
     ## New table cols regardless of syncs or databases
-    $SQL = 'SELECT clause FROM bucardo.customcols WHERE goat=? AND db IS NULL and sync IS NULL';
+    $SQL = 'SELECT clause FROM bucordo.customcols WHERE goat=? AND db IS NULL and sync IS NULL';
     my $sth_customc1 = $maindbh->prepare($SQL);
     ## New table cols for this sync only
-    $SQL = 'SELECT clause FROM bucardo.customcols WHERE goat=? AND sync=? AND db IS NULL';
+    $SQL = 'SELECT clause FROM bucordo.customcols WHERE goat=? AND sync=? AND db IS NULL';
     my $sth_customc2 = $maindbh->prepare($SQL);
     ## New table cols for a specific database only
-    $SQL = 'SELECT clause FROM bucardo.customcols WHERE goat=? AND db=? AND sync IS NULL';
+    $SQL = 'SELECT clause FROM bucordo.customcols WHERE goat=? AND db=? AND sync IS NULL';
     my $sth_customc3 = $maindbh->prepare($SQL);
     ## New table cols for this sync and a specific database
-    $SQL = 'SELECT clause FROM bucardo.customcols WHERE goat=? AND sync=? AND db=?';
+    $SQL = 'SELECT clause FROM bucordo.customcols WHERE goat=? AND sync=? AND db=?';
     my $sth_customc4 = $maindbh->prepare($SQL);
 
     for my $g (@{ $sync->{goatlist} }) {
@@ -2321,7 +2321,7 @@ sub start_controller {
             and $self->{kidpid}     ## KID must have been created at least once
             and time() - $kidchecktime >= $config{ctl_checkonkids_time}) {
 
-            my $pidfile = "$config{piddir}/bucardo.kid.sync.$syncname.pid";
+            my $pidfile = "$config{piddir}/bucordo.kid.sync.$syncname.pid";
 
             ## If we find a problem, set this to true
             my $resurrect = 0;
@@ -2436,7 +2436,7 @@ sub start_kid {
           name      goatlist   kidsalive   dbs kick_on_startup)};
 
     ## Adjust the process name, start logging
-    $0 = qq{Bucardo Kid.$self->{extraname} Sync "$syncname"};
+    $0 = qq{bucordo Kid.$self->{extraname} Sync "$syncname"};
     my $extra = $sync->{onetimecopy} ? "OTC: $sync->{onetimecopy}" : '';
     if ($config{log_showsyncname}) {
         $self->{logprefix} .= " ($syncname)";
@@ -2446,7 +2446,7 @@ sub start_kid {
 
     ## Store our PID into a file
     ## Save the complete returned name for later cleanup
-    $self->{kidpidfile} = $self->store_pid( "bucardo.kid.sync.$syncname.pid" );
+    $self->{kidpidfile} = $self->store_pid( "bucordo.kid.sync.$syncname.pid" );
 
     ## Establish these early so the DIE block can use them
     my ($S,$T,$pkval) = ('?','?','?');
@@ -2668,21 +2668,21 @@ sub start_kid {
 
     ## Set a shortcut for this handle, and log the details
     my $maindbh = $self->{masterdbh};
-    $self->glog("Bucardo database backend PID: $self->{master_backend}", LOG_VERBOSE);
+    $self->glog("bucordo database backend PID: $self->{master_backend}", LOG_VERBOSE);
 
     ## Setup mapping so we can report in the log which things came from this backend
-    $self->{pidmap}{$self->{master_backend}} = 'Bucardo DB';
+    $self->{pidmap}{$self->{master_backend}} = 'bucordo DB';
 
     ## SQL to enter a new database in the dbrun table
     $SQL = q{
-        INSERT INTO bucardo.dbrun(sync,dbname,pgpid)
+        INSERT INTO bucordo.dbrun(sync,dbname,pgpid)
         VALUES (?,?,?)
     };
     $sth{dbrun_insert} = $maindbh->prepare($SQL);
 
     ## SQL to remove a database from the dbrun table
     $SQL{dbrun_delete} = q{
-        DELETE FROM bucardo.dbrun
+        DELETE FROM bucordo.dbrun
         WHERE sync = ? AND dbname = ?
     };
     $sth{dbrun_delete} = $maindbh->prepare($SQL{dbrun_delete});
@@ -2803,7 +2803,7 @@ sub start_kid {
         $finaldbh->commit();
 
         ## Update the dbrun table as needed
-        $SQL = q{DELETE FROM bucardo.dbrun WHERE sync = ?};
+        $SQL = q{DELETE FROM bucordo.dbrun WHERE sync = ?};
         $sth = $finaldbh->prepare($SQL);
         $sth->execute($syncname);
 
@@ -2847,7 +2847,7 @@ sub start_kid {
             elsif ($msg =~ /could not connect/) {
                 $moresub = ' (no connection)';
             }
-            my $subject = qq{Bucardo kid for "$syncname" killed on $shorthost$moresub};
+            my $subject = qq{bucordo kid for "$syncname" killed on $shorthost$moresub};
             $self->send_mail({ body => "$body\n", subject => $subject });
 
         } ## end sending email
@@ -2892,12 +2892,12 @@ sub start_kid {
         ## Note that none of this is actually 'prepared' until the first execute
 
         ## SQL to add a new row to the syncrun table
-        $SQL = 'INSERT INTO bucardo.syncrun(sync,status) VALUES (?,?)';
+        $SQL = 'INSERT INTO bucordo.syncrun(sync,status) VALUES (?,?)';
         $sth{kid_syncrun_insert} = $maindbh->prepare($SQL);
 
         ## SQL to update the syncrun table's status only
         $SQL = q{
-            UPDATE bucardo.syncrun
+            UPDATE bucordo.syncrun
             SET    status=?
             WHERE  sync=?
             AND    ended IS NULL
@@ -2906,7 +2906,7 @@ sub start_kid {
 
         ## SQL to set the syncrun table as ended once complete
         $SQL = q{
-            UPDATE bucardo.syncrun
+            UPDATE bucordo.syncrun
             SET    deletes=deletes+?, inserts=inserts+?, truncates=truncates+?,
                    conflicts=?, details=?, status=?
             WHERE  sync=?
@@ -2955,10 +2955,10 @@ sub start_kid {
                 ## This is the main query: grab all unique changed primary keys since the last sync
                 $SQL{delta}{$g} = qq{
                     SELECT  DISTINCT $g->{pklist}
-                    FROM    bucardo.$g->{deltatable} d
+                    FROM    bucordo.$g->{deltatable} d
                     WHERE   NOT EXISTS (
                                SELECT 1
-                               FROM   bucardo.$g->{tracktable} t
+                               FROM   bucordo.$g->{tracktable} t
                                WHERE  d.txntime = t.txntime
                                AND    (t.target = DBGROUP::text)
                             )
@@ -2968,10 +2968,10 @@ sub start_kid {
                 ## This is a per-target check
                 $SQL{deltatarget}{$g} = qq{
                     SELECT  DISTINCT $g->{pklist}
-                    FROM    bucardo.$g->{deltatable} d
+                    FROM    bucordo.$g->{deltatable} d
                     WHERE   NOT EXISTS (
                                SELECT 1
-                               FROM   bucardo.$g->{tracktable} t
+                               FROM   bucordo.$g->{tracktable} t
                                WHERE  d.txntime = t.txntime
                                AND    (t.target = TARGETNAME::text)
                             )
@@ -2979,12 +2979,12 @@ sub start_kid {
 
                 ## Mark all unclaimed visible delta rows as done in the track table
                 $SQL{track}{$g} = qq{
-                    INSERT INTO bucardo.$g->{tracktable} (txntime,target)
+                    INSERT INTO bucordo.$g->{tracktable} (txntime,target)
                     SELECT DISTINCT txntime, DBGROUP::text
-                    FROM bucardo.$g->{deltatable} d
+                    FROM bucordo.$g->{deltatable} d
                     WHERE NOT EXISTS (
                         SELECT 1
-                        FROM   bucardo.$g->{tracktable} t
+                        FROM   bucordo.$g->{tracktable} t
                         WHERE  d.txntime = t.txntime
                         AND    (t.target = DBGROUP::text)
                     );
@@ -3002,7 +3002,7 @@ sub start_kid {
 
                 my $d = $sync->{db}{$dbname};
 
-                ## Set the DBGROUP for each database: the bucardo.track_* target entry
+                ## Set the DBGROUP for each database: the bucordo.track_* target entry
                 $d->{DBGROUPNAME} = "dbgroup $dbs";
 
                 for my $g (@$goatlist) {
@@ -3193,7 +3193,7 @@ sub start_kid {
         ## Increment our count of how many times we have been here before
         $kidloop++;
 
-        ## Reset the numbers to track total bucardo_delta matches
+        ## Reset the numbers to track total bucordo_delta matches
         undef %deltacount;
         $deltacount{all} = 0;
         $deltacount{alltables} = 0;
@@ -3290,7 +3290,7 @@ sub start_kid {
             ## Third level is maxtime and maxdb, showing the "winner" for each table
 
             $SQL = 'SELECT quote_ident(sname), quote_ident(tname), MAX(EXTRACT(epoch FROM cdate))'
-                   . ' FROM bucardo.bucardo_truncate_trigger '
+                   . ' FROM bucordo.bucordo_truncate_trigger '
                    . ' WHERE sync = ? AND replicated IS NULL GROUP BY 1,2';
 
             for my $dbname (@dbs_source) {
@@ -3391,7 +3391,7 @@ sub start_kid {
             ## so this tracks the largest number returned
             my $maxcount = 0;
 
-            ## Use the bucardo_delta_check function on each database, which gives us
+            ## Use the bucordo_delta_check function on each database, which gives us
             ## a quick summary of whether each table has any active delta rows
             ## This is a big win on slow networks!
             if ($config{quick_delta_check}) {
@@ -3402,7 +3402,7 @@ sub start_kid {
                     $sth{kid_syncrun_update_status}->execute("delta_check on db $dbname",$syncname);
                     $maindbh->commit();
 
-                    $SQL = 'SELECT * FROM bucardo.bucardo_delta_check(?,?)';
+                    $SQL = 'SELECT * FROM bucordo.bucordo_delta_check(?,?)';
                     $sth = $d->{dbh}->prepare($SQL);
                     $sth->execute($syncname, $d->{DBGROUPNAME});
                     $d->{deltazero} = $d->{deltatotal} = 0;
@@ -3436,7 +3436,7 @@ sub start_kid {
                 ## Populate the global vars
                 ($S,$T) = ($g->{safeschema},$g->{safetable});
 
-                ## This is the meat of Bucardo:
+                ## This is the meat of bucordo:
                 for my $dbname (@dbs_source) {
 
                     ## If we had a truncation, we only get deltas from the "winning" source
@@ -3453,7 +3453,7 @@ sub start_kid {
                     $sth{kid_syncrun_update_status}->execute("Counting all deltas on db $dbname",$syncname);
                     $maindbh->commit();
 
-                    ## Gets all relevant rows from bucardo_deltas: runs asynchronously
+                    ## Gets all relevant rows from bucordo_deltas: runs asynchronously
                     $d->{async_active} = time;
                     $sth{getdelta}{$dbname}{$g}->execute();
                 }
@@ -3614,7 +3614,7 @@ sub start_kid {
 
             if (! $deltacount{all} and ! $self->{has_truncation}) {
 
-               ## If we modified the bucardo_sequences table, save the change
+               ## If we modified the bucordo_sequences table, save the change
                 if ($deltacount{sequences}) {
                     #die "fixme";
                     #$sourcedbh->commit();
@@ -3719,7 +3719,7 @@ sub start_kid {
                 my $delta_attempts = 0;
 
                 ## For each source database, grab all distinct pks for this table
-                ## from bucardo_delta (that have not already been pushed to the targetname)
+                ## from bucordo_delta (that have not already been pushed to the targetname)
                 ## We've already executed and got a count from these queries:
                 ## it's now time to gather the actual data
                 my %deltabin;
@@ -3908,22 +3908,22 @@ sub start_kid {
                         }
                     }
                     ## If conflict_strategy is abort, simply die right away
-                    elsif ('bucardo_abort' eq $g->{conflict_strategy}) {
+                    elsif ('bucordo_abort' eq $g->{conflict_strategy}) {
                         $self->pause_and_exit(qq{Aborting sync due to conflict of $S.$T});
                     }
                     ## If we require a custom code, also die
-                    elsif ('bucardo_custom' eq $g->{conflict_strategy}) {
+                    elsif ('bucordo_custom' eq $g->{conflict_strategy}) {
                         $self->pause_and_exit(qq{Aborting sync due to lack of custom conflict handler for $S.$T});
                     }
-                    elsif ($g->{conflict_strategy} =~ /^bucardo_latest/o) {
+                    elsif ($g->{conflict_strategy} =~ /^bucordo_latest/o) {
 
-                        ## For bucardo_latest*, we want to check the transaction times across
+                        ## For bucordo_latest*, we want to check the transaction times across
                         ## all databases in this sync that may conflict - in other words,
                         ## source databases that have deltas. We then sort that list and set it
                         ## as the list of preferred databases
                         ## There are two variants:
-                        ## bucardo_latest: check this table only
-                        ## bucardo_latest_all_tables: check all tables in the sync
+                        ## bucordo_latest: check this table only
+                        ## bucordo_latest_all_tables: check all tables in the sync
                         ## These get internally mapped to tablewinner and syncwinner respectively
 
                         $self->glog(qq{Starting conflict strategy $g->{conflict_strategy}}, LOG_VERBOSE);
@@ -3936,13 +3936,13 @@ sub start_kid {
                             my $maxsql = 'SELECT COALESCE(extract(epoch FROM MAX(txntime)),0) FROM';
 
                             ## Find the maximum txntime across all databases for this table
-                            if ($g->{conflict_strategy} eq 'bucardo_latest') {
-                                $SQL = "$maxsql bucardo.$g->{deltatable}";
+                            if ($g->{conflict_strategy} eq 'bucordo_latest') {
+                                $SQL = "$maxsql bucordo.$g->{deltatable}";
                             }
                             ## Same, but also across all tables in the sync
-                            elsif ($g->{conflict_strategy} eq 'bucardo_latest_all_tables') {
+                            elsif ($g->{conflict_strategy} eq 'bucordo_latest_all_tables') {
                                 $SQL = join " UNION\n" =>
-                                    map { "$maxsql bucardo.$_->{deltatable}" }
+                                    map { "$maxsql bucordo.$_->{deltatable}" }
                                         grep { $_->{reltype} eq 'table'}
                                             @$goatlist;
                             }
@@ -3985,12 +3985,12 @@ sub start_kid {
 
                             ## Store it away
                             $self->{conflictinfo}{tablewinner}{$g} = $winner;
-                            if ($g->{conflict_strategy} eq 'bucardo_latest_all_tables') {
+                            if ($g->{conflict_strategy} eq 'bucordo_latest_all_tables') {
                                 $self->{conflictinfo}{syncwinner} = $winner;
                             }
                         }
 
-                    } ## end of bucardo_latest*
+                    } ## end of bucordo_latest*
                     else {
                         ## Not a built-in, so assume a list of databases:
                         $self->{conflictinfo}{winners} = $g->{conflict_strategy};
@@ -4082,7 +4082,7 @@ sub start_kid {
 
                     ## Figure out and set the filename
                     my $date = strftime('%Y%m%d_%H%M%S', localtime());
-                    $d->{filename} = "$config{flatfile_dir}/bucardo.flatfile.$self->{syncname}.$date.sql";
+                    $d->{filename} = "$config{flatfile_dir}/bucordo.flatfile.$self->{syncname}.$date.sql";
 
                     ## Does this already exist? It's possible we got so quick the old one exists
                     ## Since we want the names to be unique, come up with a new name
@@ -4162,8 +4162,8 @@ sub start_kid {
                             next if ! $d->{writtento};
 
                             $self->glog(qq{Creating savepoint on database "$dbname" for exception handler(s)}, LOG_DEBUG);
-                            $d->{dbh}->do("SAVEPOINT bucardo_$$")
-                                or die qq{Savepoint creation failed for bucardo_$$};
+                            $d->{dbh}->do("SAVEPOINT bucordo_$$")
+                                or die qq{Savepoint creation failed for bucordo_$$};
                         }
                     }
 
@@ -4312,7 +4312,7 @@ sub start_kid {
                             }
 
                             $self->glog("Rolling back to savepoint on database $dbname", LOG_DEBUG);
-                            $d->{dbh}->do("ROLLBACK TO SAVEPOINT bucardo_$$");
+                            $d->{dbh}->do("ROLLBACK TO SAVEPOINT bucordo_$$");
                         }
 
                         ## Prepare information to pass to the handler about this run
@@ -4381,7 +4381,7 @@ sub start_kid {
             $self->glog("Totals: deletes=$dmlcount{deletes} inserts=$dmlcount{inserts} conflicts=$dmlcount{conflicts}",
                         LOG_VERBOSE);
 
-            ## Update bucardo_track table so that the bucardo_delta rows we just processed
+            ## Update bucordo_track table so that the bucordo_delta rows we just processed
             ##  are marked as "done" and ignored by subsequent runs
 
             ## Reset our pretty-printer count
@@ -4416,7 +4416,7 @@ sub start_kid {
 
                     }
                 }
-                ## For each database that had delta changes, insert rows to bucardo_track
+                ## For each database that had delta changes, insert rows to bucordo_track
                 for my $dbname (@dbs_source) {
 
                     my $d = $sync->{db}{$dbname};
@@ -4430,7 +4430,7 @@ sub start_kid {
                             ## The stage table can only have rows if a previous version failed
                             ## This can happen if this kid committed, but another failed
                             ## Thus, we always want to make sure the stage table is empty:
-                            $SQL = "DELETE FROM bucardo.$g->{stagetable}";
+                            $SQL = "DELETE FROM bucordo.$g->{stagetable}";
                             $d->{dbh}->do($SQL);
                             $sth{stage}{$dbname}{$g}->execute();
                         }
@@ -4481,7 +4481,7 @@ sub start_kid {
 
                     if ($deltacount{dbtable}{$dbname}{$S}{$T}) {
                         $count = $self->{insertcount}{dbname}{$S}{$T};
-                        $self->glog((sprintf 'Rows inserted to bucardo_%s for %-*s: %*d',
+                        $self->glog((sprintf 'Rows inserted to bucordo_%s for %-*s: %*d',
                              $d->{trackstage} ? 'stage' : 'track',
                              $maxsize,
                              "$dbname.$S.$T",
@@ -4705,7 +4705,7 @@ sub start_kid {
         ## If doing truncate, do some cleanup
         if (exists $self->{truncateinfo}) {
             ## For each source database that had a truncate entry, mark them all as done
-            $SQL  = 'UPDATE bucardo.bucardo_truncate_trigger SET replicated = now() WHERE sync = ? AND replicated IS NULL';
+            $SQL  = 'UPDATE bucordo.bucordo_truncate_trigger SET replicated = now() WHERE sync = ? AND replicated IS NULL';
             for my $dbname (@dbs_source) {
 
                 my $d = $sync->{db}{$dbname};
@@ -4807,9 +4807,9 @@ sub start_kid {
 
                 next if ! $deltacount{dbtable}{$dbname}{$g->{safeschema}}{$g->{safetable}};
 
-                $SQL = "INSERT INTO bucardo.$g->{tracktable} SELECT * FROM bucardo.$g->{stagetable}";
+                $SQL = "INSERT INTO bucordo.$g->{tracktable} SELECT * FROM bucordo.$g->{stagetable}";
                 $dbh->do($SQL);
-                $SQL = "DELETE FROM bucardo.$g->{stagetable}";
+                $SQL = "DELETE FROM bucordo.$g->{stagetable}";
                 $dbh->do($SQL);
                 $self->glog("Populated $dbname.$g->{tracktable}", LOG_DEBUG);
             }
@@ -4855,7 +4855,7 @@ sub start_kid {
 
         ## Update our rate information as needed
         if (0 and $sync->{track_rates}) {
-            $SQL = 'INSERT INTO bucardo_rate(sync,goat,target,mastercommit,slavecommit,total) VALUES (?,?,?,?,?,?)';
+            $SQL = 'INSERT INTO bucordo_rate(sync,goat,target,mastercommit,slavecommit,total) VALUES (?,?,?,?,?,?)';
             $sth = $maindbh->prepare($SQL);
             for my $g (@$goatlist) {
                 next if ! exists $g->{rateinfo} or $g->{reltype} ne 'table';
@@ -5168,7 +5168,7 @@ sub start_main_transaction {
 
         if ('oracle' eq $d->{dbtype}) {
             $dbh->do('SET TRANSACTION READ WRITE');
-            $dbh->do(q{SET TRANSACTION ISOLATION LEVEL SERIALIZABLE NAME 'bucardo'});
+            $dbh->do(q{SET TRANSACTION ISOLATION LEVEL SERIALIZABLE NAME 'bucordo'});
             $self->glog(qq{Set database "$dbname" to serializable and read write}, LOG_DEBUG);
         }
 
@@ -5210,7 +5210,7 @@ sub lock_all_tables {
     my $syncname = $sync->{name};
 
     ## Check if the filesystem has a lock file request
-    my $force_lock_file = File::Spec->catfile( $config{piddir} => "bucardo-force-lock-$syncname" );
+    my $force_lock_file = File::Spec->catfile( $config{piddir} => "bucordo-force-lock-$syncname" );
     ## Cache that
 
     ## Currently, a file is the only way to trigger this rather severe action
@@ -5686,7 +5686,7 @@ sub connect_database {
             ## For now, we simply require it
             require MongoDB;
 
-            ## We also need some specific Perl modules we do not want all of Bucardo to require
+            ## We also need some specific Perl modules we do not want all of bucordo to require
             ## In this case, we want to generate our own error message:
             my $module_loaded_ok = 0;
             eval { require boolean; $module_loaded_ok = 1; };
@@ -5772,7 +5772,7 @@ sub connect_database {
             }
 
             push @dsn => 'on_connect', sub {
-                $_[0]->client_setname('bucardo');
+                $_[0]->client_setname('bucordo');
                 $_[0]->auth($pass) if $pass;
                 $_[0]->select($index) if $index;
             };
@@ -5835,11 +5835,11 @@ sub connect_database {
     ## Set the application name if we can
     if ($dbh->{pg_server_version} >= 90000) {
         my $role = $self->{logprefix} || '???';
-        $dbh->do("SET application_name='bucardo $role (PID $$)'");
+        $dbh->do("SET application_name='bucordo $role (PID $$)'");
         $dbh->commit();
     }
 
-    ## If we are using something like pgbouncer, we need to tell Bucardo not to
+    ## If we are using something like pgbouncer, we need to tell bucordo not to
     ## use server-side prepared statements, as they will not span commits/rollbacks.
     if (! $ssp) {
         $self->glog('Turning off server-side prepares for this database connection', LOG_TERSE);
@@ -5853,9 +5853,9 @@ sub connect_database {
     my $backend = $dbh->selectall_arrayref($SQL)->[0][0];
     $dbh->rollback();
 
-    ## If the main database, prepend 'bucardo' to the search path
+    ## If the main database, prepend 'bucordo' to the search path
     if (!$id) {
-        $dbh->do(q{SELECT pg_catalog.set_config('search_path', 'bucardo,' || current_setting('search_path'), false)});
+        $dbh->do(q{SELECT pg_catalog.set_config('search_path', 'bucordo,' || current_setting('search_path'), false)});
         $dbh->commit();
     }
 
@@ -5879,7 +5879,7 @@ sub connect_database {
 
 sub reload_config_database {
 
-    ## Reload the %config and %config_about hashes from the bucardo_config table
+    ## Reload the %config and %config_about hashes from the bucordo_config table
     ## Calls commit on the masterdbh
     ## Arguments: none
     ## Returns: undef
@@ -5900,7 +5900,7 @@ sub reload_config_database {
         DEBUG2  => 5,
     );
 
-    $SQL = 'SELECT name,setting,about,type,name FROM bucardo_config';
+    $SQL = 'SELECT name,setting,about,type,name FROM bucordo_config';
     $sth = $self->{masterdbh}->prepare($SQL);
     $sth->execute();
     for my $row (@{$sth->fetchall_arrayref({})}) {
@@ -5948,7 +5948,7 @@ sub log_config {
 
     my $self = shift;
 
-    my $msg = "Bucardo config:\n";
+    my $msg = "bucordo config:\n";
 
     ## Figure out the longest key name for pretty formatting
     my $maxlen = 5;
@@ -5992,7 +5992,7 @@ sub _logto {
 
         if ($dest eq 'syslog') {
             ## Use Sys::Syslog to open a new syslog connection
-            openlog 'Bucardo', 'pid nowait', $config{syslog_facility};
+            openlog 'bucordo', 'pid nowait', $config{syslog_facility};
             ## Ignore the header argument for syslog output.
             $logger{syslog} = { type => 'syslog', code => sub { shift; syslog 'info', @_ } };
         }
@@ -6004,7 +6004,7 @@ sub _logto {
         }
         else {
             ## Just a plain text file
-            my $fn = File::Spec->catfile($dest, 'log.bucardo');
+            my $fn = File::Spec->catfile($dest, 'log.bucordo');
             $fn .= ".$self->{logextension}" if length $self->{logextension};
 
             ## If we are writing each process to a separate file,
@@ -6197,7 +6197,7 @@ sub get_dbs {
 
     my $self = shift;
 
-    my $SQL = 'SELECT * FROM bucardo.db';
+    my $SQL = 'SELECT * FROM bucordo.db';
     $sth = $self->{masterdbh}->prepare($SQL);
     $sth->execute();
     my $info = $sth->fetchall_hashref('name');
@@ -6218,7 +6218,7 @@ sub get_goats {
 
     my $self = shift;
 
-    my $SQL = 'SELECT * FROM bucardo.goat';
+    my $SQL = 'SELECT * FROM bucordo.goat';
     $sth = $self->{masterdbh}->prepare($SQL);
     $sth->execute();
     my $info = $sth->fetchall_hashref('id');
@@ -6242,7 +6242,7 @@ sub find_goats {
     my $goats = $self->get_goats();
     my $SQL = q{
         SELECT   goat
-        FROM     bucardo.herdmap
+        FROM     bucordo.herdmap
         WHERE    herd = ?
         ORDER BY priority DESC, goat ASC
     };
@@ -6274,7 +6274,7 @@ sub get_syncs {
         SELECT *,
             COALESCE(EXTRACT(epoch FROM checktime),0) AS checksecs,
             COALESCE(EXTRACT(epoch FROM lifetime),0) AS lifetimesecs
-        FROM     bucardo.sync
+        FROM     bucordo.sync
     };
     $sth = $self->{masterdbh}->prepare($SQL);
     $sth->execute();
@@ -6323,7 +6323,7 @@ sub db_listen {
     ## Arguments: two, three, or four
     ## 1. Database handle
     ## 2. String to listen for
-    ## 3. Short name of the database (optional, for debug output, default to 'bucardo')
+    ## 3. Short name of the database (optional, for debug output, default to 'bucordo')
     ## 4. Whether to skip payloads. Optional boolean, defaults to false
 
     ## Returns: undef
@@ -6331,7 +6331,7 @@ sub db_listen {
     my $self = shift;
     my $ldbh = shift;
     my $string = shift;
-    my $name = shift || 'bucardo';
+    my $name = shift || 'bucordo';
     my $skip_payload = shift || 0;
 
     if (! ref $ldbh) {
@@ -6350,9 +6350,9 @@ sub db_listen {
         ## Get implicitly reset post-fork as new database handles are created
         $self->{listen_payload}{$ldbh} = 1;
 
-        ## We use 'bucardo', 'bucardo_ctl', or 'bucardo_kid'
+        ## We use 'bucordo', 'bucordo_ctl', or 'bucordo_kid'
         my $suffix = $self->{logprefix} =~ /(KID|CTL)/ ? ('_' . lc $1) : '';
-        $string = "bucardo$suffix";
+        $string = "bucordo$suffix";
     }
     elsif (exists $self->{listening}{$ldbh}{$string}) {
         ## Using old-style direct names and already listening? Just return
@@ -6363,7 +6363,7 @@ sub db_listen {
         $self->{listening}{$ldbh}{$string} = 1;
     }
 
-    $string = "bucardo_$string" if index($string, 'bucardo');
+    $string = "bucordo_$string" if index($string, 'bucordo');
 
     ## If log level low enough, show which line this call came from
     if ($config{log_level_number} <= LOG_DEBUG) {
@@ -6392,7 +6392,7 @@ sub db_unlisten {
     my $self = shift;
     my $ldbh = shift;
     my $string = shift;
-    my $name = shift || 'bucardo';
+    my $name = shift || 'bucordo';
     my $skip_payload = shift || 0;
 
     ## If we are 9.0 or greater, we never stop listening
@@ -6402,7 +6402,7 @@ sub db_unlisten {
 
     my $original_string = $string;
 
-    $string = "bucardo_$string";
+    $string = "bucordo_$string";
 
     ## If log level low enough, show which line this call came from
     if ($config{log_level_number} <= LOG_DEBUG) {
@@ -6454,7 +6454,7 @@ sub db_notify {
     ## 1. Database handle
     ## 2. The string to send
     ## 3. Whether to skip payloads. Optional boolean, defaults to false
-    ## 4. Name of the database (as defined in bucardo.db). Optional
+    ## 4. Name of the database (as defined in bucordo.db). Optional
     ## 5. Whether we should skip the final commit or not. Defaults to false. Optional.
     ## Returns: undef
 
@@ -6474,23 +6474,23 @@ sub db_notify {
 
     if ($ldbh->{pg_server_version} < 90000 or $skip_payload) {
         ## Old-school notification system. Simply send the given string
-        ## ...but prepend a 'bucardo_' to it first
-        $string = "bucardo_$string";
+        ## ...but prepend a 'bucordo_' to it first
+        $string = "bucordo_$string";
         $ldbh->do(qq{NOTIFY "$string"})
             or $self->glog(qq{Warning: NOTIFY failed for "$string"}, LOG_DEBUG);
     }
     else {
         ## New-style notification system. The string becomes the payload
 
-        ## The channel is always 'bucardo' based.
-        my $channel = 'bucardo';
+        ## The channel is always 'bucordo' based.
+        my $channel = 'bucordo';
         ## Going to ctl?
-        $channel = 'bucardo_ctl' if $string =~ s/^ctl_//o;
+        $channel = 'bucordo_ctl' if $string =~ s/^ctl_//o;
         ## Going to kid
-        $channel = 'bucardo_kid' if $string =~ s/^kid_//o;
+        $channel = 'bucordo_kid' if $string =~ s/^kid_//o;
 
         $ldbh->do(qq{NOTIFY $channel, '$string'})
-            or $self->glog(qq{Warning: NOTIFY failed for bucardo, '$string'}, LOG_DEBUG);
+            or $self->glog(qq{Warning: NOTIFY failed for bucordo, '$string'}, LOG_DEBUG);
     }
 
     $ldbh->commit() if ! $skip_commit;
@@ -6527,7 +6527,7 @@ sub db_get_notices {
             $name = $payload; ## presto!
         }
         else {
-            $name =~ s/^bucardo_//o;
+            $name =~ s/^bucordo_//o;
         }
 
         if (exists $notice{$name}) {
@@ -6596,7 +6596,7 @@ sub send_signal_to_PID {
     ## Slurp in all the files from the PID directory
     my $piddir = $config{piddir};
     opendir my $dh, $piddir or die qq{Could not opendir "$piddir" $!\n};
-    my @pidfiles = grep { /^bucardo.*\.pid$/ } readdir $dh;
+    my @pidfiles = grep { /^bucordo.*\.pid$/ } readdir $dh;
     closedir $dh or warn qq{Could not closedir "$piddir": $!\n};
 
     ## Send a signal to the ones we care about
@@ -6675,7 +6675,7 @@ sub validate_sync {
                 ## Normally, we won't get here as the sync should not be active
                 ## Mark the syncs as stalled and move on
                 $s->{status} = 'stalled';
-                $SQL = 'UPDATE bucardo.sync SET status = ? WHERE name = ?';
+                $SQL = 'UPDATE bucordo.sync SET status = ? WHERE name = ?';
                 eval {
                     my $sth = $self->{masterdbh}->prepare($SQL);
                     $sth->execute('stalled',$syncname);
@@ -6728,7 +6728,7 @@ sub validate_sync {
             ## If this db was previously stalled, restore it
             if ($d->{status} eq 'stalled') {
                 $self->glog("Restoring stalled db $dbname", LOG_NORMAL);
-                $SQL = 'UPDATE bucardo.db SET status = ? WHERE name = ?';
+                $SQL = 'UPDATE bucordo.db SET status = ? WHERE name = ?';
                 my $sth = $self->{masterdbh}->prepare($SQL);
                 eval {
                     $sth->execute('active',$dbname);
@@ -6750,7 +6750,7 @@ sub validate_sync {
         ## restore the sync as well
         if ($restored_dbs) {
             $self->glog("Restoring stalled sync $syncname", LOG_NORMAL);
-            $SQL = 'UPDATE bucardo.sync SET status = ? WHERE name = ?';
+            $SQL = 'UPDATE bucordo.sync SET status = ? WHERE name = ?';
             eval {
                 my $sth = $self->{masterdbh}->prepare($SQL);
                 $sth->execute('active',$syncname);
@@ -6860,7 +6860,7 @@ sub validate_sync {
             local $@;
             local $_;
             $c->{coderef} = eval qq{
-                package Bucardo::CustomCode;
+                package bucordo::CustomCode;
                 sub { $c->{src_code} }
             }; ## no critic (ProhibitStringyEval)
             if ($@) {
@@ -6922,7 +6922,7 @@ sub validate_sync {
 
     ## Build our customname hash for use below when checking remote database tables
     my %customname;
-    $SQL = q{SELECT goat,newname,db,COALESCE(db,'') AS db, COALESCE(sync,'') AS sync FROM bucardo.customname};
+    $SQL = q{SELECT goat,newname,db,COALESCE(db,'') AS db, COALESCE(sync,'') AS sync FROM bucordo.customname};
     my $maindbh = $self->{masterdbh};
     $sth = $maindbh->prepare($SQL);
     $sth->execute();
@@ -7014,7 +7014,7 @@ sub validate_sync {
             chop $g->{pklist};
 
             ## The name of the delta and track tables for this table
-            $SQL = 'SELECT bucardo.bucardo_tablename_maker(?)';
+            $SQL = 'SELECT bucordo.bucordo_tablename_maker(?)';
             $sth = $self->{masterdbh}->prepare($SQL);
             $sth->execute($S.'_'.$T);
             $g->{makername} = $sth->fetchall_arrayref()->[0][0];
@@ -7465,7 +7465,7 @@ sub activate_sync {
     }
 
     ## Change our process name to show all active syncs
-    $0 = "Bucardo Master Control Program v$VERSION.$self->{extraname} Active syncs: ";
+    $0 = "bucordo Master Control Program v$VERSION.$self->{extraname} Active syncs: ";
     $0 .= join ',' => @activesyncs;
 
     return 1;
@@ -7533,7 +7533,7 @@ sub deactivate_sync {
         push @activesyncs, $syncname;
     }
 
-    $0 = "Bucardo Master Control Program v$VERSION.$self->{extraname} Active syncs: ";
+    $0 = "bucordo Master Control Program v$VERSION.$self->{extraname} Active syncs: ";
     $0 .= join ',' => @activesyncs;
 
     return 1;
@@ -7689,11 +7689,11 @@ sub fork_vac {
     $self->{logprefix} = 'VAC';
 
     ## Set our process name
-    $0 = qq{Bucardo VAC.$self->{extraname}};
+    $0 = qq{bucordo VAC.$self->{extraname}};
 
     ## Store our PID into a file
     ## Save the complete returned name for later cleanup
-    $self->{vacpidfile} = $self->store_pid( 'bucardo.vac.pid' );
+    $self->{vacpidfile} = $self->store_pid( 'bucordo.vac.pid' );
 
     ## Start normal log output for this controller: basic facts
     my $msg = qq{New VAC daemon. PID=$$};
@@ -7743,11 +7743,11 @@ sub fork_vac {
     ($self->{master_backend}, $self->{masterdbh}) = $self->connect_database();
     $self->{masterdbhvac} = 1;
     my $maindbh = $self->{masterdbh};
-    $self->glog("Bucardo database backend PID: $self->{master_backend}", LOG_VERBOSE);
+    $self->glog("bucordo database backend PID: $self->{master_backend}", LOG_VERBOSE);
 
     ## Map the PIDs to common names for better log output
     $self->{pidmap}{$$} = 'VAC';
-    $self->{pidmap}{$self->{master_backend}} = 'Bucardo DB';
+    $self->{pidmap}{$self->{master_backend}} = 'bucordo DB';
 
     ## Listen for an exit request from the MCP
     my $exitrequest = 'stop_vac';
@@ -7836,12 +7836,12 @@ sub fork_vac {
 
                 my $dbh = $d->{dbh};
 
-                ## Safety check: if the bucardo schema is not there, we don't want to vacuum
+                ## Safety check: if the bucordo schema is not there, we don't want to vacuum
                 if (! exists $d->{hasschema}) {
-                    $SQL = q{SELECT count(*) FROM pg_namespace WHERE nspname = 'bucardo'};
+                    $SQL = q{SELECT count(*) FROM pg_namespace WHERE nspname = 'bucordo'};
                     $d->{hasschema} = $dbh->selectall_arrayref($SQL)->[0][0];
                     if (! $d->{hasschema} ) {
-                        $self->glog("Warning! Cannot vacuum db $dbname unless we have a bucardo schema", LOG_WARN);
+                        $self->glog("Warning! Cannot vacuum db $dbname unless we have a bucordo schema", LOG_WARN);
                     }
                 }
 
@@ -7851,8 +7851,8 @@ sub fork_vac {
                 $valid_backends++;
 
                 ## Async please
-                $self->glog(qq{Running bucardo_purge_delta on database "$dbname"}, LOG_VERBOSE);
-                $SQL = q{SELECT bucardo.bucardo_purge_delta('45 seconds')};
+                $self->glog(qq{Running bucordo_purge_delta on database "$dbname"}, LOG_VERBOSE);
+                $SQL = q{SELECT bucordo.bucordo_purge_delta('45 seconds')};
                 $sth{"vac_$dbname"} = $dbh->prepare($SQL, { pg_async => PG_ASYNC } );
                 $sth{"vac_$dbname"}->execute();
                 $d->{async_active} = time;
@@ -7864,7 +7864,7 @@ sub fork_vac {
 
                 $self->glog('No valid backends, so disabling the VAC daemon', LOG_VERBOSE);
 
-                $config{bucardo_vac} = 0;
+                $config{bucordo_vac} = 0;
 
                 ## Caught by handler above
                 die 'Not needed';
@@ -7883,7 +7883,7 @@ sub fork_vac {
 
                 my $dbh = $d->{dbh};
 
-                $self->glog(qq{Finish and fetch bucardo_purge_delta on database "$dbname"}, LOG_DEBUG);
+                $self->glog(qq{Finish and fetch bucordo_purge_delta on database "$dbname"}, LOG_DEBUG);
                 $count = $sth{"vac_$dbname"}->pg_result();
                 $d->{async_active} = 0;
 
@@ -8010,7 +8010,7 @@ sub reload_mcp {
 
     ## At this point, we are authoritative, so we can safely clean out the syncrun table
     $SQL = q{
-          UPDATE bucardo.syncrun
+          UPDATE bucordo.syncrun
           SET status=?, ended=now()
           WHERE ended IS NULL
         };
@@ -8022,7 +8022,7 @@ sub reload_mcp {
         $self->glog("Entries cleaned from the syncrun table: $count", LOG_NORMAL);
     }
 
-    $SQL = q{DELETE FROM bucardo.dbrun};
+    $SQL = q{DELETE FROM bucordo.dbrun};
     $maindbh->do($SQL);
 
     $self->glog(('Loading sync table. Rows=' . (scalar (keys %{ $self->{sync} }))), LOG_VERBOSE);
@@ -8069,7 +8069,7 @@ sub reload_mcp {
     } ## end each sync
 
     ## Change our process name, and list all active syncs
-    $0 = "Bucardo Master Control Program v$VERSION.$self->{extraname} Active syncs: ";
+    $0 = "bucordo Master Control Program v$VERSION.$self->{extraname} Active syncs: ";
     $0 .= join ',' => @activesyncs;
 
     my $count = @activesyncs;
@@ -8106,22 +8106,22 @@ sub cleanup_mcp {
     sleep 1.5;
 
     ## We know we are authoritative for all pid files in the piddir
-    ## Use those to kill any open processes that we think are still bucardo related
+    ## Use those to kill any open processes that we think are still bucordo related
     my $piddir = $config{piddir};
     opendir my $dh, $piddir or die qq{Could not opendir "$piddir" $!\n};
 
     ## As before, we only worry about certain files,
     ## even though nothing else should be in there
-    my @pidfiles2 = grep { /^bucardo.*\.pid$/ } readdir $dh;
+    my @pidfiles2 = grep { /^bucordo.*\.pid$/ } readdir $dh;
     closedir $dh or warn qq{Could not closedir "$piddir": $!\n};
 
     ## For each file, attempt to kill the process it refers to
     for my $pidfile (sort @pidfiles2) {
-        next if $pidfile eq 'bucardo.mcp.pid'; ## That's us!
+        next if $pidfile eq 'bucordo.mcp.pid'; ## That's us!
         my $pfile = File::Spec->catfile( $piddir => $pidfile );
         if (-e $pfile) {
             $self->glog("Trying to kill stale PID file $pidfile", LOG_DEBUG);
-            my $result = $self->kill_bucardo_pidfile($pfile);
+            my $result = $self->kill_bucordo_pidfile($pfile);
             if ($result == -4) { ## kill 0 indicates that PID is no more
                 $self->glog("PID from $pidfile is gone, removing file", LOG_NORMAL);
                 unlink $pfile;
@@ -8168,7 +8168,7 @@ sub terminate_old_goats {
     my $SQL;
 
     ## Grab all backends in the table
-    $SQL = 'SELECT * FROM bucardo.dbrun WHERE pgpid IS NOT NULL';
+    $SQL = 'SELECT * FROM bucordo.dbrun WHERE pgpid IS NOT NULL';
 
     ## Just for one sync if that was passed in
     if ($sync) {
@@ -8237,13 +8237,13 @@ sub terminate_old_goats {
 } ## end of terminate_old_goats
 
 
-sub kill_bucardo_pidfile {
+sub kill_bucordo_pidfile {
 
     ## Given a file, extract the PID and kill it
     ## Arguments: 2
     ## 1. File to be checked
     ## 2. String either 'strict' or not. Strict does TERM and KILL in addition to USR1
-    ## Returns: same as kill_bucardo_pid, plus:
+    ## Returns: same as kill_bucordo_pid, plus:
     ## -100: File not found
     ## -101: Could not open the file
     ## -102: No PID found in the file
@@ -8275,19 +8275,19 @@ sub kill_bucardo_pidfile {
 
     close $fh or warn qq{Could not close "$file": $!};
 
-    return $self->kill_bucardo_pid($1 => $strength);
+    return $self->kill_bucordo_pid($1 => $strength);
 
-} ## end of kill_bucardo_pidfile
+} ## end of kill_bucordo_pidfile
 
 
-sub kill_bucardo_pid {
+sub kill_bucordo_pid {
 
     ## Send a kill signal to a specific process
     ## Arguments: two
     ## 1. PID to be killed
     ## 2. String either 'strict' or not. Strict does KILL and TERM in addition to USR1
     ## Returns: 1 on successful kill, < 0 otherwise
-    ## 0: no such PID or not a 'bucardo' PID
+    ## 0: no such PID or not a 'bucordo' PID
     ## +1 : successful TERM
     ## -1: Failed to signal with USR1
     ## +2: Successful KILL
@@ -8299,13 +8299,13 @@ sub kill_bucardo_pid {
 
     $self->glog("Attempting to kill PID $pid", LOG_VERBOSE);
 
-    ## We want to confirm this is still a Bucardo process
+    ## We want to confirm this is still a bucordo process
     ## The most portable way at the moment is a plain ps -p
     ## Windows users are on their own
 
     ## If the PID is not numeric, throw a warning and return
     if ($pid !~ /^\d+$/o) {
-        $self->glog("Warning: invalid PID supplied to kill_bucardo_pid: $pid", LOG_WARN);
+        $self->glog("Warning: invalid PID supplied to kill_bucordo_pid: $pid", LOG_WARN);
         return -3;
     }
 
@@ -8316,19 +8316,19 @@ sub kill_bucardo_pid {
         return -4;
     }
 
-    ## It's nice to do some basic checks when possible that these are Bucardo processes
+    ## It's nice to do some basic checks when possible that these are bucordo processes
     ## For non Win32 boxes, we can try a basic ps
     ## If no header line, drive on
     ## If command is not perl, skip it!
-    ## If args is not perl or bucardo, skip it
+    ## If args is not perl or bucordo, skip it
     if ($^O !~ /Win/) {
         my $COM = "ps -p $pid -o comm,args";
         my $info = qx{$COM};
         if ($info !~ /^COMMAND/) {
             $self->glog(qq{Could not determine ps information for pid $pid}, LOG_VERBOSE);
         }
-        elsif ($info !~ /\bbucardo\s+/oi) {
-            $self->glog(qq{Will not kill process $pid: ps args is not 'Bucardo', got: $info}, LOG_TERSE);
+        elsif ($info !~ /\bbucordo\s+/oi) {
+            $self->glog(qq{Will not kill process $pid: ps args is not 'bucordo', got: $info}, LOG_TERSE);
             return 0;
         }
     } ## end of trying ps because not Windows
@@ -8371,7 +8371,7 @@ sub kill_bucardo_pid {
     $self->glog("Failed to KILL signal pid $pid", LOG_TERSE);
     return -2;
 
-} ## end of kill_bucardo_pid
+} ## end of kill_bucordo_pid
 
 
 sub signal_pid_files {
@@ -8412,7 +8412,7 @@ sub signal_pid_files {
         my $pid = $1; ## no critic (ProhibitCaptureWithoutTest)
         close $fh or warn qq{Could not close "$cfile": $!\n};
 
-        ## No sense in doing deeper checks that this is still a Bucardo process,
+        ## No sense in doing deeper checks that this is still a bucordo process,
         ## as a USR1 should be a pretty harmless signal
         $count = kill $signumber{USR1} => $pid;
         if ($count != 1) {
@@ -8481,7 +8481,7 @@ sub cleanup_controller {
 
     for my $pidfile (sort @pidfiles) {
         my $sname = $self->{syncname};
-        next unless $pidfile =~ /^bucardo\.kid\.sync\.$sname\.?.*\.pid$/;
+        next unless $pidfile =~ /^bucordo\.kid\.sync\.$sname\.?.*\.pid$/;
         my $pfile = File::Spec->catfile( $piddir => $pidfile );
         if (open my $fh, '<', $pfile) {
             my $pid = <$fh>;
@@ -8554,7 +8554,7 @@ sub end_syncrun {
     ## Make sure we have something to update
     $SQL = q{
         SELECT ctid
-        FROM   bucardo.syncrun
+        FROM   bucordo.syncrun
         WHERE  sync = ?
         AND    ended IS NULL};
     $sth = $ldbh->prepare($SQL);
@@ -8570,7 +8570,7 @@ sub end_syncrun {
 
     ## Remove the previous 'last' entry, if any
     $SQL = qq{
-        UPDATE bucardo.syncrun
+        UPDATE bucordo.syncrun
         SET    $lastcol = 'false'
         WHERE  $lastcol IS TRUE
         AND    sync = ?
@@ -8580,7 +8580,7 @@ sub end_syncrun {
 
     ## End the current row, and elevate it to a 'last' position
     $SQL = qq{
-        UPDATE bucardo.syncrun
+        UPDATE bucordo.syncrun
         SET    $lastcol = 'true', ended=now(), status=?
         WHERE  ctid = ?
         };
@@ -8911,7 +8911,7 @@ sub get_sequence_info {
     ## 5. (optional) Target database name
     ## Returns: hashref of information
 
-    ## If five arguments are given, look up the "old" information in bucardo_sequences
+    ## If five arguments are given, look up the "old" information in bucordo_sequences
     ## With only three arguments, pull directly from the sequence
 
     return; ## XXX sequence work
@@ -8922,7 +8922,7 @@ sub get_sequence_info {
 
     if (defined $syncname) {
         ## Pull "old" sequence information. May be empty.
-        $SQL = "SELECT $sequence_columns FROM bucardo.bucardo_sequences "
+        $SQL = "SELECT $sequence_columns FROM bucordo.bucordo_sequences "
             . ' WHERE schemaname=? AND seqname = ? AND syncname=? AND targetname=?';
         $sth = $ldbh->prepare($SQL);
         $sth->execute($schemaname,$seqname, $syncname, $targetname);
@@ -8942,7 +8942,7 @@ sub get_sequence_info {
 sub adjust_sequence {
 
     ## Adjusts all sequences as needed using a "winning" source database sequence
-    ## If changed, update the bucardo_sequences table
+    ## If changed, update the bucordo_sequences table
     ## Arguments: four
     ## 1. goat object (which contains 'winning_db' and 'sequenceinfo')
     ## 2. sync object
@@ -9061,7 +9061,7 @@ sub run_kid_custom_code {
     my $info = {
         rows     => $sync->{deltarows},
         syncname => $sync->{name},
-        version  => $self->{version}, ## Version of Bucardo
+        version  => $self->{version}, ## Version of bucordo
 
         message  => '',  ## Allows the code to send a message to the logs
         warning  => '',  ## Allows a warning to be thrown by the code
@@ -9138,7 +9138,7 @@ sub run_kid_custom_code {
         my $syncname = $infocopy->{syncname};
         my $targetname = $infocopy->{targetname};
         $sth{qend}->execute(0,0,0,$syncname,$targetname,$$);
-        my $notify = "bucardo_syncdone_${syncname}_$targetname";
+        my $notify = "bucordo_syncdone_${syncname}_$targetname";
         my $maindbh = $self->{masterdbh};
         $self->db_notify($maindbh, $notify);
         sleep $config{endsync_sleep};
@@ -10121,8 +10121,8 @@ sub push_rows {
                 if ($self->{dbdpgversion} < 21801) {
                     $dbh->do('SELECT 1');
                 }
-                ## If this table is set to makedelta, add rows to bucardo.delta to simulate the
-                ##   normal action of a trigger and add a row to bucardo.track to indicate that
+                ## If this table is set to makedelta, add rows to bucordo.delta to simulate the
+                ##   normal action of a trigger and add a row to bucordo.track to indicate that
                 ##   it has already been replicated here.
                 my $d = $Sync->{db}{$tname};
                 if ($mode ne 'fullcopy' and $d->{does_makedelta}{$source_tablename} ) {
@@ -10144,7 +10144,7 @@ sub push_rows {
                         my $placeholders = "($baseq)," x ($number_values / $numpks);
                         chop $placeholders;
 
-                        my $SQL = sprintf 'INSERT INTO bucardo.%s (%s) VALUES %s',
+                        my $SQL = sprintf 'INSERT INTO bucordo.%s (%s) VALUES %s',
                             $Table->{deltatable},
                             $cols,
                             $placeholders;
@@ -10156,7 +10156,7 @@ sub push_rows {
                     # Make sure we track it - but only if this sync already acts as a source!
                     if ($Target->{role} eq 'source') {
                         $dbh->do(qq{
-                            INSERT INTO bucardo.$Table->{tracktable}
+                            INSERT INTO bucordo.$Table->{tracktable}
                             VALUES (NOW(), ?)
                         }, undef, $d->{DBGROUPNAME});
                     }
@@ -10431,7 +10431,7 @@ sub send_mail {
     $arg->{to} ||= $config{default_email_to};
 
     ## We should always pass in a subject, but just in case:
-    $arg->{subject} ||= 'Bucardo Mail!';
+    $arg->{subject} ||= 'bucordo Mail!';
 
     ## Like any good murder mystery, a body is mandatory
     if (! $arg->{body}) {
@@ -10518,27 +10518,27 @@ __END__
 
 =head1 NAME
 
-Bucardo - Postgres multi-master replication system
+bucordo - Postgres multi-master replication system
 
 =head1 VERSION
 
-This document describes version 5.6.0 of Bucardo
+This document describes version 5.6.0 of bucordo
 
 =head1 WEBSITE
 
 The latest news and documentation can always be found at:
 
-https://bucardo.org/
+https://bucordo.org/
 
 =head1 DESCRIPTION
 
-Bucardo is a Perl module that replicates Postgres databases using a combination
+bucordo is a Perl module that replicates Postgres databases using a combination
 of Perl, a custom database schema, Pl/Perlu, and Pl/Pgsql.
 
-Bucardo is unapologetically extremely verbose in its logging.
+bucordo is unapologetically extremely verbose in its logging.
 
 Full documentation can be found on the website, or in the files that came with
-this distribution. See also the documentation for the bucardo program.
+this distribution. See also the documentation for the bucordo program.
 
 =head1 DEPENDENCIES
 
@@ -10552,7 +10552,7 @@ this distribution. See also the documentation for the bucardo program.
 
 =item * Sys::Syslog
 
-=item * DBIx::Safe ## Try 'yum install perl-DBIx-Safe' or visit bucardo.org
+=item * DBIx::Safe ## Try 'yum install perl-DBIx-Safe' or visit bucordo.org
 
 =item * boolean (only if using MongoDB)
 
@@ -10560,12 +10560,12 @@ this distribution. See also the documentation for the bucardo program.
 
 =head1 BUGS
 
-Bugs should be reported to bucardo-general@bucardo.org. A list of bugs can be found at
-https://bucardo.org/bugs.html
+Bugs should be reported to bucordo-general@bucordo.org. A list of bugs can be found at
+https://bucordo.org/bugs.html
 
 =head1 CREDITS
 
-Bucardo was originally developed and funded by Backcountry.com, who have been using versions
+bucordo was originally developed and funded by Backcountry.com, who have been using versions
 of it in production since 2002. Jon Jensen <jon@endpoint.com> wrote the original version.
 
 =head1 AUTHOR

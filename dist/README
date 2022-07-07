@@ -1,18 +1,18 @@
 This directory contains various distribution configuration files,
 patches, and start scripts.
 
-* bucardo.rc
+* bucordo.rc
 
-Sample BSD rc file for controlling Bucardo
+Sample BSD rc file for controlling bucordo
 
-* bucardo.init
+* bucordo.init
 
-Sample chkconfig-style start script for controlling Bucardo
+Sample chkconfig-style start script for controlling bucordo
 
-* bucardo.spec
+* bucordo.spec
 
 RPM spec file.
 
-* bucardo-logfiles.patch
+* bucordo-logfiles.patch
 
-Patch to set the default directory for log files to /var/log/bucardo.
+Patch to set the default directory for log files to /var/log/bucordo.

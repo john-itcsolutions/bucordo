@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
 # -*-mode:cperl; indent-tabs-mode: nil-*-
 
-package BucardoTesting;
+package bucordoTesting;
 
-## Helper module for the Bucardo tests
+## Helper module for the bucordo tests
 ## Contains shared code for setup and breakdown
 
 use strict;
@@ -22,9 +22,9 @@ require Test::More;
 
 use vars qw/$SQL $sth $count $COM %dbh/;
 
-my $DEBUG = $ENV{BUCARDO_DEBUG} || 0;
+my $DEBUG = $ENV{bucordo_DEBUG} || 0;
 
-$ENV{BUCARDO_CONFIRM} = 0 if exists $ENV{BUCARDO_CONFIRM};
+$ENV{bucordo_CONFIRM} = 0 if exists $ENV{bucordo_CONFIRM};
 
 use base 'Exporter';
 our @EXPORT = qw/%tabletype %tabletypemysql %tabletypemariadb %tabletypeoracle %tabletypesqlite %tabletypefirebird
@@ -35,9 +35,9 @@ our @EXPORT = qw/%tabletype %tabletypemysql %tabletypemariadb %tabletypeoracle %
 ## Special global vars for munging the data
 my (%gsth, %gdbh);
 
-my $dbname = 'bucardo_test';
+my $dbname = 'bucordo_test';
 
-## We need to use the local Bucardo.pm, not a system installed one!
+## We need to use the local bucordo.pm, not a system installed one!
 $ENV{PERL5LIB} = '.';
 
 ## Shortcuts for ease of changes and smaller text:
@@ -51,7 +51,7 @@ our $location = 'setup';
 my $testmsg  = ' ?';
 my $testline = '?';
 ## Sometimes, we want to stop as soon as we see an error
-my $bail_on_error = $ENV{BUCARDO_TESTBAIL} || 0;
+my $bail_on_error = $ENV{bucordo_TESTBAIL} || 0;
 my $total_errors = 0;
 ## Used by the tt sub
 my %timing;
@@ -64,7 +64,7 @@ chomp $user;
 
 my $FRESHLOG = 1;
 if ($FRESHLOG) {
-    unlink 'tmp/bucardo.log';
+    unlink 'tmp/bucordo.log';
 }
 
 my $piddir = 'pid';
@@ -72,7 +72,7 @@ if (! -e $piddir) {
     mkdir $piddir;
 }
 
-if ($ENV{BUCARDO_LOG_ERROR_CONTEXT}) {
+if ($ENV{bucordo_LOG_ERROR_CONTEXT}) {
     no strict 'refs';
     no warnings qw/prototype redefine/;
     my ($package) = caller();
@@ -106,102 +106,102 @@ my @dbs = qw/A B C D E/;
 
 our %tabletype =
     (
-     'bucardo_test1'  => 'SMALLINT',
-     'bucardo_test2'  => 'INT',
-     'Bucardo_test3'  => 'BIGINT',
-     'bucardo_test4'  => 'TEXT',
-     'bucardo_test5'  => 'DATE',
-     'bucardo_test6'  => 'TIMESTAMP',
-     'bucardo_test7'  => 'NUMERIC',
-     'bucardo_test8'  => 'BYTEA',
-     'bucardo_test9'  => 'int_unsigned',
-     'bucardo_test10' => 'TIMESTAMPTZ',
-     'bucardo space test' => 'INT',
+     'bucordo_test1'  => 'SMALLINT',
+     'bucordo_test2'  => 'INT',
+     'bucordo_test3'  => 'BIGINT',
+     'bucordo_test4'  => 'TEXT',
+     'bucordo_test5'  => 'DATE',
+     'bucordo_test6'  => 'TIMESTAMP',
+     'bucordo_test7'  => 'NUMERIC',
+     'bucordo_test8'  => 'BYTEA',
+     'bucordo_test9'  => 'int_unsigned',
+     'bucordo_test10' => 'TIMESTAMPTZ',
+     'bucordo space test' => 'INT',
      );
 
 our %tabletypemysql =
     (
-     'bucardo_test1'  => 'SMALLINT',
-     'bucardo_test2'  => 'INT',
-     'Bucardo_test3'  => 'BIGINT',
-     'bucardo_test4'  => 'VARCHAR(700)',
-     'bucardo_test5'  => 'DATE',
-     'bucardo_test6'  => 'DATETIME',
-     'bucardo_test7'  => 'NUMERIC(5,1)',
-     'bucardo_test8'  => 'VARBINARY(1000)',
-     'bucardo_test9'  => 'INTEGER UNSIGNED',
-     'bucardo_test10' => 'DATETIME',
-     'bucardo space test' => 'INT',
+     'bucordo_test1'  => 'SMALLINT',
+     'bucordo_test2'  => 'INT',
+     'bucordo_test3'  => 'BIGINT',
+     'bucordo_test4'  => 'VARCHAR(700)',
+     'bucordo_test5'  => 'DATE',
+     'bucordo_test6'  => 'DATETIME',
+     'bucordo_test7'  => 'NUMERIC(5,1)',
+     'bucordo_test8'  => 'VARBINARY(1000)',
+     'bucordo_test9'  => 'INTEGER UNSIGNED',
+     'bucordo_test10' => 'DATETIME',
+     'bucordo space test' => 'INT',
      );
 
 our %tabletypemariadb =
     (
-     'bucardo_test1'  => 'SMALLINT',
-     'bucardo_test2'  => 'INT',
-     'Bucardo_test3'  => 'BIGINT',
-     'bucardo_test4'  => 'VARCHAR(700)',
-     'bucardo_test5'  => 'DATE',
-     'bucardo_test6'  => 'DATETIME',
-     'bucardo_test7'  => 'NUMERIC(5,1)',
-     'bucardo_test8'  => 'VARBINARY(1000)',
-     'bucardo_test9'  => 'INTEGER UNSIGNED',
-     'bucardo_test10' => 'DATETIME',
-     'bucardo space test' => 'INT',
+     'bucordo_test1'  => 'SMALLINT',
+     'bucordo_test2'  => 'INT',
+     'bucordo_test3'  => 'BIGINT',
+     'bucordo_test4'  => 'VARCHAR(700)',
+     'bucordo_test5'  => 'DATE',
+     'bucordo_test6'  => 'DATETIME',
+     'bucordo_test7'  => 'NUMERIC(5,1)',
+     'bucordo_test8'  => 'VARBINARY(1000)',
+     'bucordo_test9'  => 'INTEGER UNSIGNED',
+     'bucordo_test10' => 'DATETIME',
+     'bucordo space test' => 'INT',
      );
 
 our %tabletypefirebird =
     (
-     'bucardo_test1'  => 'SMALLINT',
-     'bucardo_test2'  => 'INT',
-     'Bucardo_test3'  => 'BIGINT',
-     'bucardo_test4'  => 'VARCHAR(700)',
-     'bucardo_test5'  => 'DATE',
-     'bucardo_test6'  => 'DATETIME',
-     'bucardo_test7'  => 'NUMERIC(5,1)',
-     'bucardo_test8'  => 'VARBINARY(1000)',
-     'bucardo_test9'  => 'INTEGER UNSIGNED',
-     'bucardo_test10' => 'TIMESTAMP',
-     'bucardo space test' => 'INT',
+     'bucordo_test1'  => 'SMALLINT',
+     'bucordo_test2'  => 'INT',
+     'bucordo_test3'  => 'BIGINT',
+     'bucordo_test4'  => 'VARCHAR(700)',
+     'bucordo_test5'  => 'DATE',
+     'bucordo_test6'  => 'DATETIME',
+     'bucordo_test7'  => 'NUMERIC(5,1)',
+     'bucordo_test8'  => 'VARBINARY(1000)',
+     'bucordo_test9'  => 'INTEGER UNSIGNED',
+     'bucordo_test10' => 'TIMESTAMP',
+     'bucordo space test' => 'INT',
      );
 
 our %tabletypeoracle =
     (
-     'bucardo_test1'  => 'SMALLINT',
-     'bucardo_test2'  => 'INT',
-     'Bucardo_test3'  => 'BIGINT',
-     'bucardo_test4'  => 'NVARCHAR2(1000)',
-     'bucardo_test5'  => 'DATE',
-     'bucardo_test6'  => 'TIMESTAMP',
-     'bucardo_test7'  => 'NUMERIC(5,1)',
-     'bucardo_test8'  => 'BLOB',
-     'bucardo_test9'  => 'INTEGER',
-     'bucardo_test10' => 'TIMESTAMP WITH TIME ZONE',
-     'bucardo space test' => 'INT',
+     'bucordo_test1'  => 'SMALLINT',
+     'bucordo_test2'  => 'INT',
+     'bucordo_test3'  => 'BIGINT',
+     'bucordo_test4'  => 'NVARCHAR2(1000)',
+     'bucordo_test5'  => 'DATE',
+     'bucordo_test6'  => 'TIMESTAMP',
+     'bucordo_test7'  => 'NUMERIC(5,1)',
+     'bucordo_test8'  => 'BLOB',
+     'bucordo_test9'  => 'INTEGER',
+     'bucordo_test10' => 'TIMESTAMP WITH TIME ZONE',
+     'bucordo space test' => 'INT',
      );
 
 our %tabletypesqlite =
     (
-     'bucardo_test1'  => 'SMALLINT',
-     'bucardo_test2'  => 'INT',
-     'Bucardo_test3'  => 'BIGINT',
-     'bucardo_test4'  => 'VARCHAR(1000)',
-     'bucardo_test5'  => 'DATE',
-     'bucardo_test6'  => 'DATETIME',
-     'bucardo_test7'  => 'NUMERIC(5,1)',
-     'bucardo_test8'  => 'VARBINARY(1000)',
-     'bucardo_test9'  => 'INTEGER UNSIGNED',
-     'bucardo_test10' => 'DATETIME',
-     'bucardo space test' => 'INT',
+     'bucordo_test1'  => 'SMALLINT',
+     'bucordo_test2'  => 'INT',
+     'bucordo_test3'  => 'BIGINT',
+     'bucordo_test4'  => 'VARCHAR(1000)',
+     'bucordo_test5'  => 'DATE',
+     'bucordo_test6'  => 'DATETIME',
+     'bucordo_test7'  => 'NUMERIC(5,1)',
+     'bucordo_test8'  => 'VARBINARY(1000)',
+     'bucordo_test9'  => 'INTEGER UNSIGNED',
+     'bucordo_test10' => 'DATETIME',
+     'bucordo space test' => 'INT',
      );
 
 
-our @tables2empty = (qw/droptest_bucardo/);
+our @tables2empty = (qw/droptest_bucordo/);
 
 our %sequences =
     (
-    'bucardo_test_seq1' => '',
-    'bucardo_test_seq2' => '',
-    'Bucardo_test_seq3' => '',
+    'bucordo_test_seq1' => '',
+    'bucordo_test_seq2' => '',
+    'bucordo_test_seq3' => '',
     );
 
 my %debug = (
@@ -214,7 +214,7 @@ my $DEBUGDIR = ".";
 -e $DEBUGDIR or mkdir $DEBUGDIR;
 
 ## To avoid stepping on other instance's toes
-my $PIDDIR = "/tmp/bucardo_testing_$ENV{USER}";
+my $PIDDIR = "/tmp/bucordo_testing_$ENV{USER}";
 mkdir $PIDDIR if ! -e $PIDDIR;
 
 ## Let pg_config guide us to a likely initdb/pg_ctl location
@@ -277,7 +277,7 @@ for my $name ('A'..'Z') {
         vmaj    => $lmaj,
         vmin    => $lmin,
         vrev    => $lrev,
-        dirname => "bucardo_test_database_${name}_$lmaj.$lmin",
+        dirname => "bucordo_test_database_${name}_$lmaj.$lmin",
         port    => $lport,
     };
 }
@@ -285,8 +285,8 @@ for my $name ('A'..'Z') {
 # Set a semi-unique name to make killing old tests easier
 my $xname = "bctest_$ENV{USER}";
 
-## Maximum time to wait for bucardo to return
-my $ALARM_BUCARDO = 25;
+## Maximum time to wait for bucordo to return
+my $ALARM_bucordo = 25;
 ## Maximum time to wait for a kid to appear via pg_listener
 my $ALARM_WAIT4KID = 3;
 ## How long to wait for most syncs to take effect?
@@ -296,15 +296,15 @@ my $TIMEOUT_SLEEP = 0.1;
 ## How long to wait for a notice to be issued?
 my $TIMEOUT_NOTICE = 4;
 
-## Bail if the bucardo file does not exist / does not compile
-for my $file (qw/bucardo Bucardo.pm/) {
+## Bail if the bucordo file does not exist / does not compile
+for my $file (qw/bucordo bucordo.pm/) {
     if (! -e $file) {
         die "Cannot run without file $file\n";
     }
     eval {
-        $ENV{BUCARDO_TEST} = 1;
+        $ENV{bucordo_TEST} = 1;
         require $file;
-        $ENV{BUCARDO_TEST} = 0;
+        $ENV{bucordo_TEST} = 0;
     };
     if ($@) {
         die "Cannot run unless $file compiles cleanly: $@\n";
@@ -338,10 +338,10 @@ sub diag {
 
 sub new {
 
-    ## Create a new BucardoTesting object.
+    ## Create a new bucordoTesting object.
     ## Arguments:
     ## 1. Hashref of options (optional)
-    ## Returns: reference to a new BucardoTesting object
+    ## Returns: reference to a new bucordoTesting object
 
     my $class = shift;
     my $arg   = shift || {};
@@ -356,26 +356,26 @@ sub new {
     $self->{file} = (caller)[1];
 
     ## Bail on first error? Default is ENV, then false.
-    $bail_on_error = exists $arg->{bail} ? $arg->{bail} : $ENV{BUCARDO_TESTBAIL} || 0;
+    $bail_on_error = exists $arg->{bail} ? $arg->{bail} : $ENV{bucordo_TESTBAIL} || 0;
 
     ## Name of the test schema
-    $self->{schema} = 'bucardo_schema';
+    $self->{schema} = 'bucordo_schema';
 
-    ## Let's find out where bucardo is. Prefer the blib ones, which are shebang adjusted
-    if (-e 'blib/script/bucardo') {
-        $self->{bucardo} = 'blib/script/bucardo';
+    ## Let's find out where bucordo is. Prefer the blib ones, which are shebang adjusted
+    if (-e 'blib/script/bucordo') {
+        $self->{bucordo} = 'blib/script/bucordo';
     }
-    elsif (-e '../blib/script/bucardo') {
-        $self->{bucardo} = '../blib/script/bucardo';
+    elsif (-e '../blib/script/bucordo') {
+        $self->{bucordo} = '../blib/script/bucordo';
     }
-    elsif (-e './bucardo') {
-        $self->{bucardo} = './bucardo';
+    elsif (-e './bucordo') {
+        $self->{bucordo} = './bucordo';
     }
-    elsif (-e '../bucardo') {
-        $self->{bucardo} = '../bucardo';
+    elsif (-e '../bucordo') {
+        $self->{bucordo} = '../bucordo';
     }
     else {
-        die qq{Could not find bucardo\n};
+        die qq{Could not find bucordo\n};
     }
 
     ## Handle both old and new way of setting location
@@ -415,12 +415,12 @@ sub debug {
 sub empty_cluster {
 
     ## Empty out a cluster's databases
-    ## Creates the cluster and 'bucardo_test' database as needed
+    ## Creates the cluster and 'bucordo_test' database as needed
     ## For existing databases, removes all known schemas
     ## Always recreates the public schema
     ## Arguments: one
     ## 1. Name of the cluster
-    ## Returns: arrayref of database handles to the 'bucardo_test*' databases
+    ## Returns: arrayref of database handles to the 'bucordo_test*' databases
 
     my $self = shift;
     my $clustername = shift or die;
@@ -441,7 +441,7 @@ sub empty_cluster {
         $dbh = $self->connect_database($clustername, $dbname);
         ## Remove any of our known schemas
         my @slist;
-        for my $sname (qw/ public bucardo freezer tschema /) {
+        for my $sname (qw/ public bucordo freezer tschema /) {
             push @slist => $sname if $self->drop_schema($dbh, $sname);
         }
         debug(qq{Schemas dropped from $dbname on $clustername: } . join ',' => @slist);
@@ -637,7 +637,7 @@ sub connect_database {
     ## Return a connection to a database within a cluster
     ## Arguments:
     ## 1. Name of the cluster
-    ## 2. Name of the database (optional, defaults to 'bucardo_test')
+    ## 2. Name of the database (optional, defaults to 'bucordo_test')
     ## Returns: database handle
 
     my $self = shift;
@@ -696,7 +696,7 @@ sub connect_database {
     $dbh->do(q{SET TIME ZONE 'UTC'});
 
     if ($DEBUG) {
-        my $file = 'bucardo.debug.dsns.txt';
+        my $file = 'bucordo.debug.dsns.txt';
         if (open my $fh, '>>', $file) {
             print {$fh} "\n$dsn\n";
             my ($host,$port,$db);
@@ -742,7 +742,7 @@ sub repopulate_cluster {
     ## Arguments: two
     ## 1. Name of the cluster
     ## 2. Optional - number of additional databases to create
-    ## Returns: database handle to the 'bucardo_test' database
+    ## Returns: database handle to the 'bucordo_test' database
 
     my $self = shift;
     my $clustername = shift or die;
@@ -784,7 +784,7 @@ sub add_test_schema {
 
     ## Add an empty test schema to a database
     ## Arguments: two
-    ## 1. database handle (usually to 'bucardo_test')
+    ## 1. database handle (usually to 'bucordo_test')
     ## 2. Cluster name
     ## Returns: nothing
 
@@ -795,13 +795,13 @@ sub add_test_schema {
     my ($tcount,$scount,$fcount) = (0,0,0);
 
     ## Empty out or create the droptest table
-    if (table_exists($dbh => 'droptest_bucardo')) {
-        $dbh->do('TRUNCATE TABLE droptest_bucardo');
+    if (table_exists($dbh => 'droptest_bucordo')) {
+        $dbh->do('TRUNCATE TABLE droptest_bucordo');
     }
     else {
         $tcount++;
         $dbh->do(q{
-            CREATE TABLE droptest_bucardo (
+            CREATE TABLE droptest_bucordo (
               name TEXT NOT NULL,
               type TEXT NOT NULL
             )
@@ -822,7 +822,7 @@ sub add_test_schema {
                 RETURNS trigger
                 LANGUAGE plpgsql
                 AS $_$ BEGIN
-                INSERT INTO droptest_bucardo(name,type)
+                INSERT INTO droptest_bucordo(name,type)
                     VALUES (TG_TABLE_NAME, 'trigger');
                 RETURN NULL;
                 END;
@@ -836,7 +836,7 @@ sub add_test_schema {
                 RETURNS trigger
                 LANGUAGE plpgsql
                 AS $_$ BEGIN
-                INSERT INTO droptest_bucardo(name,type)
+                INSERT INTO droptest_bucordo(name,type)
                     VALUES (TG_TABLE_NAME, 'trigger');
                 RETURN NULL;
                 END;
@@ -895,19 +895,19 @@ sub add_test_schema {
         $SQL = qq{
             CREATE OR REPLACE RULE "bcrule_$table"
             AS ON INSERT TO "$table"
-            DO ALSO INSERT INTO droptest_bucardo(name,type) VALUES ('$table','rule')
+            DO ALSO INSERT INTO droptest_bucordo(name,type) VALUES ('$table','rule')
             };
         $table =~ /0/ and $SQL =~ s/NEW.inty/0/;
         $dbh->do($SQL);
     }
 
     ## Create the foreign key tables
-    #$dbh->do('CREATE TABLE bucardo_fkey1 (fkid INTEGER NOT NULL PRIMARY KEY, data2 TEXT)');
+    #$dbh->do('CREATE TABLE bucordo_fkey1 (fkid INTEGER NOT NULL PRIMARY KEY, data2 TEXT)');
     $SQL = q{
-ALTER TABLE bucardo_fkey1
-  ADD CONSTRAINT "bucardo_fkey1"
+ALTER TABLE bucordo_fkey1
+  ADD CONSTRAINT "bucordo_fkey1"
   FOREIGN KEY (fkid)
-  REFERENCES bucardo_test1 (id)
+  REFERENCES bucordo_test1 (id)
   ON DELETE CASCADE ON UPDATE CASCADE
 };
     #$dbh->do($SQL);
@@ -939,10 +939,10 @@ ALTER TABLE bucardo_fkey1
 sub mock_serialization_failure {
     my ($self, $dbh, $table) = @_;
     return if $dbh->{pg_server_version} < 80401;
-    $table ||= 'bucardo_test1';
+    $table ||= 'bucordo_test1';
 
     # Mock a serialization failure on every other INSERT. Runs only when
-    # `session_replica_role` is "replica", which it true for Bucardo targets.
+    # `session_replica_role` is "replica", which it true for bucordo targets.
     $dbh->do(qq{
         DROP SEQUENCE IF EXISTS serial_seq;
         CREATE SEQUENCE serial_seq;
@@ -968,7 +968,7 @@ sub mock_serialization_failure {
 sub unmock_serialization_failure {
     my ($self, $dbh, $table) = @_;
     return if $dbh->{pg_server_version} < 80401;
-    $table ||= 'bucardo_test1';
+    $table ||= 'bucordo_test1';
 
     $dbh->do(qq{
         DROP TRIGGER IF EXISTS mock_serial_fail ON "$table";
@@ -981,7 +981,7 @@ sub unmock_serialization_failure {
 
 sub add_test_databases {
 
-    ## Add one or more databases to the bucardo.db table
+    ## Add one or more databases to the bucordo.db table
     ## Arguments:
     ## 1. White-space separated db names
     ## Returns: nothing
@@ -991,7 +991,7 @@ sub add_test_databases {
 
     for my $db (split /\s+/ => $string) {
         my $ctlargs = $self->add_db_args($db);
-        my $i = $self->ctl("add database bucardo_test $ctlargs");
+        my $i = $self->ctl("add database bucordo_test $ctlargs");
         die $i if $i =~ /ERROR/;
     }
 
@@ -1026,9 +1026,9 @@ sub add_db_args {
 } ## end of add_db_args
 
 
-sub stop_bucardo {
+sub stop_bucordo {
 
-    ## Stops Bucardo via a bucardo request
+    ## Stops bucordo via a bucordo request
     ## Arguments: none
     ## Returns: 1
 
@@ -1040,53 +1040,53 @@ sub stop_bucardo {
 
     return 1;
 
-} ## end of stop_bucardo
+} ## end of stop_bucordo
 
 
 sub ctl {
 
-    ## Run a simple non-forking command against bucardo
+    ## Run a simple non-forking command against bucordo
     ## Emulates a command-line invocation
     ## Arguments:
-    ## 1. String to pass to bucardo
-    ## 2. Database name to connect to. Used only when we're not confident the bucardo database exists already.
+    ## 1. String to pass to bucordo
+    ## 2. Database name to connect to. Used only when we're not confident the bucordo database exists already.
     ## Returns: answer as a string
 
     my ($self,$args, $db) = @_;
-    $db ||= 'bucardo';
+    $db ||= 'bucordo';
 
     my $info;
-    my $ctl = $self->{bucardo};
+    my $ctl = $self->{bucordo};
 
     ## Build the connection options
     my $bc = $self->{bcinfo};
     my $connopts = '';
     for my $arg (qw/host port pass/) {
-        my $val = 'DB' . (uc $arg) . '_bucardo';
+        my $val = 'DB' . (uc $arg) . '_bucordo';
         next unless exists $bc->{$val} and length $bc->{$val};
         $connopts .= " --db$arg=$bc->{$val}";
     }
     $connopts .= " --dbname=$db --log-dest .";
     $connopts .= " --dbuser=$user";
-    ## Just hard-code these, no sense in multiple Bucardo base dbs yet:
+    ## Just hard-code these, no sense in multiple bucordo base dbs yet:
     $connopts .= " --dbport=58921";
     my $dbhost = getcwd;
     my $dirname = $pgver{A}{dirname};
     $dbhost .= "/$dirname/socket";
     $connopts .= " --dbhost=$dbhost";
-    $connopts .= " --no-bucardorc";
+    $connopts .= " --no-bucordorc";
 
     ## Whitespace cleanup
     $args =~ s/^\s+//s;
 
     ## Allow the caller to look better
-    $args =~ s/^bucardo\s+//;
+    $args =~ s/^bucordo\s+//;
 
     ## Set a timeout
     alarm 0;
     eval {
         local $SIG{ALRM} = sub { die "Alarum!\n"; };
-        alarm $ALARM_BUCARDO;
+        alarm $ALARM_bucordo;
         debug("Script: $ctl Connection options: $connopts Args: $args", 3);
         $info = decode( locale => qx{$ctl $connopts $args 2>&1} );
         debug("Exit value: $?", 3);
@@ -1098,42 +1098,42 @@ sub ctl {
         return __PACKAGE__ . ' timeout hit, giving up';
     }
     if ($@) {
-        return "Error running bucardo: " . decode( locale => $@ ) . "\n";
+        return "Error running bucordo: " . decode( locale => $@ ) . "\n";
     }
 
-    debug("bucardo said: $info", 3);
+    debug("bucordo said: $info", 3);
 
     return $info;
 
 } ## end of ctl
 
 
-sub restart_bucardo {
+sub restart_bucordo {
 
-    ## Start Bucardo, but stop first if it is already running
+    ## Start bucordo, but stop first if it is already running
     ## Arguments: one, two, or three
-    ## 1. database handle to the bucardo_control_test db
-    ## 2. The notice we wait for, defaults to: bucardo_started
-    ## 3. The message to give to the "pass" function, defaults to: Bucardo was started
+    ## 1. database handle to the bucordo_control_test db
+    ## 2. The notice we wait for, defaults to: bucordo_started
+    ## 3. The message to give to the "pass" function, defaults to: bucordo was started
     ## Returns: nothing
 
     my ($self,$dbh,$notice,$passmsg) = @_;
 
     my $line = (caller)[2];
 
-    $notice ||= 'bucardo_started';
-    $passmsg ||= "Bucardo was started (caller line $line)";
+    $notice ||= 'bucordo_started';
+    $passmsg ||= "bucordo was started (caller line $line)";
 
-    $self->stop_bucardo();
+    $self->stop_bucordo();
 
     ## Because the stop signal arrives before the PID is removed, sleep a bit
     sleep 2;
 
-    pass("Starting up Bucardo (caller line $line)");
-    $dbh->do('LISTEN bucardo');
-    $dbh->do('LISTEN bucardo_boot');
+    pass("Starting up bucordo (caller line $line)");
+    $dbh->do('LISTEN bucordo');
+    $dbh->do('LISTEN bucordo_boot');
     $dbh->do("LISTEN $notice");
-    $dbh->do('LISTEN bucardo_nosyncs');
+    $dbh->do('LISTEN bucordo_nosyncs');
     $dbh->commit();
 
     my $output = $self->ctl('start --exit-on-nosync --quickstart testing');
@@ -1144,12 +1144,12 @@ sub restart_bucardo {
         if ($bail--<0) {
             $output =~ s/^/#     /gmx;
             my $time = localtime;
-            die "Bucardo did not start, but we waited!\nTime: $time\nStart output:\n\n$output\n";
+            die "bucordo did not start, but we waited!\nTime: $time\nStart output:\n\n$output\n";
         }
         while ($n = $dbh->func('pg_notifies')) {
             my ($name, $pid, $payload) = @$n;
             if ($dbh->{pg_server_version} >= 9999990000) {
-                next if $name ne 'bucardo';
+                next if $name ne 'bucordo';
                 $name = $payload;
             }
             last WAITFORIT if $name eq $notice;
@@ -1161,10 +1161,10 @@ sub restart_bucardo {
     pass($passmsg);
 
     ## There is a race condition here for testing
-    ## Bucardo starts up, and gives the notice above.
+    ## bucordo starts up, and gives the notice above.
     ## However, after it does so, CTLs and KIDs start up and look for new rows
     ## If the caller of this function makes changes right away and then kicks,
-    ## Bucardo may see them on the "startup kick" and thus the caller will
+    ## bucordo may see them on the "startup kick" and thus the caller will
     ## get a "syncdone" message that was not initiated by *their* kick.
     ## One way around this is to make sure your caller immediately does a 
     ## kick 0, which will flush out the startup kick. If it arrives after the 
@@ -1172,31 +1172,31 @@ sub restart_bucardo {
 
     return 1;
 
-} ## end of restart_bucardo
+} ## end of restart_bucordo
 
-sub setup_bucardo {
+sub setup_bucordo {
 
-    ## Installs bucardo via "bucardo install" into a database
+    ## Installs bucordo via "bucordo install" into a database
     ## The database will be emptied out first if it already exists
     ## If it does not exist, it will be created
     ## If the cluster does not exist, it will be created
     ## Arguments:
     ## 1. Name of the cluster
-    ## Returns: database handle to the bucardo database
+    ## Returns: database handle to the bucordo database
 
     my $self = shift;
     my $clustername = shift or die;
 
-    Test::More::note('Installing Bucardo');
+    Test::More::note('Installing bucordo');
 
     $self->create_cluster($clustername);
     my $dbh = $self->connect_database($clustername, 'postgres');
-    if (database_exists($dbh,'bucardo')) {
+    if (database_exists($dbh,'bucordo')) {
         my $retries = 5;
         my $pidcol = $dbh->{pg_server_version} >= 90200 ? 'pid' : 'procpid';
         do {
             ## Kick off all other people
-            $SQL = qq{SELECT $pidcol FROM pg_stat_activity WHERE datname = 'bucardo' and $pidcol <> pg_backend_pid()};
+            $SQL = qq{SELECT $pidcol FROM pg_stat_activity WHERE datname = 'bucordo' and $pidcol <> pg_backend_pid()};
             for my $row (@{$dbh->selectall_arrayref($SQL)}) {
                 my $pid = $row->[0];
                 $SQL = 'SELECT pg_terminate_backend(?)';
@@ -1204,10 +1204,10 @@ sub setup_bucardo {
                 $sth->execute($pid);
             }
             $dbh->commit();
-        } while ($dbh->selectrow_array(qq{SELECT count(*) FROM pg_stat_activity WHERE datname = 'bucardo' and $pidcol <> pg_backend_pid()}))[0] && $retries--;
-        debug(qq{Dropping database bucardo from cluster $clustername});
+        } while ($dbh->selectrow_array(qq{SELECT count(*) FROM pg_stat_activity WHERE datname = 'bucordo' and $pidcol <> pg_backend_pid()}))[0] && $retries--;
+        debug(qq{Dropping database bucordo from cluster $clustername});
         local $dbh->{AutoCommit} = 1;
-        $dbh->do('DROP DATABASE bucardo');
+        $dbh->do('DROP DATABASE bucordo');
     }
 
     ## Make sure we have a postgres role
@@ -1217,7 +1217,7 @@ sub setup_bucardo {
     }
 
     ## Now run the install. Timeout after a few seconds
-    debug(qq{Running bucardo install on cluster $clustername});
+    debug(qq{Running bucordo install on cluster $clustername});
     my $info = $self->ctl('install --batch', 'postgres');
 
     if ($info !~ /Installation is now complete/) {
@@ -1225,10 +1225,10 @@ sub setup_bucardo {
     }
 
     ## Reconnect to the new database
-    $dbh = $self->connect_database($clustername, 'bucardo');
+    $dbh = $self->connect_database($clustername, 'bucordo');
 
     ## Make some adjustments
-    $sth = $dbh->prepare('UPDATE bucardo.bucardo_config SET setting = $2 WHERE name = $1');
+    $sth = $dbh->prepare('UPDATE bucordo.bucordo_config SET setting = $2 WHERE name = $1');
     $count = $sth->execute('piddir' => $PIDDIR);
     $count = $sth->execute('reason_file' => "$PIDDIR/reason");
     $count = $sth->execute('sendmail_file' => 'debug.sendmail.txt');
@@ -1242,18 +1242,18 @@ sub setup_bucardo {
 
     return $dbh;
 
-} ## end of setup_bucardo
+} ## end of setup_bucordo
 
-# utility sub called on test error to output pg and bucardo logs to a single
+# utility sub called on test error to output pg and bucordo logs to a single
 # output file with context; mainly useful for CI debugging/output
 sub _log_context {
-    return unless $ENV{BUCARDO_LOG_ERROR_CONTEXT};
+    return unless $ENV{bucordo_LOG_ERROR_CONTEXT};
 
     warn "Logging context for @_; dir=$ENV{PWD}\n";
     system("echo '====================' >> log.context");
     system("date >> log.context");
     system(sprintf "echo '%s' >> log.context", quotemeta($_[0])) if $_[0];
-    system("tail -n 100 log.bucardo bucardo_test_database_*/pg.log 2>/dev/null >> log.context");
+    system("tail -n 100 log.bucordo bucordo_test_database_*/pg.log 2>/dev/null >> log.context");
 }
 
 ## Utility functions for object existences:
@@ -1348,7 +1348,7 @@ sub wait_for_notice {
 
 sub fresh_database {
 
-    ## Drop and create the bucardo_test database
+    ## Drop and create the bucordo_test database
     ## First arg is cluster name
     ## Second arg is hashref, can be 'dropdb'
 
@@ -1650,7 +1650,7 @@ sub drop_database {
     my ($self, $dir) = @_;
     if ($dir eq 'all') {
         ok(opendir(my $dh, '.'), 'Open current directory to clean up');
-        my @test_db_dirs = grep { -d $_ && /^bucardo_test_database/ } readdir $dh;
+        my @test_db_dirs = grep { -d $_ && /^bucordo_test_database/ } readdir $dh;
         close($dh);
 
         for my $dirname (@test_db_dirs) {
@@ -1907,7 +1907,7 @@ sub check_for_row {
     for my $dbname (@$dblist) {
 
         if (! $gdbh{$dbname}) {
-            $gdbh{$dbname} = $self->connect_database($dbname,$BucardoTesting::dbname);
+            $gdbh{$dbname} = $self->connect_database($dbname,$bucordoTesting::dbname);
         }
 
         my $dbh = $gdbh{$dbname};

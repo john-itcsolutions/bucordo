@@ -6,8 +6,8 @@
 ## Greg Sabino Mullane <greg@turnstep.com>, Joshua Tolley <josh@endpoint.com>
 ## End Point Corporation http://www.endpoint.com/
 ## BSD licensed, see complete license at bottom of this script
-## The latest version can be found in the Bucardo distribution at:
-## http://www.bucardo.org/
+## The latest version can be found in the bucordo distribution at:
+## http://www.bucordo.org/
 ##
 ## See the HISTORY section for other contributors
 
@@ -87,7 +87,7 @@ die $USAGE unless
                'slonyset=i',
 
                'slonik',
-               'bucardo',
+               'bucordo',
                'check',
                )
     and keys %opt
@@ -108,7 +108,7 @@ Slony Migrator
 This is version $VERSION.
 
 Main functional options:
-  --bucardo          print commands to migrate this Slony cluster to  Bucardo replication
+  --bucordo          print commands to migrate this Slony cluster to  bucordo replication
   --slonik           print slonik scripts to recreate this Slony cluster
 
 Common connection options:
@@ -129,7 +129,7 @@ For a complete list of options and full documentation, please view the POD for t
 Two ways to do this is to run:
 pod2text $ME | less
 pod2man $ME | man -l -
-Or simply visit: https://bucardo.org/
+Or simply visit: https://bucordo.org/
 
 
 };
@@ -193,8 +193,8 @@ sanitycheck() if defined $opt{check};
 if (defined $opt{slonik}) {
     print_slonik($slonyinfo);
 }
-elsif (defined $opt{bucardo}) {
-    make_bucardo_init($slonyinfo);
+elsif (defined $opt{bucordo}) {
+    make_bucordo_init($slonyinfo);
 }
 else {
     printinfo();
@@ -440,10 +440,10 @@ sub run_command {
 
     ## Create a temp file to store our results
     $tempdir = tempdir(CLEANUP => 1);
-    ($tempfh,$tempfile) = tempfile('slony_bucardo_migrator.XXXXXXX', SUFFIX => '.tmp', DIR => $tempdir);
+    ($tempfh,$tempfile) = tempfile('slony_bucordo_migrator.XXXXXXX', SUFFIX => '.tmp', DIR => $tempdir);
 
     ## Create another one to catch any errors
-    ($errfh,$errorfile) = tempfile('slony_bucardo_migrator.XXXXXXX', SUFFIX => '.tmp', DIR => $tempdir);
+    ($errfh,$errorfile) = tempfile('slony_bucordo_migrator.XXXXXXX', SUFFIX => '.tmp', DIR => $tempdir);
 
     for $db (@target) {
 
@@ -942,7 +942,7 @@ sub prompt_user {
     }
 }
 
-sub make_bucardo_init {
+sub make_bucordo_init {
     my $info = shift;
     my (@dbs, @herds, @syncs, @tables, @sequences);
     my $cluster_name = $schema;
@@ -975,7 +975,7 @@ sub make_bucardo_init {
             name => $name,
             conninfo => $conninfo,
         };
-        print "./bucardo add db $name dbname=$dbname $conn\n";
+        print "./bucordo add db $name dbname=$dbname $conn\n";
     }
 
     for my $set (@{ get_ordered_subscribes($info->{sub}, $info->{set}, $info->{node}) }) {
@@ -988,20 +988,20 @@ sub make_bucardo_init {
                 map {
                     my $name = $info->{table}{$_}{FQN};
                     if ($info->{table}{$_}{set} == $set_num) {
-                        print "./bucardo add table $name db=$db autokick=true conflict_strategy=source herd=$herd\n";
+                        print "./bucordo add table $name db=$db autokick=true conflict_strategy=source herd=$herd\n";
                     }
                 } keys %{$info->{table}};
                 map {
                     my $name = $info->{sequence}{$_}{FQN};
                     if ($info->{sequence}{$_}{set} == $set_num) {
-                        print "./bucardo add sequence $name db=$db autokick=true conflict_strategy=source herd=$herd\n";
+                        print "./bucordo add sequence $name db=$db autokick=true conflict_strategy=source herd=$herd\n";
                     }
                 } keys %{$info->{sequence}};
                 for my $child (@{$node->{children}}) {
                     my $targetdbname = $cluster_name . '_' . $child;
                     my $syncname = $cluster_name . '_set' . $set_num . '_node' . $node->{num} . '_to_node' . $child;
                     my $childnode = $set->{$child};
-                    print "./bucardo add sync $syncname source=$herd targetdb=$targetdbname type=pushdelta";
+                    print "./bucordo add sync $syncname source=$herd targetdb=$targetdbname type=pushdelta";
                     print " target_makedelta=on"
                         if (exists $childnode->{children} and $#{$childnode->{children}} > -1);
                     print "\n";
@@ -1092,7 +1092,7 @@ sub traverse_set {
 
 sub get_ordered_subscribes {
     my ($subs, $sets, $nodes) = @_;
-    # Bucardo needs to know each set; slonik just needs to know a valid subscribe order
+    # bucordo needs to know each set; slonik just needs to know a valid subscribe order
     my @results;
     #map { push @subs, $subs->{$_}; } keys %{ $subs };
 
@@ -1125,32 +1125,32 @@ sub get_ordered_subscribes {
 
 =head1 NAME
 
-B<slony_migrator.pl> - Slony-to-Bucardo migration tool
+B<slony_migrator.pl> - Slony-to-bucordo migration tool
 
 =head1 SYNOPSIS
 
 Provides information about a running Slony cluster, including a summary
 description (default), Slonik scripts (the --slonik option), and
-Slony-to-Bucardo migration scripts (the --bucardo option).
+Slony-to-bucordo migration scripts (the --bucordo option).
 
 =head1 DESCRIPTION
 
 Connects to a running Slony cluster and provides one of the following: A
 summary of the sets and nodes involved in the cluster, a slonik script to
-rebuild the cluster from scratch, or bucardo commands to build the same
-cluster based on Bucardo. This last will allow migration from Slony to Bucardo.
+rebuild the cluster from scratch, or bucordo commands to build the same
+cluster based on bucordo. This last will allow migration from Slony to bucordo.
 
 =head1 OPTIONS FOR PRINCIPLE FUNCTIONS
 
 =over 4
 
-=item B<--bucardo>
+=item B<--bucordo>
 
-Returns a list of bucardo commands which will allow migration of a Slony
-cluster off of Slony and on to Bucardo. After installing Bucardo with
-I<bucardo install>, these scripts will tell Bucardo about all the tables
+Returns a list of bucordo commands which will allow migration of a Slony
+cluster off of Slony and on to bucordo. After installing bucordo with
+I<bucordo install>, these scripts will tell bucordo about all the tables
 and sequences in the Slony sets, each node in the Slony cluster, and configure
-Bucardo to replicate those objects in the same way Slony does. This includes
+bucordo to replicate those objects in the same way Slony does. This includes
 the use of cascaded replication.
 
 =item B<--slonik>
@@ -1234,7 +1234,7 @@ default.
 
 =head1 DEVELOPMENT
 
-Development happens using Git. See: https://github.com/bucardo/bucardo
+Development happens using Git. See: https://github.com/bucordo/bucordo
 
 =head1 HISTORY
 

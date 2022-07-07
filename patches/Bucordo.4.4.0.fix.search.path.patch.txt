@@ -1,5 +1,5 @@
---- Bucardo.pm	2010/09/02 14:08:46	1.1
-+++ Bucardo.pm	2010/09/02 14:09:47
+--- bucordo.pm	2010/09/02 14:08:46	1.1
++++ bucordo.pm	2010/09/02 14:09:47
 @@ -1832,6 +1832,9 @@
  					push @{$g->{binarypkey}} => 0;
  				}
@@ -20,7 +20,7 @@
  
  			## If a sequence, grab all info as a hash
 @@ -1976,6 +1981,9 @@
- 				## Store away our oid, as we may need it later to access bucardo_delta
+ 				## Store away our oid, as we may need it later to access bucordo_delta
  				$g->{targetoid}{$db} = $oid;
  
 +                ## Turn off the search path, to help the checks below match up

@@ -9,20 +9,20 @@
 ## One table: foobar
 ## Two syncs: AB A <=> B and BC (B <=> C) -> D
 ## For safety, this runs on port 5492.
-## Do not change it to 5432, as this drops the bucardo database! :)
-## This must be run from the root Bucardo source code directory
+## Do not change it to 5432, as this drops the bucordo database! :)
+## This must be run from the root bucordo source code directory
 
 export PGPORT=5492
 
-## Ensure we use the Bucardo.pm in the current directory
+## Ensure we use the bucordo.pm in the current directory
 export PERL5LIB=.
 
 ## Quick check that our scripts compile cleanly
-perl -c bucardo || exit
-perl -c Bucardo.pm || exit
+perl -c bucordo || exit
+perl -c bucordo.pm || exit
 
-## Just in case, stop any running Bucardos
-./bucardo stop --quiet 2>/dev/null
+## Just in case, stop any running bucordos
+./bucordo stop --quiet 2>/dev/null
 
 ## Bail if the cluster is not reachable
 psql -q -c 'select 1' >/dev/null 2>/dev/null
@@ -35,12 +35,12 @@ fi
 
 ## Terminate any old connections, and drop databases
 echo Dropping existing test databases
-psql -AX -qt -c "select pg_terminate_backend(pid) FROM pg_stat_activity where datname IN ('mtest1','mtest2','mtest3','mtest4','bucardo')" >/dev/null
+psql -AX -qt -c "select pg_terminate_backend(pid) FROM pg_stat_activity where datname IN ('mtest1','mtest2','mtest3','mtest4','bucordo')" >/dev/null
 psql -qc 'drop database mtest1' 2>/dev/null
 psql -qc 'drop database mtest2' 2>/dev/null
 psql -qc 'drop database mtest3' 2>/dev/null
 psql -qc 'drop database mtest4' 2>/dev/null
-psql -qc 'drop database bucardo' 2>/dev/null
+psql -qc 'drop database bucordo' 2>/dev/null
 
 echo Creating test databases
 psql -qc 'create database mtest1'
@@ -69,41 +69,41 @@ psql -qc 'create database mtest4 template mtest1'
 psql mtest1 -qc 'drop table foobar2 cascade'
 psql mtest2 -qc 'drop table foobar2 cascade'
 
-echo Installing Bucardo
-./bucardo install --batch --quiet >/tmp/foobar
+echo Installing bucordo
+./bucordo install --batch --quiet >/tmp/foobar
 if [[ $? -ne 0 ]];then
-  echo Failed to install Bucardo
+  echo Failed to install bucordo
   exit
 fi
 
-./bucardo set log_level=debug --quiet
+./bucordo set log_level=debug --quiet
 
-./bucardo add db source_sg dbname=mtest1 --quiet
-./bucardo add db target_sg dbname=mtest2 --quiet
-./bucardo add table foobar relgroup=sgherd --quiet
-./bucardo add dbgroup sggroup source_sg:source target_sg:target
-./bucardo add sync sg_sync herd=sgherd dbs=sggroup
+./bucordo add db source_sg dbname=mtest1 --quiet
+./bucordo add db target_sg dbname=mtest2 --quiet
+./bucordo add table foobar relgroup=sgherd --quiet
+./bucordo add dbgroup sggroup source_sg:source target_sg:target
+./bucordo add sync sg_sync herd=sgherd dbs=sggroup
 
-./bucardo add db source_lg dbname=mtest3 --quiet
-./bucardo add db target_lg dbname=mtest4 --quiet
-./bucardo add table foobar2 relgroup=lgherd db=source_lg 
-./bucardo add dbgroup lggroup source_lg:source target_lg:target
-./bucardo add sync lg_sync herd=lgherd dbs=lggroup
+./bucordo add db source_lg dbname=mtest3 --quiet
+./bucordo add db target_lg dbname=mtest4 --quiet
+./bucordo add table foobar2 relgroup=lgherd db=source_lg 
+./bucordo add dbgroup lggroup source_lg:source target_lg:target
+./bucordo add sync lg_sync herd=lgherd dbs=lggroup
 
-rm -f log.bucardo
-./bucardo start --logdest=.  --no-exit-on-nosync
+rm -f log.bucordo
+./bucordo start --logdest=.  --no-exit-on-nosync
 sleep 2
 
-./bucardo activate sync sg_sync
-./bucardo activate sync lg_sync
+./bucordo activate sync sg_sync
+./bucordo activate sync lg_sync
 
-./bucardo stop 
+./bucordo stop 
 sleep 2
 
 echo Restarting
-./bucardo start --logdest=.  --no-exit-on-nosync
+./bucordo start --logdest=.  --no-exit-on-nosync
 sleep 3
-./bucardo stop 
+./bucordo stop 
 sleep 2
 
 exit
@@ -112,17 +112,17 @@ exit
 
 
 ## Make a simple sync for table foobar2 going from B to C
-./bucardo add table foobar2 relgroup=mgroup2 db=B
-./bucardo add sync BC relgroup=mgroup2 dbs=C:source,B:source --quiet
+./bucordo add table foobar2 relgroup=mgroup2 db=B
+./bucordo add sync BC relgroup=mgroup2 dbs=C:source,B:source --quiet
 
-echo Starting Bucardo
-rm -f log.bucardo
-./bucardo start --logdest=. --quiet
+echo Starting bucordo
+rm -f log.bucordo
+./bucordo start --logdest=. --quiet
 sleep 4
 
-./bucardo stop --quiet
+./bucordo stop --quiet
 sleep 2
-./bucardo start --logdest=. --quiet
+./bucordo start --logdest=. --quiet
 sleep 4
 
 exit
@@ -136,11 +136,11 @@ psql -A -t mtest2 -c "select 'B:', * from foobar"
 psql -A -t mtest3 -c "select 'C:', * from foobar"
 psql -A -t mtest4 -c "select 'D:', * from foobar"
 
-./bucardo update table foobar makedelta=B
+./bucordo update table foobar makedelta=B
 
-./bucardo stop --quiet
+./bucordo stop --quiet
 sleep 2
-./bucardo start --logdest=. --quiet
+./bucordo start --logdest=. --quiet
 
 echo Makedelta is on for B, so row \"bob\" added to A will make it to C
 psql -AX -qt mtest1 -c "insert into foobar(email) values ('bob')"
@@ -151,9 +151,9 @@ psql -At mtest2 -c "select 'B:', * from foobar"
 psql -At mtest3 -c "select 'C:', * from foobar"
 psql -At mtest4 -c "select 'D:', * from foobar"
 
-./bucardo update table foobar set makedelta=A
-./bucardo message Changed makedelta
-./bucardo reload sync AB
+./bucordo update table foobar set makedelta=A
+./bucordo message Changed makedelta
+./bucordo reload sync AB
 
 echo Makedelta is on for A only, so row \"bob\" deleted from A will not make it to C
 psql -AX -qt mtest1 -c "delete from foobar where email = 'bob'"
@@ -164,9 +164,9 @@ psql -At mtest2 -c "select 'B:', * from foobar"
 psql -At mtest3 -c "select 'C:', * from foobar"
 psql -At mtest4 -c "select 'D:', * from foobar"
 
-./bucardo update table foobar set makedelta=on
-./bucardo message Changed makedelta
-./bucardo reload sync AB
+./bucordo update table foobar set makedelta=on
+./bucordo message Changed makedelta
+./bucordo reload sync AB
 
 echo Makedelta is on for everyone, so row \"mallory\" to A will not make it to B,C,D
 psql -AX -qt mtest1 -c "insert into foobar(email) values ('mallory')"
@@ -177,9 +177,9 @@ psql -At mtest2 -c "select 'B:', * from foobar"
 psql -At mtest3 -c "select 'C:', * from foobar"
 psql -At mtest4 -c "select 'D:', * from foobar"
 
-./bucardo update table foobar set makedelta=off
-./bucardo message Changed makedelta
-./bucardo reload sync AB
+./bucordo update table foobar set makedelta=off
+./bucordo message Changed makedelta
+./bucordo reload sync AB
 
 echo Makedelta is off for everyone, so row \"mallory\" removed from A will stay on C
 psql -AX -qt mtest1 -c "delete from foobar where email = 'mallory'"
@@ -191,6 +191,6 @@ psql -At mtest3 -c "select 'C:', * from foobar"
 psql -At mtest4 -c "select 'D:', * from foobar"
 
 
-echo Stopping Bucardo
-./bucardo stop --quiet
+echo Stopping bucordo
+./bucordo stop --quiet
 

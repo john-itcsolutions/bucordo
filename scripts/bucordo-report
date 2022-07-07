@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 # -*-mode:cperl; indent-tabs-mode: nil-*-
 
-## Web-based report on Bucardo activity
+## Web-based report on bucordo activity
 ##
 ## Copyright 2007-2009 Greg Sabino Mullane <greg@turnstep.com>
 
@@ -262,7 +262,7 @@ if (@{$q{syncinfo}}) {
         next if $db{$host}{SKIP};
         if (1==@{$q{syncinfo}} and $q{syncinfo}->[0] eq 'all') {
             $dbh = connect_database($host);
-            $SQL = "SELECT name FROM bucardo.sync ORDER BY name WHERE status = 'active'";
+            $SQL = "SELECT name FROM bucordo.sync ORDER BY name WHERE status = 'active'";
             for my $sync (@{$dbh->selectall_arrayref($SQL)}) {
                 &showsyncinfo($host,$sync->[0]); $found++;
             }
@@ -298,8 +298,8 @@ elsif (exists $q{showhost}) {
 
 if (!$found or exists $q{overview}) {
     ## Default action:
-    &Header("Bucardo stats");
-    print qq{<h2 class="s">Bucardo stats</h2>\n};
+    &Header("bucordo stats");
+    print qq{<h2 class="s">bucordo stats</h2>\n};
     print "<ul>";
     for (grep { ! $db{$_}{SKIP} } @dbs) {
         print qq{<li><a href="$HERE?host=$_">$db{$_}{DATABASE} stats</a></li>\n};
@@ -317,7 +317,7 @@ sub showhost {
     my $d = $db{$host};
     return if $d->{SKIP};
 
-    &Header("Bucardo stats for $d->{DATABASE}");
+    &Header("bucordo stats for $d->{DATABASE}");
 
     my $maxdaysback = (exists $q{daysback} and $q{daysback} =~ /^\d$/) ? $q{daysback} : $MAXDAYSBACK;
 
@@ -325,13 +325,13 @@ sub showhost {
     $info{dcount} = '?'; $info{tcount} = '?';
     unless ($q{norowcount}) {
         $dbh = connect_database($host."_real");
-        $SQL = "SELECT 1,count(*) FROM bucardo.bucardo_delta UNION ALL SELECT 2,count(*) FROM bucardo.bucardo_track ORDER BY 1";
+        $SQL = "SELECT 1,count(*) FROM bucordo.bucordo_delta UNION ALL SELECT 2,count(*) FROM bucordo.bucordo_track ORDER BY 1";
         $info = $dbh->selectall_arrayref($SQL);
         $info{dcount} = $info->[0][1];
         $info{tcount} = $info->[1][1];
         $dbh->disconnect();
     }
-    print qq{<h3 class="s">$d->{DATABASE} latest <a href="$HERE">Bucardo</a> sync results &nbsp; &nbsp; };
+    print qq{<h3 class="s">$d->{DATABASE} latest <a href="$HERE">bucordo</a> sync results &nbsp; &nbsp; };
     print qq{</h3>\n};
 
     ## Gather all sync information
@@ -339,13 +339,13 @@ sub showhost {
     $SQL = "SELECT *, extract(epoch FROM checktime) AS checksecs, ".
         "extract(epoch FROM overdue) AS overduesecs, ".
             "extract(epoch FROM expired) AS expiredsecs ".
-                "FROM bucardo.sync";
+                "FROM bucordo.sync";
     $sth = $dbh->prepare($SQL);
     $sth->execute();
     my $sync = $sth->fetchall_hashref('name');
 
     ## Gather all database group information
-    $SQL = "SELECT dbgroup,db,priority FROM bucardo.dbmap ORDER BY dbgroup, priority, db";
+    $SQL = "SELECT dbgroup,db,priority FROM bucordo.dbmap ORDER BY dbgroup, priority, db";
     my $dbg;
     my $order = 1;
     my $oldgroup = '';
@@ -371,8 +371,8 @@ sub showhost {
         }
     }
     ## Grab any that are queued but not started for each sync/target combo
-    $SQL = "SELECT $SQLSTART FROM (SELECT * FROM bucardo.q ".
-      "NATURAL JOIN (SELECT sync, targetdb, max(ended) AS ended FROM bucardo.q ".
+    $SQL = "SELECT $SQLSTART FROM (SELECT * FROM bucordo.q ".
+      "NATURAL JOIN (SELECT sync, targetdb, max(ended) AS ended FROM bucordo.q ".
         "WHERE started IS NULL GROUP BY 1,2) q2) AS q3";
     $sth = $dbh->prepare($SQL);
     $sth->execute();
@@ -381,8 +381,8 @@ sub showhost {
     }
 
     ## Grab any that are currently in progress
-    $SQL = "SELECT $SQLSTART FROM (SELECT * FROM bucardo.q ".
-      "NATURAL JOIN (SELECT sync, targetdb, max(ended) AS ended FROM bucardo.q ".
+    $SQL = "SELECT $SQLSTART FROM (SELECT * FROM bucordo.q ".
+      "NATURAL JOIN (SELECT sync, targetdb, max(ended) AS ended FROM bucordo.q ".
         "WHERE started IS NOT NULL and ENDED IS NULL GROUP BY 1,2) q2) AS q3";
     $sth = $dbh->prepare($SQL);
     $sth->execute();
@@ -390,8 +390,8 @@ sub showhost {
       $sync->{ $row->{sync} }{ dblist }{ $row->{targetdb} }{current} = $row;
     }
     ## Grab the last successful
-    $SQL = "SELECT $SQLSTART FROM (SELECT * FROM bucardo.q ".
-      "NATURAL JOIN (SELECT sync, targetdb, max(ended) AS ended FROM bucardo.q ".
+    $SQL = "SELECT $SQLSTART FROM (SELECT * FROM bucordo.q ".
+      "NATURAL JOIN (SELECT sync, targetdb, max(ended) AS ended FROM bucordo.q ".
         "WHERE ended IS NOT NULL AND aborted IS NULL GROUP BY 1,2) q2) AS q3";
     $sth = $dbh->prepare($SQL);
     $sth->execute();
@@ -400,8 +400,8 @@ sub showhost {
     }
 
     ## Grab the last aborted
-    $SQL = "SELECT $SQLSTART FROM (SELECT * FROM bucardo.q ".
-      "NATURAL JOIN (SELECT sync, targetdb, max(ended) AS ended FROM bucardo.q ".
+    $SQL = "SELECT $SQLSTART FROM (SELECT * FROM bucordo.q ".
+      "NATURAL JOIN (SELECT sync, targetdb, max(ended) AS ended FROM bucordo.q ".
         "WHERE aborted IS NOT NULL GROUP BY 1,2) q2) AS q3";
     $sth = $dbh->prepare($SQL);
     $sth->execute();
@@ -516,7 +516,7 @@ sub showhost {
         print $q{shownagios} ? "<pre>\n" : "\n<!-- \n";
         print qq{\nBegin Nagios\nHost: $host\nExpired: $problem{expired}\nOverdue: $problem{overdue}\n};
         print qq{Death: $problem{death}\n};
-        print qq{bucardo_delta rows: $info{dcount}\nbucardo_track rows: $info{tcount}\n};
+        print qq{bucordo_delta rows: $info{dcount}\nbucordo_track rows: $info{tcount}\n};
         print @edetail;
         print @odetail;
         print @death;
@@ -1007,9 +1007,9 @@ sub showdatabase {
     exists $db{$host} or &Error("No such host: $host");
     my $d = $db{$host};
 
-    &Header("$d->{DATABASE} Bucardo stats for target database $name");
+    &Header("$d->{DATABASE} bucordo stats for target database $name");
 
-    print qq{<h3 class="s"><a href="$HERE?host=$host">$d->{DATABASE}</a> <a href="$HERE">Bucardo</a> stats for target database "$name"</h3>\n};
+    print qq{<h3 class="s"><a href="$HERE?host=$host">$d->{DATABASE}</a> <a href="$HERE">bucordo</a> stats for target database "$name"</h3>\n};
 
     ## Default sort
     my $OCOL = 2;
@@ -1027,7 +1027,7 @@ sub showdatabase {
 qq{SELECT
   sync,
 $SQLSTART
-FROM (SELECT * FROM bucardo.q WHERE targetdb=\$1 UNION ALL SELECT * FROM bucardo.$old_q WHERE targetdb=\$1) q
+FROM (SELECT * FROM bucordo.q WHERE targetdb=\$1 UNION ALL SELECT * FROM bucordo.$old_q WHERE targetdb=\$1) q
 ${WHERECLAUSE}ORDER BY $OCOL2 $ODIR, 1 ASC, started DESC
 LIMIT $LIMIT};
 
@@ -1104,7 +1104,7 @@ sub showsync {
     exists $db{$host} or &Error("No such host: $host");
     my $d = $db{$host};
 
-    &Header("$d->{DATABASE} Bucardo stats for sync $name");
+    &Header("$d->{DATABASE} bucordo stats for sync $name");
 
     ## Default order by
     my $OCOL = 2;
@@ -1121,7 +1121,7 @@ sub showsync {
     $dbh = connect_database($host);
 
     ## Quick check that this is a valid sync
-    $SQL = "SELECT * FROM bucardo.sync WHERE name = ?";
+    $SQL = "SELECT * FROM bucordo.sync WHERE name = ?";
     $sth = $dbh->prepare($SQL);
     my $count = $sth->execute($name);
     if ($count eq '0E0') {
@@ -1129,7 +1129,7 @@ sub showsync {
     }
     my $syncinfo = $sth->fetchall_arrayref({})->[0];
 
-    printf qq{<h3 class="s"><a href="%s">%s</a> <a href="%s">Bucardo</a> sync <a href="%s">"%s"</a>\n},
+    printf qq{<h3 class="s"><a href="%s">%s</a> <a href="%s">bucordo</a> sync <a href="%s">"%s"</a>\n},
     "$HERE?host=$host", $d->{DATABASE}, $HERE, "$HERE?host=$host;syncinfo=$name", $name;
     my $space = '&nbsp; ' x 10;
     my $mouseover = qq{onmouseover="showgoat('info',+50)"};
@@ -1155,13 +1155,13 @@ sub showsync {
 qq{SELECT
   synctype,
 $SQLSTART
-FROM (SELECT * FROM bucardo.q WHERE sync=\$1 UNION ALL SELECT * FROM bucardo.$old_q $oldwhere) q
+FROM (SELECT * FROM bucordo.q WHERE sync=\$1 UNION ALL SELECT * FROM bucordo.$old_q $oldwhere) q
 ${WHERECLAUSE}ORDER BY $OCOL2 $ODIR, 1 ASC
 LIMIT $LIMIT} :
 qq{SELECT
   targetdb,
 $SQLSTART
-FROM (SELECT * FROM bucardo.q WHERE sync=\$1 UNION ALL SELECT * FROM bucardo.$old_q $oldwhere) q
+FROM (SELECT * FROM bucordo.q WHERE sync=\$1 UNION ALL SELECT * FROM bucordo.$old_q $oldwhere) q
 ${WHERECLAUSE}ORDER BY $OCOL2 $ODIR, 1 ASC
 LIMIT $LIMIT};
 
@@ -1248,14 +1248,14 @@ sub showsyncinfo {
     exists $db{$host} or &Error("No such host: $host");
     my $d = $db{$host};
 
-    &Header("$d->{DATABASE} Bucardo information on sync $name");
+    &Header("$d->{DATABASE} bucordo information on sync $name");
 
-    printf qq{<h3 class="s"><a href="%s">%s</a> <a href="%s">Bucardo</a> sync %s (<a href="%s">view stats</a>)</h3>\n},
+    printf qq{<h3 class="s"><a href="%s">%s</a> <a href="%s">bucordo</a> sync %s (<a href="%s">view stats</a>)</h3>\n},
     "$HERE?host=$host", $d->{DATABASE}, $HERE, $name, "$HERE?host=$host;sync=$name";
 
     $dbh = connect_database($host);
     if (! exists $info{$host}{syncinfo}) {
-        $SQL = "SELECT * FROM bucardo.sync";
+        $SQL = "SELECT * FROM bucordo.sync";
         $sth = $dbh->prepare($SQL);
         $sth->execute();
         $info{$host}{syncinfo} = $sth->fetchall_hashref('name');
@@ -1269,7 +1269,7 @@ sub showsyncinfo {
     if (! exists $info{$host}{herds} ) {
         $SQL = qq{
             SELECT *
-            FROM bucardo.herdmap h, bucardo.goat g
+            FROM bucordo.herdmap h, bucordo.goat g
             WHERE g.id = h.goat
             ORDER BY priority DESC, tablename ASC
 
@@ -1292,7 +1292,7 @@ sub showsyncinfo {
     if ($info->{targetgroup}) {
         my $t = $info->{targetgroup};
         if (! exists $info{$host}{dbs}{$t}) {
-            $SQL = "SELECT dm.db FROM bucardo.dbmap dm JOIN bucardo.db db ON db.name = dm.db WHERE dm.dbgroup = ? AND db.status = 'active' ORDER BY dm.priority DESC, dm.db ASC";
+            $SQL = "SELECT dm.db FROM bucordo.dbmap dm JOIN bucordo.db db ON db.name = dm.db WHERE dm.dbgroup = ? AND db.status = 'active' ORDER BY dm.priority DESC, dm.db ASC";
             $sth = $dbh->prepare_cached($SQL);
             $sth->execute($t);
             $info{$host}{dbs}{$t} = $sth->fetchall_arrayref({});
@@ -1348,7 +1348,7 @@ $fullcopy
 sub Header {
 
     return if $DONEHEADER++;
-    my $title = shift || "Bucardo Stats";
+    my $title = shift || "bucordo Stats";
     print qq{<html>
 <head>
 <title>$title</title>
@@ -1515,7 +1515,7 @@ sub Footer_Summary {
   unless ($q{hidetime}) {
     printf "<p><small>Total time: %.2f", $scripttime;
     if (exists $info{dcount}) {
-      print " &nbsp; Rows in bucardo_delta: $info{dcount} &nbsp; Rows in bucardo_track: $info{tcount}";
+      print " &nbsp; Rows in bucordo_delta: $info{dcount} &nbsp; Rows in bucordo_track: $info{tcount}";
     }
     print "</small></p>";
   }
@@ -1552,7 +1552,7 @@ sub Error {
     my $msg = shift;
     my $line = (caller)[2];
     &Header("Error");
-    print qq{<h3 class="error">Bucardo stats error</h3>\n};
+    print qq{<h3 class="error">bucordo stats error</h3>\n};
     print qq{<p class="error"><span class="error">$msg</span></p>\n};
     &Footer();
 }
@@ -1569,16 +1569,16 @@ __DATA__
 ## SKIP: Used for row counts, do not list anywhere
 
 DATABASE: SampleDB1
-DSN: dbi:Pg:database=bucardo;port=5432;host=sample1.example.com
-DBUSER: bucardo_readonly
+DSN: dbi:Pg:database=bucordo;port=5432;host=sample1.example.com
+DBUSER: bucordo_readonly
 DBPASS: foobar
 SINGLE: otherdb
 DAYSBACK: 2
 DAYSBACKSYNC: 3
 
 DATABASE: OtherDB
-DSN: dbi:Pg:database=bucardo;port=5432;host=sample2.example.com
-DBUSER: bucardo_readonly
+DSN: dbi:Pg:database=bucordo;port=5432;host=sample2.example.com
+DBUSER: bucordo_readonly
 DBPASS: foobar
 DAYSBACK: 5
 DAYSBACKSYNC: 30

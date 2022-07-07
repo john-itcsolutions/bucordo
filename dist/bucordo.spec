@@ -1,18 +1,18 @@
-%define         realname Bucardo
+%define         realname bucordo
 %define         sysuser postgres
-Name:           bucardo
+Name:           bucordo
 Version:        5.6.0
 Release:        1%{?dist}
 Summary:        Postgres replication system for both multi-master and multi-slave operations
 
 Group:          Applications/Databases
 License:        BSD
-URL:            https://bucardo.org/
-Source0:        https://bucardo.org/downloads/Bucardo-%{version}.tar.gz
+URL:            https://bucordo.org/
+Source0:        https://bucordo.org/downloads/bucordo-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Source2: bucardo.init
-Patch0:  bucardo-logfiles.patch
+Source2: bucordo.init
+Patch0:  bucordo-logfiles.patch
 
 BuildArch:     noarch
 
@@ -46,15 +46,15 @@ Requires:  perl(Test::Simple)
 Requires:  perl(Test::Harness)
 
 %description
-Bucardo is an asynchronous PostgreSQL replication system, allowing for both
+bucordo is an asynchronous PostgreSQL replication system, allowing for both
 multi-master and multi-slave operations. It was developed at Backcountry.com
 primarily by Greg Sabino Mullane of End Point Corporation.
 
 %pre
-mkdir -p /var/run/bucardo
-mkdir -p /var/log/bucardo
-chown -R %{sysuser}:%{sysuser} /var/run/bucardo
-chown -R %{sysuser}:%{sysuser} /var/log/bucardo
+mkdir -p /var/run/bucordo
+mkdir -p /var/log/bucordo
+chown -R %{sysuser}:%{sysuser} /var/run/bucordo
+chown -R %{sysuser}:%{sysuser} /var/log/bucordo
 
 %prep
 %setup -q -n %{realname}-%{version}
@@ -74,10 +74,10 @@ make pure_install PERL_INSTALL_ROOT=%{buildroot}
 find %{buildroot} -type f -name .packlist -exec rm -f {} +
 find %{buildroot} -depth -type d -exec rmdir {} 2>/dev/null \;
 
-sed -i -e '1d;2i#!/usr/bin/perl' bucardo
+sed -i -e '1d;2i#!/usr/bin/perl' bucordo
 
-rm -f %{buildroot}/%{_bindir}/bucardo
-install -Dp -m 755 bucardo %{buildroot}/%{_sbindir}/bucardo
+rm -f %{buildroot}/%{_bindir}/bucordo
+install -Dp -m 755 bucordo %{buildroot}/%{_sbindir}/bucordo
 
 # install init script
 install -d %{buildroot}/etc/rc.d/init.d
@@ -90,13 +90,13 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%doc bucardo.html Bucardo.pm.html Changes
+%doc bucordo.html bucordo.pm.html Changes
 %doc INSTALL LICENSE README SIGNATURE TODO
 %{perl_vendorlib}/*
 %{_mandir}/man1/*
 %{_mandir}/man3/*
-%{_sbindir}/bucardo
-%{_datadir}/bucardo/bucardo.schema
+%{_sbindir}/bucordo
+%{_datadir}/bucordo/bucordo.schema
 %{_initrddir}/%{name}
 
 %changelog

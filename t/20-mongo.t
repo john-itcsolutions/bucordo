@@ -35,13 +35,13 @@ if (!$evalok) {
 my $mongoversion = $MongoDB::VERSION;
 my $oldversion = $mongoversion =~ /^0\./ ? 1 : 0;
 
-## For creating the bucardo user on the mongo databases
+## For creating the bucordo user on the mongo databases
 my ($newuserfh, $newuserfilename) = tempfile( UNLINK => 1, SUFFIX => '.js');
 print {$newuserfh} qq{
 db.createUser(
   {
-    user: "bucardo",
-    pwd: "bucardo",
+    user: "bucordo",
+    pwd: "bucordo",
     roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]
   }
 )
@@ -73,7 +73,7 @@ for my $mdb (@mongos) {
         ## This will hang if more than one called: fixme!
         ## system $COM;
     }
-    ## Create the bucardo user, just in case:
+    ## Create the bucordo user, just in case:
     my $COM = "mongo --quiet --port $port admin $newuserfilename 2>/dev/null";
     system $COM;
 
@@ -88,13 +88,13 @@ for my $mdb (@mongos) {
     }
 }
 
-use BucardoTesting;
+use bucordoTesting;
 
 ## For now, remove the bytea table type as we don't have full mongo support yet
-delete $tabletype{bucardo_test8};
+delete $tabletype{bucordo_test8};
 
 ## Also cannot handle multi-column primary keys
-delete $tabletype{bucardo_test2};
+delete $tabletype{bucordo_test2};
 
 for my $key (keys %tabletype) {
     next if $key !~ /test1/;
@@ -115,13 +115,13 @@ for my $mdb (@mongos) {
     is_deeply (\@names, [], $t);
 }
 
-$bct = BucardoTesting->new() or BAIL_OUT "Creation of BucardoTesting object failed\n";
+$bct = bucordoTesting->new() or BAIL_OUT "Creation of bucordoTesting object failed\n";
 $location = 'mongo';
 
 pass("*** Beginning mongo tests");
 
 END {
-    $bct and $bct->stop_bucardo($dbhX);
+    $bct and $bct->stop_bucordo($dbhX);
     $dbhX and  $dbhX->disconnect();
     $dbhA and $dbhA->disconnect();
     $dbhB and $dbhB->disconnect();
@@ -133,71 +133,71 @@ $dbhA = $bct->repopulate_cluster('A');
 $dbhB = $bct->repopulate_cluster('B');
 $dbhC = $bct->repopulate_cluster('C');
 
-## Create a bucardo database, and install Bucardo into it
-$dbhX = $bct->setup_bucardo('A');
+## Create a bucordo database, and install bucordo into it
+$dbhX = $bct->setup_bucordo('A');
 
-## Tell Bucardo about these databases
+## Tell bucordo about these databases
 
 ## Three Postgres databases will be source, source, and target
 for my $name (qw/ A B C /) {
     $t = "Adding database from cluster $name works";
     my ($dbuser,$dbport,$dbhost) = $bct->add_db_args($name);
-    $command = "bucardo add db $name dbname=bucardo_test user=$dbuser port=$dbport host=$dbhost";
+    $command = "bucordo add db $name dbname=bucordo_test user=$dbuser port=$dbport host=$dbhost";
     $res = $bct->ctl($command);
     like ($res, qr/Added database "$name"/, $t);
 }
 
 $t = 'Adding mongo database M works';
 $command =
-"bucardo add db M dbname=btest1 dbuser=bucardo dbpass=bucardo dbport=$mongoport[1] type=mongo";
+"bucordo add db M dbname=btest1 dbuser=bucordo dbpass=bucordo dbport=$mongoport[1] type=mongo";
 $res = $bct->ctl($command);
 like ($res, qr/Added database "M"/, $t);
 
 $t = 'Adding mongo database N works';
-$command = qq{bucardo add db N dbname=btest2 dbdsn="mongodb://localhost:$mongoport[2]" type=mongo};
+$command = qq{bucordo add db N dbname=btest2 dbdsn="mongodb://localhost:$mongoport[2]" type=mongo};
 $res = $bct->ctl($command);
 like ($res, qr/Added database "N"/, $t);
 
 $t = 'Adding mongo database O works';
-$command = qq{bucardo add db O dbname=btest3 dbdsn="mongodb://localhost:$mongoport[3]" type=mongo};
+$command = qq{bucordo add db O dbname=btest3 dbdsn="mongodb://localhost:$mongoport[3]" type=mongo};
 $res = $bct->ctl($command);
 like ($res, qr/Added database "O"/, $t);
 
-## Teach Bucardo about all pushable tables, adding them to a new relgroup named "therd"
+## Teach bucordo about all pushable tables, adding them to a new relgroup named "therd"
 $t = q{Adding all tables on the master works};
 $command =
-"bucardo add tables all db=A relgroup=therd pkonly";
+"bucordo add tables all db=A relgroup=therd pkonly";
 $res = $bct->ctl($command);
 like ($res, qr/Creating relgroup: therd.*New tables added: \d/s, $t);
 
 ## Add a suffix to the end of each mongo target table on M
-$SQL = q{INSERT INTO bucardo.customname(goat,newname,db)
+$SQL = q{INSERT INTO bucordo.customname(goat,newname,db)
 SELECT id,tablename||'_pg','M' FROM goat};
 $dbhX->do($SQL);
 
 ## Add all sequences, and add them to the newly created relgroup
 $t = q{Adding all sequences on the master works};
 $command =
-"bucardo add sequences all db=A relgroup=therd";
+"bucordo add sequences all db=A relgroup=therd";
 $res = $bct->ctl($command);
 like ($res, qr/New sequences added: \d/, $t);
 
 ## Create a new dbgroup
 $t = q{Created a new dbgroup};
 $command =
-"bucardo add dbgroup md A:source B:source C M N O:fullcopy";
+"bucordo add dbgroup md A:source B:source C M N O:fullcopy";
 $res = $bct->ctl($command);
 like ($res, qr/Created dbgroup "md"/, $t);
 
 ## Create a new sync
 $t = q{Created a new sync};
 $command =
-"bucardo add sync mongo relgroup=therd dbs=md autokick=false";
+"bucordo add sync mongo relgroup=therd dbs=md autokick=false";
 $res = $bct->ctl($command);
 like ($res, qr/Added sync "mongo"/, $t);
 
-## Start up Bucardo with this new sync
-$bct->restart_bucardo($dbhX);
+## Start up bucordo with this new sync
+$bct->restart_bucordo($dbhX);
 
 ## Get the statement handles ready for each table type
 for my $table (sort keys %tabletype) {
@@ -255,7 +255,7 @@ $dbhC->commit();
 
 ## Commit, then kick off the sync
 $dbhA->commit();
-$bct->ctl('bucardo kick mongo 0');
+$bct->ctl('bucordo kick mongo 0');
 
 ## Check B and C for the new rows
 for my $table (sort keys %tabletype) {
@@ -331,7 +331,7 @@ for my $table (keys %tabletype) {
     $sth{update}{$table}{A}->execute(42);
 }
 $dbhA->commit();
-$bct->ctl('bucardo kick mongo 0');
+$bct->ctl('bucordo kick mongo 0');
 
 for my $mdb (@mongos) {
     my $db = $db[$mdb];
@@ -353,7 +353,7 @@ for my $table (keys %tabletype) {
     $sth{deleteall}{$table}{A}->execute();
 }
 $dbhA->commit();
-$bct->ctl('bucardo kick mongo 0');
+$bct->ctl('bucordo kick mongo 0');
 
 for my $mdb (@mongos) {
     my $db = $db[$mdb];
@@ -377,7 +377,7 @@ for my $table (keys %tabletype) {
     $sth{insert}{2}{$table}{A}->execute($val2);
 }
 $dbhA->commit();
-$bct->ctl('bucardo kick mongo 0');
+$bct->ctl('bucordo kick mongo 0');
 
 for my $mdb (@mongos) {
     my $db = $db[$mdb];
@@ -396,7 +396,7 @@ for my $table (keys %tabletype) {
     $sth{deleteone}{$table}{A}->execute(2); ## inty = 2
 }
 $dbhA->commit();
-$bct->ctl('bucardo kick mongo 0');
+$bct->ctl('bucordo kick mongo 0');
 
 for my $mdb (@mongos) {
     my $db = $db[$mdb];
@@ -419,7 +419,7 @@ for my $table (keys %tabletype) {
     $sth{insert}{4}{$table}{A}->execute($val4);
 }
 $dbhA->commit();
-$bct->ctl('bucardo kick mongo 0');
+$bct->ctl('bucordo kick mongo 0');
 
 for my $mdb (@mongos) {
     my $db = $db[$mdb];
@@ -437,7 +437,7 @@ for my $table (keys %tabletype) {
     $sth{truncate}{$table}{A}->execute();
 }
 $dbhA->commit();
-$bct->ctl('bucardo kick mongo 0');
+$bct->ctl('bucordo kick mongo 0');
 
 for my $mdb (@mongos) {
     my $db = $db[$mdb];
@@ -459,10 +459,10 @@ for my $table (keys %tabletype) {
 
 
 ## Test of customname options
-$dbhX->do('DELETE FROM bucardo.customname');
+$dbhX->do('DELETE FROM bucordo.customname');
 
 ## Add a new suffix to the end of each table in this sync for mongo
-$SQL = q{INSERT INTO bucardo.customname(goat,newname,db,sync)
+$SQL = q{INSERT INTO bucordo.customname(goat,newname,db,sync)
 SELECT id,tablename||'_pg','M','mongo' FROM goat};
 $dbhX->do($SQL);
 $dbhX->commit();
@@ -478,7 +478,7 @@ for my $table (keys %tabletype) {
     $sth{insert}{4}{$table}{A}->execute($val4);
 }
 $dbhA->commit();
-$bct->ctl('bucardo kick mongo 0');
+$bct->ctl('bucordo kick mongo 0');
 
 for my $mdb (@mongos) {
     my $db = $db[$mdb];
@@ -493,9 +493,9 @@ for my $mdb (@mongos) {
 }
 
 $t=q{Using customname, we can force a text string to an int};
-my $CS = 'SELECT id, data1 AS data2inty::INTEGER, inty, email FROM bucardo.bucardo_test2';
+my $CS = 'SELECT id, data1 AS data2inty::INTEGER, inty, email FROM bucordo.bucordo_test2';
 ## Set this one for this db and this sync
-$bct->ctl('bucardo add cs db=M sync=mongo table=ttable');
+$bct->ctl('bucordo add cs db=M sync=mongo table=ttable');
 
 $t=q{Using customname, we can restrict the columns sent};
 

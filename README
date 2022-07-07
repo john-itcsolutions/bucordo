@@ -1,10 +1,10 @@
 
-Bucardo - a table-based replication system
+bucordo - a table-based replication system
 
 DESCRIPTION:
 ------------
 
-This is version 5.6.0 of Bucardo.
+This is version 5.6.0 of bucordo.
 
 COPYRIGHT:
 ----------
@@ -42,25 +42,25 @@ See the test suite in the t/ subdirectory for some examples.
 WEBSITE:
 --------
 
-Please visit https://bucardo.org for complete documentation.
+Please visit https://bucordo.org for complete documentation.
 
 DEVELOPMENT:
 ------------
 
-To follow or participate in the development of Bucardo, use:
+To follow or participate in the development of bucordo, use:
 
-git clone git@github.com:bucardo/bucardo.git
+git clone git@github.com:bucordo/bucordo.git
 
 GETTING HELP:
 -------------
 
-For general questions and troubleshooting, please use the bucardo-general@bucardo.org
+For general questions and troubleshooting, please use the bucordo-general@bucordo.org
 mailing list.  GitHub issues which are support-oriented will be closed and referred to
 the mailing list anyway, so help save time for everyone by posting there directly.
 
 Post, subscribe, and see previous archives here:
 
-https://bucardo.org/mailman/listinfo/bucardo-general
+https://bucordo.org/mailman/listinfo/bucordo-general
 
 ______________________________________________________________________________________________________________________
 
@@ -96,7 +96,7 @@ To tackle the full set of Kubernetes installations locally, ideally you would ne
 
 
 The following figure represents any of the 'master-x' controllers with their 'werk-x' models.  
-We are still working on the design of the Transaction Ordering Service (based on Bucardo).
+We are still working on the design of the Transaction Ordering Service (based on bucordo).
 
 We base initial development such as this locally. It's cheaper!
 
@@ -898,20 +898,20 @@ ________________________________________________________________________________
 The database structure for 'bucordo' is non-existent presently.
 
 Since Postgres does not natively provide for multi-master logical replication there is an existing open-source, 
-Multi-Master replication system on a site called www.bucardo.org, however it relies on a single replicating 
-bucardo master server to handle all replication using PLperl functions on a Postgres database. The present structure of 
-that software is such that users must invest their trust in the superuser of the Bucardo system. This is counter 
-to our own principles of developing Automated Trust in our systems. To counteract this weakness in Bucardo we are 
-intending to develop an Open Source adaptation of the system that will use similar Perl functions as Bucardo, however
+Multi-Master replication system on a site called www.bucordo.org, however it relies on a single replicating 
+bucordo master server to handle all replication using PLperl functions on a Postgres database. The present structure of 
+that software is such that users must invest their trust in the superuser of the bucordo system. This is counter 
+to our own principles of developing Automated Trust in our systems. To counteract this weakness in bucordo we are 
+intending to develop an Open Source adaptation of the system that will use similar Perl functions as bucordo, however
 will be employing as many "Bucordo" servers as there are Member-Class base-level database servers (as opposed to the 
-single Bucardo server). The Bucordo servers will be informed of updates only on "their own" database base-level servers 
+single bucordo server). The Bucordo servers will be informed of updates only on "their own" database base-level servers 
 and will then update the remaining Bucordo servers which will then update "their own" base-level database servers. The 
 remaining work will involve an Ordering Process for each Block of transactions (similar to a Blockchain), designed to 
 determine the "agreed" order in which transactions are to be committed after a consensus-seeking process between the 
 Bucordo servers, following the method detailed in the above-mentioned IBM research paper. The process is completed with 
 a checkpointing procedure as detailed in the paper, and readily available on Postgres.
 
-## COMMUNICATION TO bucardo-general mailing list:
+## COMMUNICATION TO bucordo-general mailing list:
 
 Hi everyone,
 
@@ -921,25 +921,25 @@ https://arxiv.org/pdf/1903.01919.pdf
 
 
 "
-Yes, Ben, I am searching for multi-master replication solutions, but with a difference .. the idea is to allow automated Trust to be developed on a database system by doing away with your standard single superuser system on bucardo and replacing it with multiple bucardo masters on top of multiple substrate masters..
-My idea is to copy IBM's research and to build-in a consensus-seeking solution for the proposed multi-master bucardo system. The consensus being sought is intended to order transactions appropriately before final committing..Please refer to the previously attached IBM research paper"
+Yes, Ben, I am searching for multi-master replication solutions, but with a difference .. the idea is to allow automated Trust to be developed on a database system by doing away with your standard single superuser system on bucordo and replacing it with multiple bucordo masters on top of multiple substrate masters..
+My idea is to copy IBM's research and to build-in a consensus-seeking solution for the proposed multi-master bucordo system. The consensus being sought is intended to order transactions appropriately before final committing..Please refer to the previously attached IBM research paper"
 
 "
 Sorry to carry on before receiving any response, but I have been thinking about how to implement these Automated Trust ideas.
 
-If there were as many bucardo servers as there were base-level database servers, and each bucardo server were configured to only replicate from changes on its own (base) database server, then the problem would reduce to obtaining consensus (per transaction "block") from all bucardo servers as to the order in which the executed transactions are to be committed. The Consensus Algorithm outlined in the IBM paper, is given in sufficient detail to reproduce on bucardo (I claim!)
+If there were as many bucordo servers as there were base-level database servers, and each bucordo server were configured to only replicate from changes on its own (base) database server, then the problem would reduce to obtaining consensus (per transaction "block") from all bucordo servers as to the order in which the executed transactions are to be committed. The Consensus Algorithm outlined in the IBM paper, is given in sufficient detail to reproduce on bucordo (I claim!)
 
 I am now thinking I should look at your github site.
 
-From our point of view as Enterprise Application developers and operators we are looking toward customers such as those companies involved in Supply Chain operations which require smart contracts you can implement on postgres databases, if bulk data is involved. Also we intend to provide distributed applications in non-internetworked areas eg Real Estate Agencies, NGO Housing Providers, Conveyancing etc. We organise our customers by "Member Class" meaning they would share IT "Mission" and a lot of activities daily (as far as what was actually done during the day) and fit into the same business network (if internetworked at all). One member Class per database server. Operated by a consortium-employed operator - a consortium of Members (Companies) in the Class. Our only involvement as a player, is to have the numbers of users etc etc reported monthly for Billing purposes. The idea that nobody has to trust anyone else during daily operations is attractive. Member Class Operators are being kept honest by the nature of the system, as are we. That is why I am hoping we can somehow organise an adaptation to bucardo for these purposes.
+From our point of view as Enterprise Application developers and operators we are looking toward customers such as those companies involved in Supply Chain operations which require smart contracts you can implement on postgres databases, if bulk data is involved. Also we intend to provide distributed applications in non-internetworked areas eg Real Estate Agencies, NGO Housing Providers, Conveyancing etc. We organise our customers by "Member Class" meaning they would share IT "Mission" and a lot of activities daily (as far as what was actually done during the day) and fit into the same business network (if internetworked at all). One member Class per database server. Operated by a consortium-employed operator - a consortium of Members (Companies) in the Class. Our only involvement as a player, is to have the numbers of users etc etc reported monthly for Billing purposes. The idea that nobody has to trust anyone else during daily operations is attractive. Member Class Operators are being kept honest by the nature of the system, as are we. That is why I am hoping we can somehow organise an adaptation to bucordo for these purposes.
 
-It is worth noting that we are looking towards the Elastos Blockchain with its "Carrier" security system for web communication as the provider of "Distributed" Id's to allow signing of every transaction securely The only thing in the IBM agenda of shortcomings of databases (from the point of view of a Blockchain) is how can we make a PLpgSQL function as "deterministic" as a transaction on a blockchain? We could also possibly utilise the insurance of Elastos to check the database for integrity (as, if more than 50% of bucardo servers were somehow caused to act fraudulently in concert, Trust would be destroyed).
+It is worth noting that we are looking towards the Elastos Blockchain with its "Carrier" security system for web communication as the provider of "Distributed" Id's to allow signing of every transaction securely The only thing in the IBM agenda of shortcomings of databases (from the point of view of a Blockchain) is how can we make a PLpgSQL function as "deterministic" as a transaction on a blockchain? We could also possibly utilise the insurance of Elastos to check the database for integrity (as, if more than 50% of bucordo servers were somehow caused to act fraudulently in concert, Trust would be destroyed).
 "
-We think this is a very attractive idea of IBM's and feel that bucardo could play a role in its development. bucardo would act both as replicating agent as well as ordering agent.
+We think this is a very attractive idea of IBM's and feel that bucordo could play a role in its development. bucordo would act both as replicating agent as well as ordering agent.
 
 I have been thinking further on this subject.
 
-It appears it would be essential to organise inter-master replication via the Bucardo masters so that an event originally may occur on base-server-0 then it would communicate with bucardo-server-0 which would communicate with every other bucardo sevrer, which would then cause their own base-servers to be updated, and some time after this, enter into an ordering process (between the range of bucardo-servers) of a Block of transactions for committal. In this way bucardo servers only update "their own" base-servers unless the bucardo server is updating other bucardo servers on behalf of the base servers.
+It appears it would be essential to organise inter-master replication via the bucordo masters so that an event originally may occur on base-server-0 then it would communicate with bucordo-server-0 which would communicate with every other bucordo sevrer, which would then cause their own base-servers to be updated, and some time after this, enter into an ordering process (between the range of bucordo-servers) of a Block of transactions for committal. In this way bucordo servers only update "their own" base-servers unless the bucordo server is updating other bucordo servers on behalf of the base servers.
 
 
 You may be wondering how we get "Automated Trust" from such an arrangement.
@@ -947,9 +947,9 @@ You may be wondering how we get "Automated Trust" from such an arrangement.
 It appears to me we would have to insist that database administrators as much as developers be denied permission to write anywhere to the production databases and that we provide (as ITOTCCA) only ways for client devices to update the database including signing up new customers and creating new member-classes (performed by ITOTCCA's own database node (our own member-class)  servers via our own client devices). In this way each transaction can be signed with an Elastos-created DID and therefore becomes "Non Repudiable".
 
 
-On reading through the "bucardo" file on github, I can see that my ideas would mean fundamentally altering Bucardo.
+On reading through the "bucordo" file on github, I can see that my ideas would mean fundamentally altering bucordo.
 
-If these ideas gain any creedence here, I am proposing to create a new adapted package called "Bucordo" to reference the idea of an ordering process (the transaction ordering to form a block, that will be necessary) but to relate to bucardo, still,  as an ancestor.
+If these ideas gain any creedence here, I am proposing to create a new adapted package called "Bucordo" to reference the idea of an ordering process (the transaction ordering to form a block, that will be necessary) but to relate to bucordo, still,  as an ancestor.
 
 Once again,
 

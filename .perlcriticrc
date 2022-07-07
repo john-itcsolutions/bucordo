@@ -1,5 +1,5 @@
 
-## perlcritic file for Bucardo
+## perlcritic file for bucordo
 ## Usage: perlcritic -profile <thisfile> <scriptname>
 
 verbose = 8
@@ -78,7 +78,7 @@ profile-strictness = quiet
 [-Editor::RequireEmacsFileVariables]
 [-Lax::ProhibitEmptyQuotes::ExceptAsFallback]
 ## This one really ought to be removed entirely:
-## Giving too many false positives in bucardo:
+## Giving too many false positives in bucordo:
 [-Miscellanea::ProhibitUselessNoCritic]
 [-Miscellanea::RequireRcsKeywords]
 [-References::ProhibitDoubleSigils]

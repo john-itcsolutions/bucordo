@@ -22,44 +22,44 @@ if ($majorversion < 3) {
 }
 plan tests => 20;
 
-use BucardoTesting;
-my $bct = BucardoTesting->new({ location => 'makedelta' })
-    or BAIL_OUT "Creation of BucardoTesting object failed\n";
+use bucordoTesting;
+my $bct = bucordoTesting->new({ location => 'makedelta' })
+    or BAIL_OUT "Creation of bucordoTesting object failed\n";
 
-END { $bct->stop_bucardo if $bct }
+END { $bct->stop_bucordo if $bct }
 
 ok my $dbhA = $bct->repopulate_cluster('A'), 'Populate cluster A';
 ok my $dbhB = $bct->repopulate_cluster('B'), 'Populate cluster B';
 ok my $dbhC = $bct->repopulate_cluster('C'), 'Populate cluster C';
 ok my $dbhD = $bct->repopulate_cluster('D'), 'Populate cluster D';
-ok my $dbhX = $bct->setup_bucardo('A'), 'Set up Bucardo';
+ok my $dbhX = $bct->setup_bucordo('A'), 'Set up bucordo';
 
 END { $_->disconnect for grep { $_ } $dbhA, $dbhB, $dbhC, $dbhD, $dbhX }
 
 $_->{pg_enable_utf8} = 0 for grep { $_ } $dbhA, $dbhB, $dbhC, $dbhD, $dbhX;
 
-# Teach Bucardo about the databases.
+# Teach bucordo about the databases.
 for my $db (qw(A B C D)) {
     my ($user, $port, $host) = $bct->add_db_args($db);
     like $bct->ctl(
-        "bucardo add db $db dbname=bucardo_test user=$user port=$port host=$host"
-    ), qr/Added database "$db"/, qq{Add database "$db" to Bucardo};
+        "bucordo add db $db dbname=bucordo_test user=$user port=$port host=$host"
+    ), qr/Added database "$db"/, qq{Add database "$db" to bucordo};
 }
 
 for my $arr ((['A','B'], ['C','D'])) {
     my ($src, $dest) = @$arr;
-    like $bct->ctl("bucardo add table bucardo_test1 db=$src relgroup=myrels_$src"),
+    like $bct->ctl("bucordo add table bucordo_test1 db=$src relgroup=myrels_$src"),
         qr/Added the following tables/, "Added table in db $src ";
-    like $bct->ctl("bucardo add sync test_$src relgroup=myrels_$src dbs=$src:source,$dest:target"),
+    like $bct->ctl("bucordo add sync test_$src relgroup=myrels_$src dbs=$src:source,$dest:target"),
         qr/Added sync "test_$src"/, "Create sync from $src to $dest";
 }
 
 # Now remove syncs, for easier testing
-map { $bct->ctl('bucardo remove sync $_') } qw/A C/;
+map { $bct->ctl('bucordo remove sync $_') } qw/A C/;
 
 # Remove a table from just database C
-like $bct->ctl('bucardo remove table public.bucardo_test1 db=C'),
-    qr/Removed the following tables:\s*\n\s+public.bucardo_test1 \(DB: C\)/,
+like $bct->ctl('bucordo remove table public.bucordo_test1 db=C'),
+    qr/Removed the following tables:\s*\n\s+public.bucordo_test1 \(DB: C\)/,
     "Removed table from just one database";
 
 ## Test non-ASCII characters in table names
@@ -71,17 +71,17 @@ for my $dbh (($dbhA, $dbhB)) {
 }
 
 ## XXX TODO: Make sync names and relgroup names with non-ASCII characters work
-like $bct->ctl(encode_utf8('bucardo add table test_büçárđo db=A relgroup=unicode')),
+like $bct->ctl(encode_utf8('bucordo add table test_büçárđo db=A relgroup=unicode')),
     qr/Added the following tables/, "Added table in db A";
-like($bct->ctl("bucardo add sync test_unicode relgroup=unicode dbs=A:source,B:target"),
+like($bct->ctl("bucordo add sync test_unicode relgroup=unicode dbs=A:source,B:target"),
     qr/Added sync "test_unicode"/, "Create sync from A to B")
     or BAIL_OUT "Failed to add test_unicode sync";
 
 $dbhA->do(encode_utf8("INSERT INTO test_büçárđo (pkey_\x{2695}, data) VALUES (1, 'Something')"));
 $dbhA->commit;
 
-## Get Bucardo going
-$bct->restart_bucardo($dbhX);
+## Get bucordo going
+$bct->restart_bucordo($dbhX);
 
 ## Kick off the sync.
 my $timer_regex = qr/\[0\s*s\]\s+(?:[\b]{6}\[\d+\s*s\]\s+)*/;
@@ -93,7 +93,7 @@ my $res = $dbhB->selectall_arrayref(encode_utf8('SELECT * FROM test_büçárđo'
 ok($#$res == 0 && $res->[0][0] == 1 && $res->[0][1] eq 'Something', 'Replication worked');
 
 END {
-    $bct and $bct->stop_bucardo();
+    $bct and $bct->stop_bucordo();
     $dbhX and $dbhX->disconnect();
     $dbhA and $dbhA->disconnect();
     $dbhB and $dbhB->disconnect();

@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 # -*-mode:cperl; indent-tabs-mode: nil-*-
 
-## Test Bucardo in a large star network
+## Test bucordo in a large star network
 ## We will use 'A' as the hub, and the three others B C D, each having multiple dbs
 
 use 5.008003;
@@ -14,16 +14,16 @@ use Test::More;
 
 use vars qw/ $dbhX $dbhA $dbhB $dbhC $dbhD $res $command $t $SQL $sth $count /;
 
-use BucardoTesting;
-my $bct = BucardoTesting->new({location => 'star', bail => 1})
-    or BAIL_OUT "Creation of BucardoTesting object failed\n";
+use bucordoTesting;
+my $bct = bucordoTesting->new({location => 'star', bail => 1})
+    or BAIL_OUT "Creation of bucordoTesting object failed\n";
 
 plan tests => 66;
 
 pass("*** Beginning star tests");
 
 END {
-    $bct and $bct->stop_bucardo();
+    $bct and $bct->stop_bucordo();
     $dbhX and $dbhX->disconnect();
     $dbhA and $dbhA->disconnect();
     $dbhB and $dbhB->disconnect();
@@ -38,15 +38,15 @@ $dbhB = $bct->repopulate_cluster('B',$extras);
 $dbhC = $bct->repopulate_cluster('C',$extras);
 $dbhD = $bct->repopulate_cluster('D',$extras);
 
-## Create a bucardo database, and install Bucardo into it
-$dbhX = $bct->setup_bucardo('A');
+## Create a bucordo database, and install bucordo into it
+$dbhX = $bct->setup_bucordo('A');
 
-## Teach Bucardo about all databases
+## Teach bucordo about all databases
 my (@alldbs, @alldbhs, %dbmap);
 for my $name (qw/ A B C D /) {
     my ($dbuser,$dbport,$dbhost) = $bct->add_db_args($name);
     for my $number (0..$extras) {
-        my $dbname = 'bucardo_test';
+        my $dbname = 'bucordo_test';
         my $bname = $name;
         ## Always a single hub
         next if $number and $name eq 'A';
@@ -55,7 +55,7 @@ for my $name (qw/ A B C D /) {
             $bname .= $number;
         }
         $t = "Added database $bname for database $dbname";
-        $command = "bucardo add db $bname dbname=$dbname user=$dbuser port=$dbport host=$dbhost";
+        $command = "bucordo add db $bname dbname=$dbname user=$dbuser port=$dbport host=$dbhost";
         $command .= ' makedelta=1' if $name eq 'A';
         $res = $bct->ctl($command);
         like ($res, qr/Added database "$bname"/, $t);
@@ -68,12 +68,12 @@ for my $name (qw/ A B C D /) {
 
 ## Put all pk tables into a relgroup
 $t = q{Added all PK tables to a relgroup named 'allpk'};
-$res = $bct->ctl(q{bucardo add tables '*bucardo*test*' '*Bucardo*test*' db=A relgroup=allpk pkonly});
+$res = $bct->ctl(q{bucordo add tables '*bucordo*test*' '*bucordo*test*' db=A relgroup=allpk pkonly});
 like ($res, qr/Created the relgroup named "allpk".*are now part of/s, $t);
 
 ## Make a simpler relgroup of just one table
-$t = q{Created relgroup of just bucardo_test1 named 'rel1'};
-$res = $bct->ctl(q{bucardo add relgroup rel1 bucardo_test1});
+$t = q{Created relgroup of just bucordo_test1 named 'rel1'};
+$res = $bct->ctl(q{bucordo add relgroup rel1 bucordo_test1});
 like ($res, qr/relgroup "rel1"/s, $t);
 
 ## Create a lot of syncs. Each simulates a multi-source from center to a distinct server leaf
@@ -83,7 +83,7 @@ for my $db (qw/ B C D /) {
         my $syncname = "star$number";
         my $leaf = sprintf '%s%s', $db, $num || '';
         $t = qq{Created a new sync $syncname going for A <=> $leaf};
-        my $command = "bucardo add sync $syncname relgroup=rel1 dbs=A,$leaf:source autokick=true";
+        my $command = "bucordo add sync $syncname relgroup=rel1 dbs=A,$leaf:source autokick=true";
         $res = $bct->ctl($command);
         like ($res, qr/Added sync "$syncname"/, $t);
         $number++;
@@ -91,20 +91,20 @@ for my $db (qw/ B C D /) {
 }
 
 ## Turn off the vac daemon for now
-$bct->ctl('bucardo set bucardo_vac=0');
+$bct->ctl('bucordo set bucordo_vac=0');
 
-## Start up the Bucardo daemon
-$bct->restart_bucardo($dbhX);
+## Start up the bucordo daemon
+$bct->restart_bucordo($dbhX);
 
 ## Add a row to A and make sure it gets to all leafs
 $bct->add_row_to_database('A', 1);
-$bct->ctl('bucardo kick sync star1 0');
+$bct->ctl('bucordo kick sync star1 0');
 sleep 5;
-$bct->check_for_row([[1]], \@alldbs, '', 'bucardo_test1');
+$bct->check_for_row([[1]], \@alldbs, '', 'bucordo_test1');
 
 $number = 0;
 my $maxnumber = 1;
-$SQL = 'INSERT INTO bucardo_test1(id,inty) VALUES (?,?)';
+$SQL = 'INSERT INTO bucordo_test1(id,inty) VALUES (?,?)';
 for my $dbh (@alldbhs) {
     $number++;
     next if $number < 2; ## Do not want to add anything to the "A" database
@@ -121,7 +121,7 @@ for my $dbh (@alldbhs) {
 my $toolong = 30; ## number of 1-second loops
 my $round = 1;
 
-$SQL = 'SELECT id FROM bucardo_test1 ORDER BY id';
+$SQL = 'SELECT id FROM bucordo_test1 ORDER BY id';
 my %sth;
 for my $dbh (@alldbhs) {
     $sth{$dbh} = $dbh->prepare($SQL);
@@ -161,8 +161,8 @@ for my $dbh (@alldbhs) {
 
 my $result = [];
 push @$result, [$_] for 1..$maxnumber;
-$bct->check_for_row($result, [qw/ A B C D /], '', 'bucardo_test1');
+$bct->check_for_row($result, [qw/ A B C D /], '', 'bucordo_test1');
 
-$bct->ctl('bucardo stop');
+$bct->ctl('bucordo stop');
 
 done_testing();

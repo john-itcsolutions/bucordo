@@ -1,4 +1,4 @@
-## ctest1.pl - a conflict handler for Bucardo
+## ctest1.pl - a conflict handler for bucordo
 use strict;
 use warnings;
 

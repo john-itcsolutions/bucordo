@@ -14,9 +14,9 @@ if (! $ENV{RELEASE_TESTING}) {
     plan (skip_all =>  'Test skipped unless environment variable RELEASE_TESTING is set');
 }
 
-## The 'bucardo' script
+## The 'bucordo' script
 
-my $file = 'bucardo';
+my $file = 'bucordo';
 my $fh;
 if (! open $fh, '<', $file) {
     $file = "../$file";
@@ -35,7 +35,7 @@ close $fh or die qq{Could not close filehandle for "$file": $!\n};
 
 pass "Scanned file $file";
 
-$file = 'Bucardo.pm';
+$file = 'bucordo.pm';
 if (! open $fh, '<', $file) {
     $file = "../$file";
     if (! open $fh, '<', $file) {

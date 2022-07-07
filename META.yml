@@ -1,5 +1,5 @@
 --- #YAML:1.0
-name                : Bucardo
+name                : bucordo
 version             : 5.6.0
 abstract            : Postgres multi-master replication system
 author:              
@@ -30,19 +30,19 @@ build_requires:
   Module::Signature   : 0.50
 
 provides:
-  Bucardo:
-    file            : Bucardo.pm
+  bucordo:
+    file            : bucordo.pm
     version         : 5.6.0
-  bucardo:
-    file            : bucardo
+  bucordo:
+    file            : bucordo
     version         : 5.6.0
 
 resources:
-  homepage          : https://bucardo.org/index.html
-  MailingList       : https://bucardo.org/list.html
-  bugtracker        : https://github.com/bucardo/bucardo/issues
-  repository        : https://bucardo.org/repo.html
-  license           : https://bucardo.org/license.html
+  homepage          : https://bucordo.org/index.html
+  MailingList       : https://bucordo.org/list.html
+  bugtracker        : https://github.com/bucordo/bucordo/issues
+  repository        : https://bucordo.org/repo.html
+  license           : https://bucordo.org/license.html
 meta-spec:
   version           : 1.3
   url               : http://module-build.sourceforge.net/META-spec-v1.3.html

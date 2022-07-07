@@ -12,9 +12,9 @@
 ## next section, run this command, replacing `{sync}` with the name of the
 ## sync it applies to.
 ##
-##     bucardo add customcode employee_sub_email_key_conflict \
+##     bucordo add customcode employee_sub_email_key_conflict \
 ##            whenrun=exception \
-##            src_code=bucardo_unique_conflict_resolution.pl \
+##            src_code=bucordo_unique_conflict_resolution.pl \
 ##            sync={sync} \
 ##            getdbh=1 \
 ##            relation=public.employee

@@ -1,16 +1,16 @@
 This directory contains various helper scripts.
 
-* bucardo-report
+* bucordo-report
 
-Web-based report on Bucardo activity
+Web-based report on bucordo activity
 
-* bucardo_rrd
+* bucordo_rrd
 
-Grab a bunch of Bucardo stats for cacti
+Grab a bunch of bucordo stats for cacti
 
-* check_bucardo_sync
+* check_bucordo_sync
 
-Check the status of Bucardo through the stats page
+Check the status of bucordo through the stats page
 
 
 

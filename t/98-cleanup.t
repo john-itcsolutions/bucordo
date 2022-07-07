@@ -9,15 +9,15 @@ use warnings;
 use Test::More;
 use File::Path 'rmtree';
 
-if ($ENV{BUCARDO_NOCLEANUP}) {
-    diag 'Skipping cleanup because BUCARDO_NOCLEANUP is set';
+if ($ENV{bucordo_NOCLEANUP}) {
+    diag 'Skipping cleanup because bucordo_NOCLEANUP is set';
     done_testing();
     exit;
 }
 
 opendir my $dh, '.' or die qq{Could not opendir?: $!\n};
 for my $dir (readdir $dh) {
-    next if $dir !~ /^bucardo_test_database_[A-Z]/ or ! -d $dir;
+    next if $dir !~ /^bucordo_test_database_[A-Z]/ or ! -d $dir;
     my $pidfile = "$dir/postmaster.pid";
     if (-e $pidfile) {
         open my $fh, '<', $pidfile or die qq{Could not open "$pidfile": $!\n};
@@ -35,7 +35,7 @@ for my $dir (readdir $dh) {
 
 pass 'Test databases are shut down';
 
-my $dir = "/tmp/bucardo_testing_$ENV{USER}";
+my $dir = "/tmp/bucordo_testing_$ENV{USER}";
 if (-d $dir) {
     opendir my $dh, $dir or die qq{Could not open directory "$dir": $!\n};
     for my $file (grep { /^\w/ } readdir($dh)) {
@@ -47,7 +47,7 @@ if (-d $dir) {
 
 pass "Removed directory $dir";
 
-unlink <bucardo_pgservice.tmp.*>;
+unlink <bucordo_pgservice.tmp.*>;
 
 done_testing();
 

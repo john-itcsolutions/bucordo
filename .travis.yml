@@ -37,7 +37,7 @@ before_install:
 
 script:
   - perl Makefile.PL
-  - BUCARDO_LOG_ERROR_CONTEXT=1 PATH=$PATH:/usr/lib/postgresql/${PGVERSION}/bin make test
+  - bucordo_LOG_ERROR_CONTEXT=1 PATH=$PATH:/usr/lib/postgresql/${PGVERSION}/bin make test
 
 after_failure:
   - cat log.context

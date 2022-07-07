@@ -31,7 +31,7 @@ if (! -e $PROFILE) {
 
 plan tests => 2;
 Test::Perl::Critic->import( -profile => $PROFILE );
-critic_ok('Bucardo.pm');
-critic_ok('bucardo');
+critic_ok('bucordo.pm');
+critic_ok('bucordo');
 
 

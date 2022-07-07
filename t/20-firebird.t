@@ -39,18 +39,18 @@ if (!$evalok) {
     plan (skip_all =>  "Cannot test Firebird as we cannot connect to a running Firebird database: $@");
 }
 
-use BucardoTesting;
+use bucordoTesting;
 
 ## For now, remove a few test tables
 for my $x (2,5,6,8,9,10) {
-    delete $tabletypefirebird{"bucardo_test$x"};
+    delete $tabletypefirebird{"bucordo_test$x"};
 }
 
 my $numtabletypes = keys %tabletypefirebird;
 plan tests => 151;
 
 ## Drop the test database if it exists
-$dbname = q{/tmp/bucardo_test};
+$dbname = q{/tmp/bucordo_test};
 
 eval {
     $dbh->do("DROP DATABASE $dbname");
@@ -90,13 +90,13 @@ for my $table (sort keys %tabletypefirebird) {
 
 }
 
-$bct = BucardoTesting->new() or BAIL_OUT "Creation of BucardoTesting object failed\n";
+$bct = bucordoTesting->new() or BAIL_OUT "Creation of bucordoTesting object failed\n";
 $location = 'firebird';
 
 pass("*** Beginning Firebird tests");
 
 END {
-    $bct and $bct->stop_bucardo($dbhX);
+    $bct and $bct->stop_bucordo($dbhX);
     $dbhX and  $dbhX->disconnect();
     $dbhA and $dbhA->disconnect();
     $dbhB and $dbhB->disconnect();
@@ -109,60 +109,60 @@ $dbhA = $bct->repopulate_cluster('A');
 $dbhB = $bct->repopulate_cluster('B');
 $dbhC = $bct->repopulate_cluster('C');
 
-## Create a bucardo database, and install Bucardo into it
-$dbhX = $bct->setup_bucardo('A');
+## Create a bucordo database, and install bucordo into it
+$dbhX = $bct->setup_bucordo('A');
 
-## Tell Bucardo about these databases
+## Tell bucordo about these databases
 
 ## Three Postgres databases will be source, source, and target
 for my $name (qw/ A B C /) {
     $t = "Adding database from cluster $name works";
     my ($dbuser,$dbport,$dbhost) = $bct->add_db_args($name);
-    $command = "bucardo add db $name dbname=bucardo_test user=$dbuser port=$dbport host=$dbhost";
+    $command = "bucordo add db $name dbname=bucordo_test user=$dbuser port=$dbport host=$dbhost";
     $res = $bct->ctl($command);
     like ($res, qr/Added database "$name"/, $t);
 }
 
 $t = 'Adding firebird database Q works';
 $command =
-"bucardo add db Q dbname=$dbname type=firebird dbuser=$dbuser password=$dbpass";
+"bucordo add db Q dbname=$dbname type=firebird dbuser=$dbuser password=$dbpass";
 $res = $bct->ctl($command);
 like ($res, qr/Added database "Q"/, $t);
 
-## Teach Bucardo about all pushable tables, adding them to a new relgroup named "therd"
+## Teach bucordo about all pushable tables, adding them to a new relgroup named "therd"
 $t = q{Adding all tables on the master works};
 $command =
-"bucardo add tables all db=A relgroup=therd pkonly";
+"bucordo add tables all db=A relgroup=therd pkonly";
 $res = $bct->ctl($command);
 like ($res, qr/Creating relgroup: therd.*New tables added: \d/s, $t);
 
 ## Add all sequences, and add them to the newly created relgroup
 $t = q{Adding all sequences on the master works};
 $command =
-"bucardo add sequences all db=A relgroup=therd";
+"bucordo add sequences all db=A relgroup=therd";
 $res = $bct->ctl($command);
 like ($res, qr/New sequences added: \d/, $t);
 
 ## Create a new dbgroup
 $t = q{Created a new dbgroup};
 $command =
-"bucardo add dbgroup qx A:source B:source C Q";
+"bucordo add dbgroup qx A:source B:source C Q";
 $res = $bct->ctl($command);
 like ($res, qr/Created dbgroup "qx"/, $t);
 
 ## Create a new sync
 $t = q{Created a new sync};
 $command =
-"bucardo add sync firebird relgroup=therd dbs=qx autokick=false";
+"bucordo add sync firebird relgroup=therd dbs=qx autokick=false";
 $res = $bct->ctl($command);
 like ($res, qr/Added sync "firebird"/, $t);
 
 ## Create a second sync, solely for multi-sync interaction issues
-$bct->ctl('bucardo add dbgroup t1 A:source B C');
-$bct->ctl('bucardo add sync tsync1 relgroup=therd dbs=t1 autokick=false status=inactive');
+$bct->ctl('bucordo add dbgroup t1 A:source B C');
+$bct->ctl('bucordo add sync tsync1 relgroup=therd dbs=t1 autokick=false status=inactive');
 
-## Start up Bucardo with these new syncs
-$bct->restart_bucardo($dbhX);
+## Start up bucordo with these new syncs
+$bct->restart_bucordo($dbhX);
 
 ## Boolean values
 my (@boolys) = qw( xxx true false null false true null );
@@ -222,8 +222,8 @@ for my $table (sort keys %tabletypefirebird) {
 
 ## Commit, then kick off the sync
 $dbhA->commit();
-$bct->ctl('bucardo kick firebird 0');
-$bct->ctl('bucardo kick firebird 0');
+$bct->ctl('bucordo kick firebird 0');
+$bct->ctl('bucordo kick firebird 0');
 
 ## Check B and C for the new rows
 for my $table (sort keys %tabletypefirebird) {
@@ -276,7 +276,7 @@ for my $table (keys %tabletypefirebird) {
     $sth{update}{$table}{A}->execute(42);
 }
 $dbhA->commit();
-$bct->ctl('bucardo kick firebird 0');
+$bct->ctl('bucordo kick firebird 0');
 
 for my $table (keys %tabletypefirebird) {
     $t = "Firebird table $table has correct number of rows after update";
@@ -295,7 +295,7 @@ for my $table (keys %tabletypefirebird) {
     $sth{deleteall}{$table}{A}->execute();
 }
 $dbhA->commit();
-$bct->ctl('bucardo kick firebird 0');
+$bct->ctl('bucordo kick firebird 0');
 
 for my $table (keys %tabletypefirebird) {
     $t = "Firebird table $table has correct number of rows after delete";
@@ -316,7 +316,7 @@ for my $table (keys %tabletypefirebird) {
     $sth{insert}{2}{$table}{A}->execute($val2);
 }
 $dbhA->commit();
-$bct->ctl('bucardo kick firebird 0');
+$bct->ctl('bucordo kick firebird 0');
 
 for my $table (keys %tabletypefirebird) {
     $t = "Firebird table $table has correct number of rows after double insert";
@@ -332,7 +332,7 @@ for my $table (keys %tabletypefirebird) {
     $sth{deleteone}{$table}{A}->execute(2); ## inty = 2
 }
 $dbhA->commit();
-$bct->ctl('bucardo kick firebird 0');
+$bct->ctl('bucordo kick firebird 0');
 
 for my $table (keys %tabletypefirebird) {
     $t = "Firebird table $table has correct number of rows after single deletion";
@@ -352,7 +352,7 @@ for my $table (keys %tabletypefirebird) {
     $sth{insert}{4}{$table}{A}->execute($val4);
 }
 $dbhA->commit();
-$bct->ctl('bucardo kick firebird 0');
+$bct->ctl('bucordo kick firebird 0');
 
 for my $table (keys %tabletypefirebird) {
     $t = "Firebird table $table has correct number of rows after more inserts";

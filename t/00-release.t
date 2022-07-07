@@ -3,7 +3,7 @@
 
 ## Make sure the version number is consistent in all places
 ## Check all files in MANIFEST for tabs and odd characters
-## Check that all glog calls in Bucardo.pm have a level set
+## Check that all glog calls in bucordo.pm have a level set
 
 use 5.006;
 use strict;
@@ -34,23 +34,23 @@ my %v;
 my $vre = qr{(\d+\.\d+\.\d+\_?\d*)};
 
 ## Grab version from various files
-$file = 'Bucardo.pm';
+$file = 'bucordo.pm';
 open my $fh, '<', $file or die qq{Could not open "$file": $!\n};
 my $logsok = 1;
 while (<$fh>) {
 	push @{$v{$file}} => [$1,$.] if (/VERSION = '$vre'/ or /document describes version $vre/);
     if (/self->glog.+\);/ and ! /LOG_(\w+)\)/) {
         $logsok = 0;
-        diag "Bad glog call at line $. of Bucardo.pm\n";
+        diag "Bad glog call at line $. of bucordo.pm\n";
     }
 }
 close $fh or warn qq{Could not close "$file": $!\n};
 
 if ($logsok) {
-    pass 'All calls to glog inside of Bucardo.pm are using a log level';
+    pass 'All calls to glog inside of bucordo.pm are using a log level';
 }
 else {
-    fail 'Not all calls to glog inside of Bucardo.pm are using a log level';
+    fail 'Not all calls to glog inside of bucordo.pm are using a log level';
 }
 
 $file = 'META.yml';
@@ -67,21 +67,21 @@ while (<$fh>) {
 }
 close $fh or warn qq{Could not close "$file": $!\n};
 
-$file = 'Bucardo.pm.html';
+$file = 'bucordo.pm.html';
 open $fh, '<', $file or die qq{Could not open "$file": $!\n};
 while (<$fh>) {
 	push @{$v{$file}} => [$1,$.] if /document describes version $vre/;
 }
 close $fh or warn qq{Could not close "$file": $!\n};
 
-$file = 'bucardo';
+$file = 'bucordo';
 open $fh, '<', $file or die qq{Could not open "$file": $!\n};
 while (<$fh>) {
 	push @{$v{$file}} => [$1,$.] if (/VERSION = '$vre'/ or /document describes version $vre/);
 }
 close $fh or warn qq{Could not close "$file": $!\n};
 
-$file = 'bucardo.html';
+$file = 'bucordo.html';
 open $fh, '<', $file or die qq{Could not open "$file": $!\n};
 while (<$fh>) {
 	push @{$v{$file}} => [$1,$.] if /document describes version $vre/;
@@ -105,7 +105,7 @@ while (<$fh>) {
 }
 close $fh or warn qq{Could not close "$file": $!\n};
 
-$file = 'bucardo.schema';
+$file = 'bucordo.schema';
 open $fh, '<', $file or die qq{Could not open "$file": $!\n};
 while (<$fh>) {
 	push @{$v{$file}} => [$1,$.] if (/\-\- Version $vre/ or /version\|$vre/);

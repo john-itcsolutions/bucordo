@@ -9,9 +9,9 @@ use warnings;
 use Data::Dumper;
 use lib 't','.';
 use Test::More;
-use BucardoTesting;
+use bucordoTesting;
 
-my @important_files = qw{Bucardo.pm bucardo };
+my @important_files = qw{bucordo.pm bucordo };
 
 opendir my $dh, 't' or die qq{Could not open the 't' directory: are you running this from the right place?\n};
 my @test_files = grep { /\.t$/ } readdir $dh;
@@ -22,7 +22,7 @@ my @script_files = grep { /^[a-z]/ } readdir $dh;
 closedir $dh or warn qq{Could not close the 'scripts' directory: $!\n};
 
 if (! eval { require CGI; } ) {
-    @script_files = grep { ! /bucardo-report/ } @script_files;
+    @script_files = grep { ! /bucordo-report/ } @script_files;
 }
 
 plan tests => @important_files + @test_files + @script_files;

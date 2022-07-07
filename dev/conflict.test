@@ -8,20 +8,20 @@
 ## Three table: alpha, beta, charlie
 ## Two syncs: AB A <=> B and BC (B <=> C) -> D
 ## For safety, this runs on port 5492.
-## Do not change it to 5432, as this drops the bucardo database! :)
-## This must be run from the root Bucardo source code directory
+## Do not change it to 5432, as this drops the bucordo database! :)
+## This must be run from the root bucordo source code directory
 
 export PGPORT=5492
 
-## Ensure we use the Bucardo.pm in the current directory
+## Ensure we use the bucordo.pm in the current directory
 export PERL5LIB=.
 
 ## Quick check that our scripts compile cleanly
-perl -c bucardo || exit
-perl -c Bucardo.pm || exit
+perl -c bucordo || exit
+perl -c bucordo.pm || exit
 
-## Just in case, stop any running Bucardos
-./bucardo stop --quiet 2>/dev/null
+## Just in case, stop any running bucordos
+./bucordo stop --quiet 2>/dev/null
 
 ## Bail if the cluster is not reachable
 psql -q -c 'select 1' >/dev/null 2>/dev/null
@@ -33,12 +33,12 @@ fi
 
 ## Terminate any old connections, and drop databases
 echo Dropping existing test databases
-psql -AX -qt -c "select pg_terminate_backend(pid) FROM pg_stat_activity where datname IN ('ctest1','ctest2','ctest3','ctest4','bucardo')" >/dev/null
+psql -AX -qt -c "select pg_terminate_backend(pid) FROM pg_stat_activity where datname IN ('ctest1','ctest2','ctest3','ctest4','bucordo')" >/dev/null
 psql -qc 'drop database ctest1' 2>/dev/null
 psql -qc 'drop database ctest2' 2>/dev/null
 psql -qc 'drop database ctest3' 2>/dev/null
 psql -qc 'drop database ctest4' 2>/dev/null
-psql -qc 'drop database bucardo' 2>/dev/null
+psql -qc 'drop database bucordo' 2>/dev/null
 
 echo Creating test databases
 psql -qc 'create database ctest1'
@@ -56,23 +56,23 @@ psql ctest3 -qc 'alter sequence mseq restart with 3'
 
 psql -qc 'create database ctest4 template ctest1'
 
-echo Installing Bucardo
-./bucardo install --batch --quiet
-./bucardo set log_level=debug --quiet
+echo Installing bucordo
+./bucordo install --batch --quiet
+./bucordo set log_level=debug --quiet
 
 echo Adding databases A B C D
-./bucardo add db A dbname=ctest1 --quiet
-./bucardo add db B dbname=ctest2 --quiet
-./bucardo add db C dbname=ctest3 --quiet
-./bucardo add db D dbname=ctest4 --quiet
+./bucordo add db A dbname=ctest1 --quiet
+./bucordo add db B dbname=ctest2 --quiet
+./bucordo add db C dbname=ctest3 --quiet
+./bucordo add db D dbname=ctest4 --quiet
 echo Adding table, relgroup, and syncs
-./bucardo add table alpha beta relgroup=mgroup --quiet
-./bucardo add sync AB relgroup=mgroup dbs=A:source,B:source autokick=false --quiet isolation_level=repeatable_read
-./bucardo add sync BC relgroup=mgroup dbs=B:source,C:source,D:target --quiet
+./bucordo add table alpha beta relgroup=mgroup --quiet
+./bucordo add sync AB relgroup=mgroup dbs=A:source,B:source autokick=false --quiet isolation_level=repeatable_read
+./bucordo add sync BC relgroup=mgroup dbs=B:source,C:source,D:target --quiet
 
-echo Starting Bucardo
-rm -f log.bucardo
-./bucardo start --logdest=. --quiet
+echo Starting bucordo
+rm -f log.bucordo
+./bucordo start --logdest=. --quiet
 sleep 2
 
 echo Creating a conflict that will violate FKs if left to itself
@@ -81,9 +81,9 @@ psql -AX -qt ctest1 -c "insert into beta(fk1) values (1)"
 echo Table beta references alpha.id 1
 
 echo Kicking sync AB
-./bucardo kick AB 0
+./bucordo kick AB 0
 
-./bucardo stop
+./bucordo stop
 exit
 
 
@@ -93,7 +93,7 @@ echo On B, deleting alpha.id 2
 psql -AX -qt ctest2 -c "delete from alpha where id = 2"
 
 echo Kicking sync AB
-./bucardo kick AB 0
+./bucordo kick AB 0
 
 psql -A -t ctest1 -c "select 'A.alpha.id:', id from alpha"
 psql -A -t ctest1 -c "select 'A.beta.id|fk1:', id,fk1 from beta"
@@ -110,21 +110,21 @@ psql -A -t ctest2 -c "select 'B:', * from alpha"
 psql -A -t ctest3 -c "select 'C:', * from alpha"
 psql -A -t ctest4 -c "select 'D:', * from alpha"
 
-./bucardo update table alpha makedelta=B
+./bucordo update table alpha makedelta=B
 
-./bucardo stop --quiet
+./bucordo stop --quiet
 sleep 2
 
-psql ctest1 -U bucardo -c "select * from delta_public_alpha"
-psql ctest1 -U bucardo -c "select * from stage_public_alpha"
-psql ctest1 -U bucardo -c "select * from track_public_alpha"
-psql ctest1 -U bucardo -c "select * from bucardo_delta_targets"
+psql ctest1 -U bucordo -c "select * from delta_public_alpha"
+psql ctest1 -U bucordo -c "select * from stage_public_alpha"
+psql ctest1 -U bucordo -c "select * from track_public_alpha"
+psql ctest1 -U bucordo -c "select * from bucordo_delta_targets"
 
 
 exit
 
 
-./bucardo start --logdest=. --quiet
+./bucordo start --logdest=. --quiet
 
 echo Makedelta is on for B, so row \"bob\" added to A will make it to C
 psql -AX -qt ctest1 -c "insert into alpha(email) values ('bob')"
@@ -135,9 +135,9 @@ psql -At ctest2 -c "select 'B:', * from alpha"
 psql -At ctest3 -c "select 'C:', * from alpha"
 psql -At ctest4 -c "select 'D:', * from alpha"
 
-./bucardo update table alpha set makedelta=A
-./bucardo message Changed makedelta
-./bucardo reload sync AB
+./bucordo update table alpha set makedelta=A
+./bucordo message Changed makedelta
+./bucordo reload sync AB
 
 echo Makedelta is on for A only, so row \"bob\" deleted from A will not make it to C
 psql -AX -qt ctest1 -c "delete from alpha where email = 'bob'"
@@ -148,9 +148,9 @@ psql -At ctest2 -c "select 'B:', * from alpha"
 psql -At ctest3 -c "select 'C:', * from alpha"
 psql -At ctest4 -c "select 'D:', * from alpha"
 
-./bucardo update table alpha set makedelta=on
-./bucardo message Changed makedelta
-./bucardo reload sync AB
+./bucordo update table alpha set makedelta=on
+./bucordo message Changed makedelta
+./bucordo reload sync AB
 
 echo Makedelta is on for everyone, so row \"mallory\" to A will not make it to B,C,D
 psql -AX -qt ctest1 -c "insert into alpha(email) values ('mallory')"
@@ -161,9 +161,9 @@ psql -At ctest2 -c "select 'B:', * from alpha"
 psql -At ctest3 -c "select 'C:', * from alpha"
 psql -At ctest4 -c "select 'D:', * from alpha"
 
-./bucardo update table alpha set makedelta=off
-./bucardo message Changed makedelta
-./bucardo reload sync AB
+./bucordo update table alpha set makedelta=off
+./bucordo message Changed makedelta
+./bucordo reload sync AB
 
 echo Makedelta is off for everyone, so row \"mallory\" removed from A will stay on C
 psql -AX -qt ctest1 -c "delete from alpha where email = 'mallory'"
@@ -175,7 +175,7 @@ psql -At ctest3 -c "select 'C:', * from alpha"
 psql -At ctest4 -c "select 'D:', * from alpha"
 
 
-echo Stopping Bucardo
-./bucardo stop
+echo Stopping bucordo
+./bucordo stop
 
 

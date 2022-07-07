@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>bucardo - utility script for controlling the Bucardo program</title>
+<title>bucordo - utility script for controlling the bucordo program</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 
 </head>
@@ -80,60 +80,60 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>bucardo - utility script for controlling the Bucardo program</p>
+<p>bucordo - utility script for controlling the bucordo program</p>
 
 <h1 id="VERSION">VERSION</h1>
 
-<p>This document describes version 5.6.0 of bucardo</p>
+<p>This document describes version 5.6.0 of bucordo</p>
 
 <h1 id="USAGE">USAGE</h1>
 
-<pre><code>  bucardo [&lt;options&gt;] &lt;command&gt; [&lt;action&gt;] [&lt;command-options&gt;] [&lt;command-params&gt;]</code></pre>
+<pre><code>  bucordo [&lt;options&gt;] &lt;command&gt; [&lt;action&gt;] [&lt;command-options&gt;] [&lt;command-params&gt;]</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>The bucardo script is the main interaction to a running Bucardo instance. It can be used to start and stop Bucardo, add new items, kick syncs, and even install and upgrade Bucardo itself. For more complete documentation, please view <a href="https://bucardo.org/">the wiki</a>.</p>
+<p>The bucordo script is the main interaction to a running bucordo instance. It can be used to start and stop bucordo, add new items, kick syncs, and even install and upgrade bucordo itself. For more complete documentation, please view <a href="https://bucordo.org/">the wiki</a>.</p>
 
 <h1 id="COMMANDS">COMMANDS</h1>
 
-<p>Run <code>bucardo help &lt;command&gt;</code> for additional details</p>
+<p>Run <code>bucordo help &lt;command&gt;</code> for additional details</p>
 
 <dl>
 
 <dt id="install"><code>install</code></dt>
 <dd>
 
-<p>Installs the Bucardo configuration database.</p>
+<p>Installs the bucordo configuration database.</p>
 
 </dd>
 <dt id="upgrade"><code>upgrade</code></dt>
 <dd>
 
-<p>Upgrades the Bucardo configuration database to the latest schema.</p>
+<p>Upgrades the bucordo configuration database to the latest schema.</p>
 
 </dd>
 <dt id="start-start-options-reason"><code>start [&lt;start options&gt;] [&lt;reason&gt;]</code></dt>
 <dd>
 
-<p>Starts Bucardo.</p>
+<p>Starts bucordo.</p>
 
 </dd>
 <dt id="stop-reason"><code>stop [&lt;reason&gt;]</code></dt>
 <dd>
 
-<p>Stops Bucardo.</p>
+<p>Stops bucordo.</p>
 
 </dd>
 <dt id="restart-start-options-reason"><code>restart [&lt;start options&gt;] [&lt;reason&gt;]</code></dt>
 <dd>
 
-<p>Stops and starts Bucardo.</p>
+<p>Stops and starts bucordo.</p>
 
 </dd>
 <dt id="list-type-regex"><code>list &lt;type&gt; [&lt;regex&gt;]</code></dt>
 <dd>
 
-<p>Lists objects managed by Bucardo.</p>
+<p>Lists objects managed by bucordo.</p>
 
 </dd>
 <dt id="add-type-name-parameters"><code>add &lt;type&gt; &lt;name&gt; &lt;parameters&gt;</code></dt>
@@ -163,19 +163,19 @@
 <dt id="reload-config"><code>reload config</code></dt>
 <dd>
 
-<p>Sends a message to all CTL and KID processes asking them to reload the Bucardo configuration.</p>
+<p>Sends a message to all CTL and KID processes asking them to reload the bucordo configuration.</p>
 
 </dd>
 <dt id="reopen"><code>reopen</code></dt>
 <dd>
 
-<p>Sends a message to all Bucardo processes asking them to reopen any log files they may have open. Call this after you have rotated the log file(s).</p>
+<p>Sends a message to all bucordo processes asking them to reopen any log files they may have open. Call this after you have rotated the log file(s).</p>
 
 </dd>
 <dt id="show-all-setting-setting"><code>show all|&lt;setting&gt; [&lt;setting&gt;...]</code></dt>
 <dd>
 
-<p>Shows the current Bucardo settings.</p>
+<p>Shows the current bucordo settings.</p>
 
 </dd>
 <dt id="set-setting-value-setting-value"><code>&lt;set &lt;setting=value</code> [&lt;setting=value&gt;...] &gt;&gt;</dt>
@@ -211,7 +211,7 @@
 <dt id="message-body"><code>message &#39;&lt;body&gt;&#39;</code></dt>
 <dd>
 
-<p>Sends a message to the running Bucardo logs.</p>
+<p>Sends a message to the running bucordo logs.</p>
 
 </dd>
 <dt id="reload-syncname-syncname"><code>reload [&lt;syncname&gt; [&lt;syncname&gt;...]]</code></dt>
@@ -259,8 +259,8 @@
   -P --db-pass       PASS  Database password.
   -h --db-host       HOST  Database server host name.
   -p --db-port       PORT  Database server port number.
-     --bucardorc     FILE  Use specified .bucardorc file.
-     --no-bucardorc        Do not use .bucardorc file.
+     --bucordorc     FILE  Use specified .bucordorc file.
+     --no-bucordorc        Do not use .bucordorc file.
      --batch               Enable batch mode: don&#39;t ask questions or validate inputs
      --quiet               Incremental quiet.
      --verbose             Incremental verbose mode.
@@ -273,21 +273,21 @@
 
 <p>Most of the commands take parameters. These may be passed after the command name and, where appropriate, an object name. Parameters take the form of key/value pairs separated by an equal sign (<code>=</code>). For example:</p>
 
-<pre><code>  bucardo add db sea_widgets dbname=widgets host=db.example.com</code></pre>
+<pre><code>  bucordo add db sea_widgets dbname=widgets host=db.example.com</code></pre>
 
 <p>Here <code>dbname</code> and &lt;host&gt; are parameters.</p>
 
-<p>Many of the commands also use command-line options, which are specified in the normal way. For example, the <code>bucardo add db</code> command could also be written as:</p>
+<p>Many of the commands also use command-line options, which are specified in the normal way. For example, the <code>bucordo add db</code> command could also be written as:</p>
 
-<pre><code>  bucardo add db sea_widgets --dbname widgets --dbhost db.example.com</code></pre>
+<pre><code>  bucordo add db sea_widgets --dbname widgets --dbhost db.example.com</code></pre>
 
 <p>However, parameters and options are not directly interchangeable in all cases. See the documentation for individual commands for their supported options.</p>
 
 <h2 id="install1">install</h2>
 
-<pre><code>  bucardo install</code></pre>
+<pre><code>  bucordo install</code></pre>
 
-<p>Installs the Bucardo schema from the file <i>bucardo.schema</i> into an existing Postgres cluster. The user &quot;bucardo&quot; and database &quot;bucardo&quot; will be created first as needed. This is an interactive installer, but you can supply the following values from the command line:</p>
+<p>Installs the bucordo schema from the file <i>bucordo.schema</i> into an existing Postgres cluster. The user &quot;bucordo&quot; and database &quot;bucordo&quot; will be created first as needed. This is an interactive installer, but you can supply the following values from the command line:</p>
 
 <dl>
 
@@ -312,22 +312,22 @@
 <dt id="pid-dir"><code>--pid-dir</code></dt>
 <dd>
 
-<p>defaults to /var/run/bucardo/</p>
+<p>defaults to /var/run/bucordo/</p>
 
 </dd>
 </dl>
 
 <h2 id="upgrade1">upgrade</h2>
 
-<pre><code>  bucardo upgrade</code></pre>
+<pre><code>  bucordo upgrade</code></pre>
 
-<p>Upgrades an existing Bucardo installation to the current version of the bucardo database script. Requires that bucardo and the <i>bucardo.schema</i> file be the same version. All changes should be backwards compatible, but you may need to re-validate existing scripts to make sure changes get propagated to all databases.</p>
+<p>Upgrades an existing bucordo installation to the current version of the bucordo database script. Requires that bucordo and the <i>bucordo.schema</i> file be the same version. All changes should be backwards compatible, but you may need to re-validate existing scripts to make sure changes get propagated to all databases.</p>
 
 <h2 id="start">start</h2>
 
-<pre><code>  bucardo start &quot;Reason&quot;</code></pre>
+<pre><code>  bucordo start &quot;Reason&quot;</code></pre>
 
-<p>Starts Bucardo. Fails if the MCP process is running (determined if its PID file is present). Otherwise, starts cleanly by first issuing the equivalent of a stop to ask any existing Bucardo processes to exit, and then starting a new Bucardo MCP process. A short reason and name should be provided - these are written to the <code>reason_file</code> file (<i>./bucardo.restart.reason.txt</i> by default) and sent in the email sent when Bucardo has been started up. It is also appended to the reason log, which has the same name as the the <code>reason_file</code> but ends in <i>.log</i>.</p>
+<p>Starts bucordo. Fails if the MCP process is running (determined if its PID file is present). Otherwise, starts cleanly by first issuing the equivalent of a stop to ask any existing bucordo processes to exit, and then starting a new bucordo MCP process. A short reason and name should be provided - these are written to the <code>reason_file</code> file (<i>./bucordo.restart.reason.txt</i> by default) and sent in the email sent when bucordo has been started up. It is also appended to the reason log, which has the same name as the the <code>reason_file</code> but ends in <i>.log</i>.</p>
 
 <p>The options for the <code>start</code> command are:</p>
 
@@ -336,13 +336,13 @@
 <dt id="sendmail"><code>--sendmail</code></dt>
 <dd>
 
-<p>Tells Bucardo whether or not to send mail on interesting events: startup, shutdown, and errors. Default is on.</p>
+<p>Tells bucordo whether or not to send mail on interesting events: startup, shutdown, and errors. Default is on.</p>
 
 </dd>
 <dt id="extra-name-string"><code>--extra-name string</code></dt>
 <dd>
 
-<p>A short string that will be appended to the version string as output by the Bucardo process names. Mostly useful for debugging.</p>
+<p>A short string that will be appended to the version string as output by the bucordo process names. Mostly useful for debugging.</p>
 
 </dd>
 <dt id="log-destination-destination"><code>--log-destination destination</code></dt>
@@ -374,19 +374,19 @@
 </dd>
 </dl>
 
-<p>May be specified more than once, which is useful for, e.g., logging both to a directory and to syslog. If <code>--log-destination</code> is not specified at all, the default is to log to files in <i>/var/log/bucardo</i>.</p>
+<p>May be specified more than once, which is useful for, e.g., logging both to a directory and to syslog. If <code>--log-destination</code> is not specified at all, the default is to log to files in <i>/var/log/bucordo</i>.</p>
 
 </dd>
 <dt id="log-separate"><code>--log-separate</code></dt>
 <dd>
 
-<p>Forces creation of separate log files for each Bucardo process of the form &quot;log.bucardo.X.Y&quot;, where X is the type of process (MCP, CTL, or KID), and Y is the process ID.</p>
+<p>Forces creation of separate log files for each bucordo process of the form &quot;log.bucordo.X.Y&quot;, where X is the type of process (MCP, CTL, or KID), and Y is the process ID.</p>
 
 </dd>
 <dt id="log-extension-string"><code>--log-extension string</code></dt>
 <dd>
 
-<p>Appends the given string to the end of the default log file name, <i>log.bucardo</i>. A dot is added before the name as well, so a log extension of &quot;rootdb&quot; would produce a log file named <i>log.bucardo.rootdb</i>.</p>
+<p>Appends the given string to the end of the default log file name, <i>log.bucordo</i>. A dot is added before the name as well, so a log extension of &quot;rootdb&quot; would produce a log file named <i>log.bucordo.rootdb</i>.</p>
 
 </dd>
 <dt id="log-clean"><code>--log-clean</code></dt>
@@ -412,7 +412,7 @@
 <dt id="no-exit-on-nosync"><code>--no-exit-on-nosync</code></dt>
 <dd>
 
-<p>On startup, if Bucardo finds no active syncs, it normally will continue to run, requiring a restart once syncs are added. This is useful for startup scripts and whatnot.</p>
+<p>On startup, if bucordo finds no active syncs, it normally will continue to run, requiring a restart once syncs are added. This is useful for startup scripts and whatnot.</p>
 
 <p>If, however, you want it to exit when there are no active syncs, pass the <code>--exit-on-nosync</code> option. You can also be explicit that it should <i>not</i> exit when there are no syncs by passing <code>--no-exit-on-nosync</code>. This is the default value.</p>
 
@@ -421,21 +421,21 @@
 
 <h2 id="stop">stop</h2>
 
-<pre><code>  bucardo stop &quot;Reason&quot;</code></pre>
+<pre><code>  bucordo stop &quot;Reason&quot;</code></pre>
 
-<p>Forces Bucardo to quit by creating a stop file which all MCP, CTL, and KID processes should detect and cause them to exit. Note that active syncs will not exit right away, as they will not look for the stop file until they have finished their current run. Typically, you should scan the list of processes after running this program to make sure that all Bucardo processes have stopped. One should also provide a reason for issuing the stop - usually this is a short explanation and your name. This is written to the <code>reason_file</code> file (<i>./bucardo.restart.reason.txt</i> by default) and is also used by Bucardo when it exits and sends out mail about its death. It is also appended to the reason log, which has the same name as the the <code>reason_file</code> but ends in <i>.log</i>.</p>
+<p>Forces bucordo to quit by creating a stop file which all MCP, CTL, and KID processes should detect and cause them to exit. Note that active syncs will not exit right away, as they will not look for the stop file until they have finished their current run. Typically, you should scan the list of processes after running this program to make sure that all bucordo processes have stopped. One should also provide a reason for issuing the stop - usually this is a short explanation and your name. This is written to the <code>reason_file</code> file (<i>./bucordo.restart.reason.txt</i> by default) and is also used by bucordo when it exits and sends out mail about its death. It is also appended to the reason log, which has the same name as the the <code>reason_file</code> but ends in <i>.log</i>.</p>
 
 <h2 id="restart">restart</h2>
 
-<pre><code>  bucardo restart &quot;Reason&quot;</code></pre>
+<pre><code>  bucordo restart &quot;Reason&quot;</code></pre>
 
-<p>Stops bucardo, waits for the stop to complete, and then starts it again. Supports the same options as <code>start</code>. Useful for start scripts. For getting just CTL and KID processes to recognize newly added, updated, or removed objects, use the <code>reload</code> command, instead.</p>
+<p>Stops bucordo, waits for the stop to complete, and then starts it again. Supports the same options as <code>start</code>. Useful for start scripts. For getting just CTL and KID processes to recognize newly added, updated, or removed objects, use the <code>reload</code> command, instead.</p>
 
 <h2 id="list">list</h2>
 
-<pre><code>  bucardo list &lt;type&gt; &lt;regex&gt;</code></pre>
+<pre><code>  bucordo list &lt;type&gt; &lt;regex&gt;</code></pre>
 
-<p>Lists summary information about Bucardo objects. The supported types are:</p>
+<p>Lists summary information about bucordo objects. The supported types are:</p>
 
 <ul>
 
@@ -477,9 +477,9 @@
 
 <h2 id="add">add</h2>
 
-<pre><code>  bucardo add &lt;type&gt; &lt;name&gt; &lt;parameters&gt;</code></pre>
+<pre><code>  bucordo add &lt;type&gt; &lt;name&gt; &lt;parameters&gt;</code></pre>
 
-<p>Adds a new object to Bucardo. The <code>type</code> specifies the type of object to add, while the <code>name</code> should be the name of the object. The supported types include:</p>
+<p>Adds a new object to bucordo. The <code>type</code> specifies the type of object to add, while the <code>name</code> should be the name of the object. The supported types include:</p>
 
 <dl>
 
@@ -527,11 +527,11 @@
 
 <h3 id="add-db">add db</h3>
 
-<pre><code>  bucardo add db &lt;name&gt; dbname=actual_name port=xxx host=xxx user=xxx</code></pre>
+<pre><code>  bucordo add db &lt;name&gt; dbname=actual_name port=xxx host=xxx user=xxx</code></pre>
 
-<p>Adds one or more new databases. The <code>name</code> is the name by which the database will be known to Bucardo, and must be unique. This may vary from the actual database name, as multiple hosts might have databases with the same name. Multiple databases can be added by separating the names with commas. Options that differ between the databases should be separated by a matching commas. Example:</p>
+<p>Adds one or more new databases. The <code>name</code> is the name by which the database will be known to bucordo, and must be unique. This may vary from the actual database name, as multiple hosts might have databases with the same name. Multiple databases can be added by separating the names with commas. Options that differ between the databases should be separated by a matching commas. Example:</p>
 
-<pre><code>  bucardo add db alpha,beta dbname=sales host=aa,bb user=bucardo</code></pre>
+<pre><code>  bucordo add db alpha,beta dbname=sales host=aa,bb user=bucordo</code></pre>
 
 <p>This command will attempt an immediate test connection to the added database(s). The supported named parameters are:</p>
 
@@ -586,25 +586,25 @@
 <dt id="user"><code>user</code></dt>
 <dd>
 
-<p>The username Bucardo should use when connecting to this database.</p>
+<p>The username bucordo should use when connecting to this database.</p>
 
 </dd>
 <dt id="pass"><code>pass</code></dt>
 <dd>
 
-<p>The password Bucardo should use when connecting to this database. It is recommended that you use a .pgpass file rather than entering the password here.</p>
+<p>The password bucordo should use when connecting to this database. It is recommended that you use a .pgpass file rather than entering the password here.</p>
 
 </dd>
 <dt id="host"><code>host</code></dt>
 <dd>
 
-<p>The host Bucardo should use when connecting to this database. Defaults to the value of the <code>$PGHOSTADDR</code> or <code>$PGHOST</code> environment variables, if present.</p>
+<p>The host bucordo should use when connecting to this database. Defaults to the value of the <code>$PGHOSTADDR</code> or <code>$PGHOST</code> environment variables, if present.</p>
 
 </dd>
 <dt id="port"><code>port</code></dt>
 <dd>
 
-<p>The port Bucardo should use when connecting to this database. Defaults to the value of the <code>$PGPORT</code> environment variable, if present.</p>
+<p>The port bucordo should use when connecting to this database. Defaults to the value of the <code>$PGPORT</code> environment variable, if present.</p>
 
 </dd>
 <dt id="conn"><code>conn</code></dt>
@@ -616,7 +616,7 @@
 <dt id="service"><code>service</code></dt>
 <dd>
 
-<p>The service name Bucardo should use when connecting to this database.</p>
+<p>The service name bucordo should use when connecting to this database.</p>
 
 </dd>
 <dt id="status"><code>status</code></dt>
@@ -673,17 +673,17 @@
 </dd>
 </dl>
 
-<p><b>Note:</b> As a convenience, if the <code>dbuser</code> value is its default value, &quot;bucardo&quot;, in the event that Bucardo cannot connect to the database, it will try connecting as &quot;postgres&quot; and create a superuser named &quot;bucardo&quot;. This is to make things easier for folks getting started with Bucardo, but will not work if it cannot connect as &quot;postgres&quot;, or if it the connection failed due to an authentication failure.</p>
+<p><b>Note:</b> As a convenience, if the <code>dbuser</code> value is its default value, &quot;bucordo&quot;, in the event that bucordo cannot connect to the database, it will try connecting as &quot;postgres&quot; and create a superuser named &quot;bucordo&quot;. This is to make things easier for folks getting started with bucordo, but will not work if it cannot connect as &quot;postgres&quot;, or if it the connection failed due to an authentication failure.</p>
 
 <h3 id="add-dbgroup">add dbgroup</h3>
 
-<pre><code>  bucardo add dbgroup name db1:source db2:source db3:target ...</code></pre>
+<pre><code>  bucordo add dbgroup name db1:source db2:source db3:target ...</code></pre>
 
 <p>Adds one or more databases to the named dbgroup. If the dbgroup doesn&#39;t exist, it will be created. The database parameters should specify their roles, either &quot;source&quot; or &quot;target&quot;.</p>
 
 <h3 id="add-table">add table</h3>
 
-<pre><code>  bucardo add table [schema].table db=actual_db_name</code></pre>
+<pre><code>  bucordo add table [schema].table db=actual_db_name</code></pre>
 
 <p>Adds a table object. The table information will be read from the specified database. Supported parameters:</p>
 
@@ -692,7 +692,7 @@
 <dt id="db1"><code>db</code></dt>
 <dd>
 
-<p>The name of the database from which to read the table information. Should be a name known to Bucardo, thanks to a previous call to <code>add database</code>. Required.</p>
+<p>The name of the database from which to read the table information. Should be a name known to bucordo, thanks to a previous call to <code>add database</code>. Required.</p>
 
 </dd>
 <dt id="autokick"><code>autokick</code></dt>
@@ -741,14 +741,14 @@
 
 <h3 id="add-sequence">add sequence</h3>
 
-<pre><code>  bucardo add sequence [schema].sequence relgroup=xxx</code></pre>
+<pre><code>  bucordo add sequence [schema].sequence relgroup=xxx</code></pre>
 
 <dl>
 
 <dt id="db2"><code>db</code></dt>
 <dd>
 
-<p>The name of the database from which to read the sequence information. Should be a name known to Bucardo, thanks to a previous call to <code>add database</code>. Required.</p>
+<p>The name of the database from which to read the sequence information. Should be a name known to bucordo, thanks to a previous call to <code>add database</code>. Required.</p>
 
 </dd>
 <dt id="relgroup2"><code>relgroup</code></dt>
@@ -761,9 +761,9 @@
 
 <h3 id="add-all-tables">add all tables</h3>
 
-<pre><code>  bucardo add all tables [relgroup=xxx] [pkonly]</code></pre>
+<pre><code>  bucordo add all tables [relgroup=xxx] [pkonly]</code></pre>
 
-<p>Adds all the tables in all known databases or in a specified database. Excludes tables in the <code>pg_catalog</code>, <code>information_schema</code>, and <code>bucardo</code> schemas. (Yes, this means that you cannot replicate the Bucardo configuration database using Bucardo. Sorry about that.) Supported options and parameters:</p>
+<p>Adds all the tables in all known databases or in a specified database. Excludes tables in the <code>pg_catalog</code>, <code>information_schema</code>, and <code>bucordo</code> schemas. (Yes, this means that you cannot replicate the bucordo configuration database using bucordo. Sorry about that.) Supported options and parameters:</p>
 
 <dl>
 
@@ -853,9 +853,9 @@
 
 <h3 id="add-all-sequences">add all sequences</h3>
 
-<pre><code>  bucardo add all sequences relgroup=xxx</code></pre>
+<pre><code>  bucordo add all sequences relgroup=xxx</code></pre>
 
-<p>Adds all the sequences in all known databases or in a specified database. Excludes sequences in the <code>pg_catalog</code>, <code>information_schema</code>, and <code>bucardo</code> schemas. (Yes, this means that you cannot replicate the Bucardo configuration database using Bucardo. Sorry about that.) Supported options and parameters:</p>
+<p>Adds all the sequences in all known databases or in a specified database. Excludes sequences in the <code>pg_catalog</code>, <code>information_schema</code>, and <code>bucordo</code> schemas. (Yes, this means that you cannot replicate the bucordo configuration database using bucordo. Sorry about that.) Supported options and parameters:</p>
 
 <dl>
 
@@ -911,14 +911,14 @@
 
 <h3 id="add-relgroup">add relgroup</h3>
 
-<pre><code>  bucardo add relgroup name
-  bucardo add relgroup name table, sequence, ...</code></pre>
+<pre><code>  bucordo add relgroup name
+  bucordo add relgroup name table, sequence, ...</code></pre>
 
 <p>Adds a relgroup. After the name, pass in an optional list of tables and/or sequences and they will be added to the group.</p>
 
 <h3 id="add-sync">add sync</h3>
 
-<pre><code>  bucardo add sync name relgroup=xxx dbs=xxx</code></pre>
+<pre><code>  bucordo add sync name relgroup=xxx dbs=xxx</code></pre>
 
 <p>Adds a sync, which is a named replication event containing information about what to replicate from where to where. The supported parameters are:</p>
 
@@ -979,37 +979,37 @@
 
 <dl>
 
-<dt id="bucardo_source"><code>bucardo_source</code></dt>
+<dt id="bucordo_source"><code>bucordo_source</code></dt>
 <dd>
 
-<p>The rows on the &quot;source&quot; database always &quot;win&quot;. In other words, in a conflict, Bucardo copies rows from source to target.</p>
+<p>The rows on the &quot;source&quot; database always &quot;win&quot;. In other words, in a conflict, bucordo copies rows from source to target.</p>
 
 </dd>
-<dt id="bucardo_target"><code>bucardo_target</code></dt>
+<dt id="bucordo_target"><code>bucordo_target</code></dt>
 <dd>
 
 <p>The rows on the &quot;target&quot; database always win.</p>
 
 </dd>
-<dt id="bucardo_skip"><code>bucardo_skip</code></dt>
+<dt id="bucordo_skip"><code>bucordo_skip</code></dt>
 <dd>
 
 <p>Any conflicting rows are simply not replicated. Not recommended for most cases.</p>
 
 </dd>
-<dt id="bucardo_random"><code>bucardo_random</code></dt>
+<dt id="bucordo_random"><code>bucordo_random</code></dt>
 <dd>
 
 <p>Each database has an equal chance of winning each time. This is the default.</p>
 
 </dd>
-<dt id="bucardo_latest"><code>bucardo_latest</code></dt>
+<dt id="bucordo_latest"><code>bucordo_latest</code></dt>
 <dd>
 
 <p>The row that was most recently changed wins.</p>
 
 </dd>
-<dt id="bucardo_abort"><code>bucardo_abort</code></dt>
+<dt id="bucordo_abort"><code>bucordo_abort</code></dt>
 <dd>
 
 <p>The sync is aborted on a conflict.</p>
@@ -1079,13 +1079,13 @@
 <dt id="overdue"><code>overdue</code></dt>
 <dd>
 
-<p>An interval specifying the amount of time after which the sync has not run that it should be considered overdue. <code>check_bucardo_sync</code> issues a warning when a sync has not been run in this amount of time.</p>
+<p>An interval specifying the amount of time after which the sync has not run that it should be considered overdue. <code>check_bucordo_sync</code> issues a warning when a sync has not been run in this amount of time.</p>
 
 </dd>
 <dt id="expired"><code>expired</code></dt>
 <dd>
 
-<p>An interval specifying the amount of time after which the sync has not run that it should be considered expired. <code>check_bucardo_sync</code> issues a critical message when a sync has not been run in this amount of time.</p>
+<p>An interval specifying the amount of time after which the sync has not run that it should be considered expired. <code>check_bucordo_sync</code> issues a critical message when a sync has not been run in this amount of time.</p>
 
 </dd>
 <dt id="track_rates"><code>track_rates</code></dt>
@@ -1110,9 +1110,9 @@
 
 <h3 id="add-customname">add customname</h3>
 
-<pre><code>  bucardo add customname oldname newname [db=name] [sync=name]</code></pre>
+<pre><code>  bucordo add customname oldname newname [db=name] [sync=name]</code></pre>
 
-<p>Creates a new Bucardo custom name mapping. This allows the tables involved in replication to have different names on different databases. The <code>oldname</code> must contain the schema as well as the table name (if the source database supports schemas). The optional parameters limit it to one or more databases, and/or to one or more syncs. Supported parameters:</p>
+<p>Creates a new bucordo custom name mapping. This allows the tables involved in replication to have different names on different databases. The <code>oldname</code> must contain the schema as well as the table name (if the source database supports schemas). The optional parameters limit it to one or more databases, and/or to one or more syncs. Supported parameters:</p>
 
 <dl>
 
@@ -1136,13 +1136,13 @@
 
 <h3 id="add-customcols">add customcols</h3>
 
-<pre><code>  bucardo add customcols tablename select_clause [sync=x db=x]</code></pre>
+<pre><code>  bucordo add customcols tablename select_clause [sync=x db=x]</code></pre>
 
 <p>Specify the list of columns to select from when syncing. Rather than the default <code>SELECT *</code> behavior, you can specify any columns you want, including the use of function call return values and things not in the source column list. The optional parameters limit it to one or more databases, and/or to one or more syncs. Some examples:</p>
 
-<pre><code>  bucardo add customcols public.foobar &quot;select a, b, c&quot;
-  bucardo add customcols public.foobar &quot;select a, upper(b) AS b, c&quot; db=foo
-  bucardo add customcols public.foobar &quot;select a, b, c&quot; db=foo sync=abc</code></pre>
+<pre><code>  bucordo add customcols public.foobar &quot;select a, b, c&quot;
+  bucordo add customcols public.foobar &quot;select a, upper(b) AS b, c&quot; db=foo
+  bucordo add customcols public.foobar &quot;select a, b, c&quot; db=foo sync=abc</code></pre>
 
 <p>Supported parameters:</p>
 
@@ -1168,9 +1168,9 @@
 
 <h3 id="add-customcode">add customcode</h3>
 
-<pre><code>  bucardo add customcode &lt;name&gt; &lt;whenrun=value&gt; &lt;src_code=filename&gt; [optional information]</code></pre>
+<pre><code>  bucordo add customcode &lt;name&gt; &lt;whenrun=value&gt; &lt;src_code=filename&gt; [optional information]</code></pre>
 
-<p>Adds a customcode, which is a Perl subroutine that can be run at certain points in the sync process. It might handle exceptions, handle conflicts, or just run at certain times with no expectation of functionality (e.g., before Bucardo drops triggers). Metadata about that point will be passed to the subroutine as a hash reference.</p>
+<p>Adds a customcode, which is a Perl subroutine that can be run at certain points in the sync process. It might handle exceptions, handle conflicts, or just run at certain times with no expectation of functionality (e.g., before bucordo drops triggers). Metadata about that point will be passed to the subroutine as a hash reference.</p>
 
 <p>Supported parameters:</p>
 
@@ -1301,7 +1301,7 @@
 <dt id="version"><code>version</code></dt>
 <dd>
 
-<p>The version of Bucardo executing the sync.</p>
+<p>The version of bucordo executing the sync.</p>
 
 </dd>
 <dt id="sourcename"><code>sourcename</code></dt>
@@ -1423,7 +1423,7 @@
   my $info = shift;
 
   # Let&#39;s open a file.
-  my $file = &#39;/tmp/bucardo_dump.txt&#39;;
+  my $file = &#39;/tmp/bucordo_dump.txt&#39;;
   open my $fh, &#39;&gt;:encoding(UTF-8)&#39;, $file or do {
       $info-&gt;{warning} = &quot;Cannot open $file: $!\n&quot;;
       return;
@@ -1439,9 +1439,9 @@
 
 <h2 id="update">update</h2>
 
-<pre><code>  bucardo update &lt;type&gt; &lt;name&gt; &lt;parameters&gt;</code></pre>
+<pre><code>  bucordo update &lt;type&gt; &lt;name&gt; &lt;parameters&gt;</code></pre>
 
-<p>Updates a Bucardo object. The <code>type</code> specifies the type of object to update, while the <code>name</code> should be the name of the object. The supported parameters for each type are the same as those for <a href="#add">&quot;add&quot;</a>. The supported types are:</p>
+<p>Updates a bucordo object. The <code>type</code> specifies the type of object to update, while the <code>name</code> should be the name of the object. The supported parameters for each type are the same as those for <a href="#add">&quot;add&quot;</a>. The supported types are:</p>
 
 <dl>
 
@@ -1469,7 +1469,7 @@
 
 <h3 id="update-customcode">update customcode</h3>
 
-<pre><code>  bucardo update customcode &lt;name&gt; setting=value</code></pre>
+<pre><code>  bucordo update customcode &lt;name&gt; setting=value</code></pre>
 
 <p>Updates an existing customcode. Items that can be changed are:</p>
 
@@ -1573,9 +1573,9 @@
 
 <h3 id="update-db">update db</h3>
 
-<pre><code>  bucardo update db &lt;name&gt; port=xxx host=xxx user=xxx pass=xxx</code></pre>
+<pre><code>  bucordo update db &lt;name&gt; port=xxx host=xxx user=xxx pass=xxx</code></pre>
 
-<p>Updates a database. The <code>name</code> is the name by which the database is known to Bucardo. This may vary from the actual database name, as multiple hosts might have databases with the same name.</p>
+<p>Updates a database. The <code>name</code> is the name by which the database is known to bucordo. This may vary from the actual database name, as multiple hosts might have databases with the same name.</p>
 
 <p>The supported named parameters are:</p>
 
@@ -1646,7 +1646,7 @@
 <dt id="user1"><code>user</code></dt>
 <dd>
 
-<p>The username Bucardo should use to connect to the database.</p>
+<p>The username bucordo should use to connect to the database.</p>
 
 </dd>
 <dt id="password"><code>password</code></dt>
@@ -1660,7 +1660,7 @@
 <dt id="pass1"><code>pass</code></dt>
 <dd>
 
-<p>The password Bucardo should use when connecting to the database.</p>
+<p>The password bucordo should use when connecting to the database.</p>
 
 </dd>
 <dt id="dbhost"><code>dbhost</code></dt>
@@ -1708,7 +1708,7 @@
 <dt id="status4"><code>status</code></dt>
 <dd>
 
-<p>Status of the database in Bucardo. Must be either &quot;active&quot; or &quot;inactive&quot;.</p>
+<p>Status of the database in bucordo. Must be either &quot;active&quot; or &quot;inactive&quot;.</p>
 
 </dd>
 <dt id="dbgroup3"><code>dbgroup</code></dt>
@@ -1751,7 +1751,7 @@
 
 <h3 id="update-sync">update sync</h3>
 
-<pre><code>  bucardo update sync syncname relgroup=xxx dbs=xxx</code></pre>
+<pre><code>  bucordo update sync syncname relgroup=xxx dbs=xxx</code></pre>
 
 <p>Updates a sync, which is a named replication event containing information about what to replicate from where to where. The supported parameters are:</p>
 
@@ -1812,25 +1812,25 @@
 
 <dl>
 
-<dt id="bucardo_source1"><code>bucardo_source</code></dt>
+<dt id="bucordo_source1"><code>bucordo_source</code></dt>
 <dd>
 
-<p>The rows on the &quot;source&quot; database always &quot;win&quot;. In other words, in a conflict, Bucardo copies rows from source to target.</p>
+<p>The rows on the &quot;source&quot; database always &quot;win&quot;. In other words, in a conflict, bucordo copies rows from source to target.</p>
 
 </dd>
-<dt id="bucardo_target1"><code>bucardo_target</code></dt>
+<dt id="bucordo_target1"><code>bucordo_target</code></dt>
 <dd>
 
 <p>The rows on the &quot;target&quot; database always win.</p>
 
 </dd>
-<dt id="bucardo_latest1"><code>bucardo_latest</code></dt>
+<dt id="bucordo_latest1"><code>bucordo_latest</code></dt>
 <dd>
 
 <p>The row that was most recently changed wins.</p>
 
 </dd>
-<dt id="bucardo_abort1"><code>bucardo_abort</code></dt>
+<dt id="bucordo_abort1"><code>bucordo_abort</code></dt>
 <dd>
 
 <p>The sync is aborted on a conflict.</p>
@@ -1900,13 +1900,13 @@
 <dt id="overdue1"><code>overdue</code></dt>
 <dd>
 
-<p>An interval specifying the amount of time after which the sync has not run that it should be considered overdue. <code>check_bucardo_sync</code> issues a warning when a sync has not been run in this amount of time.</p>
+<p>An interval specifying the amount of time after which the sync has not run that it should be considered overdue. <code>check_bucordo_sync</code> issues a warning when a sync has not been run in this amount of time.</p>
 
 </dd>
 <dt id="expired1"><code>expired</code></dt>
 <dd>
 
-<p>An interval specifying the amount of time after which the sync has not run that it should be considered expired. <code>check_bucardo_sync</code> issues a critical message when a sync has not been run in this amount of time.</p>
+<p>An interval specifying the amount of time after which the sync has not run that it should be considered expired. <code>check_bucordo_sync</code> issues a critical message when a sync has not been run in this amount of time.</p>
 
 </dd>
 <dt id="track_rates1"><code>track_rates</code></dt>
@@ -1931,7 +1931,7 @@
 
 <h3 id="update-table">update table</h3>
 
-<pre><code>  bucardo update table [schema].table db=actual_db_name</code></pre>
+<pre><code>  bucordo update table [schema].table db=actual_db_name</code></pre>
 
 <p>Updates a table object. The table information will be read from the specified database. Supported parameters:</p>
 
@@ -1940,7 +1940,7 @@
 <dt id="db11"><code>db</code></dt>
 <dd>
 
-<p>The name of the database from which to read the table information. Should be a name known to Bucardo.</p>
+<p>The name of the database from which to read the table information. Should be a name known to bucordo.</p>
 
 </dd>
 <dt id="schemaname1"><code>schemaname</code></dt>
@@ -2001,7 +2001,7 @@
 
 <h3 id="update-sequence">update sequence</h3>
 
-<pre><code>  bucardo update sequence [schema].sequence relgroup=xxx</code></pre>
+<pre><code>  bucordo update sequence [schema].sequence relgroup=xxx</code></pre>
 
 <dl>
 
@@ -2027,9 +2027,9 @@
 
 <h2 id="remove">remove</h2>
 
-<pre><code>  bucardo remove &lt;item_type&gt; &lt;item_name&gt;</code></pre>
+<pre><code>  bucordo remove &lt;item_type&gt; &lt;item_name&gt;</code></pre>
 
-<p>Removes one or more objects from Bucardo. Valid item types are;</p>
+<p>Removes one or more objects from bucordo. Valid item types are;</p>
 
 <ul>
 
@@ -2066,9 +2066,9 @@
 
 <h2 id="kick">kick</h2>
 
-<pre><code>  bucardo kick &lt;syncname(s)&gt; [timeout]</code></pre>
+<pre><code>  bucordo kick &lt;syncname(s)&gt; [timeout]</code></pre>
 
-<p>Tells one or more named syncs to fire as soon as possible. Note that this simply sends a request that the sync fire: it may not start right away if the same sync is already running, or if the source or target database has exceeded the number of allowed Bucardo connections. If the final argument is a number, it is treated as a timeout. If this number is zero, the bucardo command will not return until the sync has finished. For any other number, the sync will wait at most that number of seconds. If any sync has not finished before the timeout, an exit value of 1 will be returned. Errors will cause exit values of 2 or 3. In all other cases, an exit value of 0 will be returned.</p>
+<p>Tells one or more named syncs to fire as soon as possible. Note that this simply sends a request that the sync fire: it may not start right away if the same sync is already running, or if the source or target database has exceeded the number of allowed bucordo connections. If the final argument is a number, it is treated as a timeout. If this number is zero, the bucordo command will not return until the sync has finished. For any other number, the sync will wait at most that number of seconds. If any sync has not finished before the timeout, an exit value of 1 will be returned. Errors will cause exit values of 2 or 3. In all other cases, an exit value of 0 will be returned.</p>
 
 <p>If a timeout is given, the total completion time in seconds is also displayed. If the sync is going to multiple targets, the time that each target takes from the start of the kick is also shown as each target finishes. Options:</p>
 
@@ -2096,25 +2096,25 @@
 
 <h2 id="pause">pause</h2>
 
-<pre><code>  bucardo pause &lt;syncname(s)&gt;
-  bucardo pause all
-  bucardo resume &lt;syncname(s)&gt;
-  bucardo resume all</code></pre>
+<pre><code>  bucordo pause &lt;syncname(s)&gt;
+  bucordo pause all
+  bucordo resume &lt;syncname(s)&gt;
+  bucordo resume all</code></pre>
 
-<p>Tells one or more named syncs to temporarily pause, or to resume from a previous pause. This only applies to active syncs and only takes effect if Bucardo is currently running. The keyword &#39;all&#39; can be used as well to pause or resume all known active syncs.</p>
+<p>Tells one or more named syncs to temporarily pause, or to resume from a previous pause. This only applies to active syncs and only takes effect if bucordo is currently running. The keyword &#39;all&#39; can be used as well to pause or resume all known active syncs.</p>
 
 <h2 id="reload-config1">reload config</h2>
 
-<pre><code>  bucardo reload config
-  bucardo reload config 30</code></pre>
+<pre><code>  bucordo reload config
+  bucordo reload config 30</code></pre>
 
-<p>Sends a message to all CTL and KID processes asking them to reload the Bucardo configuration. This configuration is a series of key/value pairs that configure Bucardo&#39;s behavior, and not any of the objects managed by the <code>add</code>, <code>remove</code>, or <code>update</code> commands.</p>
+<p>Sends a message to all CTL and KID processes asking them to reload the bucordo configuration. This configuration is a series of key/value pairs that configure bucordo&#39;s behavior, and not any of the objects managed by the <code>add</code>, <code>remove</code>, or <code>update</code> commands.</p>
 
-<p>By default, Bucardo will send the message and then exit. Pass an optional number and Bucardo will instead wait up to that length of time for all child processes to report completion.</p>
+<p>By default, bucordo will send the message and then exit. Pass an optional number and bucordo will instead wait up to that length of time for all child processes to report completion.</p>
 
 <h2 id="set">set</h2>
 
-<pre><code>  bucardo set setting1=value [setting2=value]</code></pre>
+<pre><code>  bucordo set setting1=value [setting2=value]</code></pre>
 
 <p>Sets one or more configuration setting table. Setting names are case-insensitive. The available settings are:</p>
 
@@ -2126,22 +2126,22 @@
 <p>Which DDL changing conditions do we try to remedy automatically? Default: <code>newcol</code>.</p>
 
 </dd>
-<dt id="bucardo_version"><code>bucardo_version</code></dt>
+<dt id="bucordo_version"><code>bucordo_version</code></dt>
 <dd>
 
-<p>Current version of Bucardo. Default: <code>5.6.0</code>.</p>
+<p>Current version of bucordo. Default: <code>5.6.0</code>.</p>
 
 </dd>
-<dt id="bucardo_vac"><code>bucardo_vac</code></dt>
+<dt id="bucordo_vac"><code>bucordo_vac</code></dt>
 <dd>
 
 <p>Do we want the automatic VAC daemon to run? Default: <code>1</code>.</p>
 
 </dd>
-<dt id="bucardo_initial_version"><code>bucardo_initial_version</code></dt>
+<dt id="bucordo_initial_version"><code>bucordo_initial_version</code></dt>
 <dd>
 
-<p>Bucardo version this schema was created with. Default: <code>5.6.0</code>.</p>
+<p>bucordo version this schema was created with. Default: <code>5.6.0</code>.</p>
 
 </dd>
 <dt id="ctl_checkonkids_time"><code>ctl_checkonkids_time</code></dt>
@@ -2165,7 +2165,7 @@
 <dt id="default_conflict_strategy"><code>default_conflict_strategy</code></dt>
 <dd>
 
-<p>Default conflict strategy for all syncs. Default: <code>bucardo_latest</code>.</p>
+<p>Default conflict strategy for all syncs. Default: <code>bucordo_latest</code>.</p>
 
 </dd>
 <dt id="default_email_from"><code>default_email_from</code></dt>
@@ -2255,7 +2255,7 @@
 <dt id="log_conflict_file"><code>log_conflict_file</code></dt>
 <dd>
 
-<p>Name of the conflict detail log file. Default: <code>bucardo_conflict.log</code>.</p>
+<p>Name of the conflict detail log file. Default: <code>bucordo_conflict.log</code>.</p>
 
 </dd>
 <dt id="log_level"><code>log_level</code></dt>
@@ -2327,13 +2327,13 @@
 <dt id="piddir"><code>piddir</code></dt>
 <dd>
 
-<p>Directory holding Bucardo PID files. Default: <code>/var/run/bucardo</code>.</p>
+<p>Directory holding bucordo PID files. Default: <code>/var/run/bucordo</code>.</p>
 
 </dd>
 <dt id="reason_file"><code>reason_file</code></dt>
 <dd>
 
-<p>File to hold reasons for stopping and starting. Default: <code>bucardo.restart.reason.txt</code>.</p>
+<p>File to hold reasons for stopping and starting. Default: <code>bucordo.restart.reason.txt</code>.</p>
 
 </dd>
 <dt id="reload_config_timeout"><code>reload_config_timeout</code></dt>
@@ -2345,7 +2345,7 @@
 <dt id="semaphore_table"><code>semaphore_table</code></dt>
 <dd>
 
-<p>Table to let apps know a sync is ongoing. Default: <code>bucardo_status</code>.</p>
+<p>Table to let apps know a sync is ongoing. Default: <code>bucordo_status</code>.</p>
 
 </dd>
 <dt id="statement_chunk_size"><code>statement_chunk_size</code></dt>
@@ -2357,13 +2357,13 @@
 <dt id="stats_script_url"><code>stats_script_url</code></dt>
 <dd>
 
-<p>Location of the stats script. Default: <code>http://www.bucardo.org/</code>.</p>
+<p>Location of the stats script. Default: <code>http://www.bucordo.org/</code>.</p>
 
 </dd>
 <dt id="stopfile"><code>stopfile</code></dt>
 <dd>
 
-<p>Name of the semaphore file used to stop Bucardo processes. Default: <code>fullstopbucardo</code>.</p>
+<p>Name of the semaphore file used to stop bucordo processes. Default: <code>fullstopbucordo</code>.</p>
 
 </dd>
 <dt id="syslog_facility"><code>syslog_facility</code></dt>
@@ -2405,35 +2405,35 @@
 <dt id="warning_file"><code>warning_file</code></dt>
 <dd>
 
-<p>File containing all log lines starting with &quot;Warning&quot;. Default: <code>bucardo.warning.log</code>.</p>
+<p>File containing all log lines starting with &quot;Warning&quot;. Default: <code>bucordo.warning.log</code>.</p>
 
 </dd>
 </dl>
 
 <h2 id="show">show</h2>
 
-<pre><code>  bucardo show all|changed|&lt;setting&gt; [&lt;setting&gt;...]</code></pre>
+<pre><code>  bucordo show all|changed|&lt;setting&gt; [&lt;setting&gt;...]</code></pre>
 
-<p>Shows the current Bucardo settings. Use the keyword &quot;all&quot; to see all the settings, &quot;changed&quot; to see settings different than the installed defaults, or specify one or more search terms. See <a href="#set">&quot;set&quot;</a> for complete details on the configuration settings.</p>
+<p>Shows the current bucordo settings. Use the keyword &quot;all&quot; to see all the settings, &quot;changed&quot; to see settings different than the installed defaults, or specify one or more search terms. See <a href="#set">&quot;set&quot;</a> for complete details on the configuration settings.</p>
 
 <h2 id="config">config</h2>
 
-<pre><code>  bucardo config show all|&lt;setting&gt; [&lt;setting&gt;...]
-  bucardo config set &lt;setting=value&gt; [&lt;setting=value&gt;...]</code></pre>
+<pre><code>  bucordo config show all|&lt;setting&gt; [&lt;setting&gt;...]
+  bucordo config set &lt;setting=value&gt; [&lt;setting=value&gt;...]</code></pre>
 
 <p>Deprecated interface for showing and setting configuration settings. Use the <a href="#show">&quot;show&quot;</a> and <a href="#set">&quot;set&quot;</a> commands, instead.</p>
 
 <h2 id="ping">ping</h2>
 
-<pre><code>  bucardo ping
-  bucardo ping 60
-  bucardo ping 0</code></pre>
+<pre><code>  bucordo ping
+  bucordo ping 60
+  bucordo ping 0</code></pre>
 
 <p>Sends a ping notice to the MCP process to see if it will respond. By default, it will wait 15 seconds. A numeric argument will change this timeout. Using a 0 as the timeout indicates waiting forever. If a response was returned, the program will exit with a value of 0. If it times out, the value will be 1. Returns a Nagios like message starting with &quot;OK&quot; or &quot;CRITICAL&quot; for success or failure.</p>
 
 <h2 id="status6">status</h2>
 
-<pre><code>  bucardo status [syncname(s)] [--sort=#] [--show-days] [--compress]</code></pre>
+<pre><code>  bucordo status [syncname(s)] [--sort=#] [--show-days] [--compress]</code></pre>
 
 <p>Shows the brief status of all known syncs in a tabular format. If given one or more sync names, shows detailed information for each one. To see detailed information for all syncs, simply use &quot;status all&quot;</p>
 
@@ -2511,31 +2511,31 @@
 
 <h2 id="activate">activate</h2>
 
-<pre><code>  bucardo activate syncname [syncname2 syncname3 ...] [timeout]</code></pre>
+<pre><code>  bucordo activate syncname [syncname2 syncname3 ...] [timeout]</code></pre>
 
-<p>Activates one or more named syncs. If given a timeout argument, it will wait until it has received confirmation from Bucardo that each sync has been successfully activated.</p>
+<p>Activates one or more named syncs. If given a timeout argument, it will wait until it has received confirmation from bucordo that each sync has been successfully activated.</p>
 
 <h2 id="deactivate">deactivate</h2>
 
-<pre><code>  bucardo deactivate syncname [syncname2 syncname3 ...] [timeout]</code></pre>
+<pre><code>  bucordo deactivate syncname [syncname2 syncname3 ...] [timeout]</code></pre>
 
-<p>Deactivates one or more named syncs. If given a timeout argument, it will wait until it has received confirmation from Bucardo that the sync has been successfully deactivated.</p>
+<p>Deactivates one or more named syncs. If given a timeout argument, it will wait until it has received confirmation from bucordo that the sync has been successfully deactivated.</p>
 
 <h2 id="message1">message</h2>
 
-<pre><code>  bucardo message &#39;I WAS HERE&#39;</code></pre>
+<pre><code>  bucordo message &#39;I WAS HERE&#39;</code></pre>
 
-<p>Sends a message to the running Bucardo logs. This message will appear prefixed with &quot;MESSAGE: &quot;. If Bucardo is not running, the message will go to the logs the next time Bucardo runs and someone adds another message.</p>
+<p>Sends a message to the running bucordo logs. This message will appear prefixed with &quot;MESSAGE: &quot;. If bucordo is not running, the message will go to the logs the next time bucordo runs and someone adds another message.</p>
 
 <h2 id="reload">reload</h2>
 
-<pre><code>  bucardo reload [syncname2 syncname3 ...]</code></pre>
+<pre><code>  bucordo reload [syncname2 syncname3 ...]</code></pre>
 
 <p>Sends a message to one or more sync processes, instructing them to reload. Waits for each to reload before going on to the next. Reloading consists of deactivating a sync, reloading its information from the database, and activating it again.</p>
 
 <h2 id="inspect">inspect</h2>
 
-<pre><code>  bucardo inspect &lt;type&gt; &lt;name&gt; [&lt;name2&gt;...]</code></pre>
+<pre><code>  bucordo inspect &lt;type&gt; &lt;name&gt; [&lt;name2&gt;...]</code></pre>
 
 <p>Inspects one or more objects of a particular type. The results are sent to <code>STDOUT</code>. The supported types include:</p>
 
@@ -2557,7 +2557,7 @@
 
 <h2 id="validate">validate</h2>
 
-<pre><code>  bucardo validate all|&lt;sync&gt; [&lt;sync&gt;...]</code></pre>
+<pre><code>  bucordo validate all|&lt;sync&gt; [&lt;sync&gt;...]</code></pre>
 
 <p>Validates one or more syncs. Use the keyword &quot;all&quot; to validate all syncs, or specify one or more syncs to validate.</p>
 
@@ -2565,21 +2565,21 @@
 
 <h2 id="purge">purge</h2>
 
-<pre><code>  bucardo purge all|&lt;table&gt; [&lt;table&gt;...]</code></pre>
+<pre><code>  bucordo purge all|&lt;table&gt; [&lt;table&gt;...]</code></pre>
 
 <p>Purges the delta and track tables for one or more tables, for one or more databases. Use the keyword &quot;all&quot; to validate all tables, or specify one or more tables to validate.</p>
 
 <h2 id="delta">delta</h2>
 
-<pre><code>  bucardo delta [total] [&lt;database&gt;...]</code></pre>
+<pre><code>  bucordo delta [total] [&lt;database&gt;...]</code></pre>
 
 <p>Show the current delta count for each source target. Provide a list of databases to limit it to just the given ones. Wildcards are allowed. Use the special name &quot;totals&quot; to show only the grand total.</p>
 
 <h2 id="help">help</h2>
 
-<pre><code>  bucardo help
-  bucardo help &lt;command&gt;
-  bucardo help &lt;command&gt; &lt;action&gt;</code></pre>
+<pre><code>  bucordo help
+  bucordo help &lt;command&gt;
+  bucordo help &lt;command&gt; &lt;action&gt;</code></pre>
 
 <p>Get help. General help can be returned, as well as help for a single command or a command and its action. Some examples:</p>
 
@@ -2599,10 +2599,10 @@
 <dt id="db-name"><code>--db-name</code></dt>
 <dd>
 
-<pre><code>  bucardo --db-name widgets
-  bucardo -d bricolage</code></pre>
+<pre><code>  bucordo --db-name widgets
+  bucordo -d bricolage</code></pre>
 
-<p>Name of the Bucardo database to which to connect.</p>
+<p>Name of the bucordo database to which to connect.</p>
 
 </dd>
 <dt id="U"><code>-U</code></dt>
@@ -2612,10 +2612,10 @@
 <dt id="db-user"><code>--db-user</code></dt>
 <dd>
 
-<pre><code>  bucardo --db-user postgres
-  bucardo -U Mom</code></pre>
+<pre><code>  bucordo --db-user postgres
+  bucordo -U Mom</code></pre>
 
-<p>User name to use when connecting to the Bucardo database.</p>
+<p>User name to use when connecting to the bucordo database.</p>
 
 </dd>
 <dt id="P"><code>-P</code></dt>
@@ -2625,10 +2625,10 @@
 <dt id="db-pass"><code>--db-pass</code></dt>
 <dd>
 
-<pre><code>  bucardo --db-pass s3cr1t
-  bucardo -P lolz</code></pre>
+<pre><code>  bucordo --db-pass s3cr1t
+  bucordo -P lolz</code></pre>
 
-<p>Password to use when connecting to the Bucardo database.</p>
+<p>Password to use when connecting to the bucordo database.</p>
 
 </dd>
 <dt id="h"><code>-h</code></dt>
@@ -2638,10 +2638,10 @@
 <dt id="db-host"><code>--db-host</code></dt>
 <dd>
 
-<pre><code>  bucardo --db-host db.example.com
-  bucardo -h db2.example.net</code></pre>
+<pre><code>  bucordo --db-host db.example.com
+  bucordo -h db2.example.net</code></pre>
 
-<p>Host name to use when connecting to the Bucardo database.</p>
+<p>Host name to use when connecting to the bucordo database.</p>
 
 </dd>
 <dt id="p"><code>-p</code></dt>
@@ -2651,60 +2651,60 @@
 <dt id="db-port"><code>--db-port</code></dt>
 <dd>
 
-<pre><code>  bucardo --db-port 7654</code></pre>
+<pre><code>  bucordo --db-port 7654</code></pre>
 
-<p>Port number to connect to when connecting to the Bucardo database.</p>
-
-</dd>
-<dt id="bucardorc"><code>--bucardorc</code></dt>
-<dd>
-
-<pre><code>  bucardo --bucardorc myrcfile</code></pre>
-
-<p>Use the specified file for configuration instead of the default <i>./.bucardorc</i>.</p>
+<p>Port number to connect to when connecting to the bucordo database.</p>
 
 </dd>
-<dt id="no-bucardorc"><code>--no-bucardorc</code></dt>
+<dt id="bucordorc"><code>--bucordorc</code></dt>
 <dd>
 
-<p>Do not use the <i>./.bucardorc</i> configuration file.</p>
+<pre><code>  bucordo --bucordorc myrcfile</code></pre>
+
+<p>Use the specified file for configuration instead of the default <i>./.bucordorc</i>.</p>
+
+</dd>
+<dt id="no-bucordorc"><code>--no-bucordorc</code></dt>
+<dd>
+
+<p>Do not use the <i>./.bucordorc</i> configuration file.</p>
 
 </dd>
 <dt id="verbose"><code>--verbose</code></dt>
 <dd>
 
-<p>Makes bucardo run verbosely. Default is off.</p>
+<p>Makes bucordo run verbosely. Default is off.</p>
 
 </dd>
 <dt id="quiet"><code>--quiet</code></dt>
 <dd>
 
-<p>Tells bucardo to be as quiet as possible. Default is off.</p>
+<p>Tells bucordo to be as quiet as possible. Default is off.</p>
 
 </dd>
 <dt id="help1"><code>--help</code></dt>
 <dd>
 
-<p>Shows a brief summary of usage for bucardo.</p>
+<p>Shows a brief summary of usage for bucordo.</p>
 
 </dd>
 </dl>
 
 <h1 id="FILES">FILES</h1>
 
-<p>In addition to command-line configurations, you can put any options inside of a file. The file <i>.bucardorc</i> in the current directory will be used if found. If not found, then the file <i>~/.bucardorc</i> will be used. Finally, the file /etc/bucardorc will be used if available. The format of the file is option = value, one per line. Any line starting with a &#39;#&#39; will be skipped. Any values loaded from a bucardorc file will be overwritten by command-line options. All bucardorc files can be ignored by supplying a <code>--no-bucardorc</code> argument. A specific file can be forced with the <code>--bucardorc=file</code> option; if this option is set, bucardo will refuse to run unless that file can be read.</p>
+<p>In addition to command-line configurations, you can put any options inside of a file. The file <i>.bucordorc</i> in the current directory will be used if found. If not found, then the file <i>~/.bucordorc</i> will be used. Finally, the file /etc/bucordorc will be used if available. The format of the file is option = value, one per line. Any line starting with a &#39;#&#39; will be skipped. Any values loaded from a bucordorc file will be overwritten by command-line options. All bucordorc files can be ignored by supplying a <code>--no-bucordorc</code> argument. A specific file can be forced with the <code>--bucordorc=file</code> option; if this option is set, bucordo will refuse to run unless that file can be read.</p>
 
 <h1 id="ENVIRONMENT-VARIABLES">ENVIRONMENT VARIABLES</h1>
 
-<p>The bucardo script uses <i>$ENV{HOME}</i> to look for a <i>.bucardorc</i> file.</p>
+<p>The bucordo script uses <i>$ENV{HOME}</i> to look for a <i>.bucordorc</i> file.</p>
 
 <h1 id="BUGS">BUGS</h1>
 
-<p>Bug reports and feature requests are always welcome, please visit <a href="https://bucardo.org">bucardo.org</a>, file <a href="http://github.com/bucardo/bucardo/issues">GitHub Issues</a>, or post to our <a href="https://bucardo.org/mailman/listinfo/bucardo-general">email list</a>.</p>
+<p>Bug reports and feature requests are always welcome, please visit <a href="https://bucordo.org">bucordo.org</a>, file <a href="http://github.com/bucordo/bucordo/issues">GitHub Issues</a>, or post to our <a href="https://bucordo.org/mailman/listinfo/bucordo-general">email list</a>.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p>Bucardo</p>
+<p>bucordo</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

@@ -1,21 +1,21 @@
 #!/bin/sh
 
-# PROVIDE: bucardo
+# PROVIDE: bucordo
 # REQUIRE: LOGIN postgresql 
 # KEYWORD: shutdown
 #
-# bucardo_enable="YES"
-# bucardo_flags="--dbuser bucardo --dbname bucardo"
+# bucordo_enable="YES"
+# bucordo_flags="--dbuser bucordo --dbname bucordo"
 #
 #
 . /etc/rc.subr
 
-name="bucardo"
+name="bucordo"
 rcvar=`set_rcvar`
 command="/usr/local/bin/${name}"
 
 load_rc_config $name
-bucardo_flags=${bucardo_flags:-"--dbuser bucardo --dbname bucardo"}
+bucordo_flags=${bucordo_flags:-"--dbuser bucordo --dbname bucordo"}
 
 rc_usage="start|stop|reload|restart|status|kick [sync_name]"
 extra_commands="reload kick"
@@ -29,52 +29,52 @@ status_cmd="${name}_status"
 
 PATH="$PATH":/usr/local/bin
 
-bucardo_start()
+bucordo_start()
 {
     if [ -x ${command} ]; then
-        ${command} ${bucardo_flags} start "Started by rc script."
+        ${command} ${bucordo_flags} start "Started by rc script."
     else
         echo "${command} not found or not executable!"
         exit 1
     fi
 }
 
-bucardo_stop()
+bucordo_stop()
 {
     if [ -x ${command} ]; then
-        ${command} ${bucardo_flags} stop "Stopped by rc script."
+        ${command} ${bucordo_flags} stop "Stopped by rc script."
     else
         echo "${command} not found or not executable!"
         exit 1
     fi
 }
 
-bucardo_reload()
+bucordo_reload()
 {
     if [ -x ${command} ]; then
-        ${command} ${bucardo_flags} reload_config
+        ${command} ${bucordo_flags} reload_config
     else
         echo "${command} not found or not executable!"
         exit 1
     fi
 }
 
-bucardo_restart()
+bucordo_restart()
 {
     if [ -x ${command} ]; then
-        ${command} ${bucardo_flags} stop "Restarting: Stopped by rc script"
-        ${command} ${bucardo_flags} start "Restarting: Started by rc script"
+        ${command} ${bucordo_flags} stop "Restarting: Stopped by rc script"
+        ${command} ${bucordo_flags} start "Restarting: Started by rc script"
     else
         echo "${command} not found or not executable!"
         exit 1
     fi
 }
 
-bucardo_kick()
+bucordo_kick()
 {
     if [ -x ${command} ]; then
         if [ $# -gt 0 ]; then
-            ${command} ${bucardo_flags} kick $*
+            ${command} ${bucordo_flags} kick $*
         else
             echo "Specifiy sync name to kick off"
             exit 1
@@ -85,13 +85,13 @@ bucardo_kick()
     fi
 }
 
-bucardo_status()
+bucordo_status()
 {
     if [ -x ${command} ]; then
         if [ $# -gt 0 ]; then
-            ${command} ${bucardo_flags} status $*
+            ${command} ${bucordo_flags} status $*
         else
-            ${command} ${bucardo_flags} status
+            ${command} ${bucordo_flags} status
         fi
     else
         echo "${command} not found or not executable!"
