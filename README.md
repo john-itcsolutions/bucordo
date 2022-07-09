@@ -1,4 +1,4 @@
-bucordo - a table-based replication system: descended from bucardo https://github.com/bucardo/bucardo
+Bucordo - a table-based replication system: descended from bucardo https://github.com/bucardo/bucardo
         - This adaptation aimed at achieving Automated Trust - with the immutability and automatic Trust of a Blockchain:
 	With heaps of data capacity, yet with no mining.
 
@@ -11,8 +11,9 @@ COPYRIGHT:
 ----------
 
     Copyright (c) 2005-2022 Greg Sabino Mullane <greg@turnstep.com> (Bucardo)
-    And:
-    Copyright (c) 2022 John Lloyd Olsen <john@itotchaincloud.com.au> on behalf of IT/OT Chain & Cloud Australia. (Bucordo)
+    And our Fork:
+    Copyright (c) 2022 John Lloyd Olsen <john@itotchaincloud.com.au> 
+    on behalf of IT/OT Chain & Cloud Australia. (Bucordo)
 
 REQUIREMENTS:
 -------------
