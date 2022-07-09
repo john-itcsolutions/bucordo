@@ -658,7 +658,7 @@ ________________________________________________________________________________
 
 Our final (nearly!) Docker Installation of 50 servers linked to a pgadmin4 container looks like:
 
-<img src="./Screenshot from 2022-06-02 22-48-43.png">
+<img src="./Docker_3.png">
 
 Next we have to clone the Elastos Smartweb blockchain and database server package to the Sub-Project root directories:
 
