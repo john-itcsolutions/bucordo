@@ -80,7 +80,7 @@ gRPC protocols replace the older style REST APIs, for communicating requests, an
 
 To tackle the full set of Kubernetes installations locally, ideally you would need (for 3 multipass vm's with a microk8s installation on each) a 64 GB RAM (minimum); 16 core cpu; 250+ GB SSD; + second HDD: PC (x86_64). eg an Extreme Gaming Computer. If you intend to include Machine Learning/AI capabilities, you really need an Accelerator NVIDIA GPU of at least 10GB vRAM. This allows approximately three member classes with corresponding Ordering Services (residing on the second workers) to develop with. However the most powerful way to develop here is to use Docker (see below). The current state of our Infrastructure can be represented figuratively:
 
-<img src="./ITCSA_Plan_2.png">
+<img src="./ITCSA_Plan_3.png">
 
 
 The following figure represents any of the 'master-x' controllers with their 'werk-x' models.  
