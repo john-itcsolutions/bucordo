@@ -90,7 +90,7 @@ We base initial development such as this locally. It's cheaper!
 
 
 
-<img src="./kubernetesinstallation-08-11-2021-2.png">
+<img src="./kubernetes-02-05-2022.png">
 
 The schema above are labeled G(n,m) for the internetworked, multiple member class dApps. In reality there is one schema/member-class 
 (m-c: see https://itotchaincloud.com.au/the-general), across all business subnets. The single member classes, ie non-internetworked 
