@@ -396,7 +396,7 @@ Insert the following content, follow the pattern,  and adapt as required to your
 
 # docker_dbase_resetup.sh script
 
-createuser gmu && createdb lagerhaus && psql lagerhaus < das_fuhrwerk_backup.sql && echo "das_fuhrwerk" && psql lagerhaus < das_fuhrwerk_oseer.sql && echo "das_fuhrwerk_oseer" && psql lagerhaus < cheirrs_backup.sql && echo "cheirrs" && psql lagerhaus < cheirrs_oseer_backup.sql && echo "cheirrs_oseer" && psql lagerhaus < chubba_morris_backup.sql && echo "chubba_morris" && psql lagerhaus < chubba_morris_oseer_backup.sql && echo "chubba_morris_oseer" && psql lagerhaus < convey_it_backup.sql && echo "convey_it" && psql lagerhaus < convey_it_oseer_backup.sql && echo "convey_it_oseer" && psql lagerhaus < iot_backup.sql && echo "iot" && psql lagerhaus < member_class_0_0_backup.sql && echo "member_class_0_0" && psql lagerhaus < member_class_0_0_oseer_backup.sql && echo "member_class_0_0_oseer" && psql lagerhaus < member_class_0_1_backup.sql && echo "member_class_0_1" && psql lagerhaus < member_class_0_1_oseer_backup.sql && echo "member_class_0_1_oseer" && psql lagerhaus < member_class_0_2_backup.sql && echo "member_class_0_2" && psql lagerhaus < member_class_0_2_oseer_backup.sql && echo "member_class_0_2_oseer" && psql lagerhaus < member_class_1_0_backup.sql && echo "member_class_1_0" && psql lagerhaus < member_class_1_0_oseer_backup.sql && echo "member_class_1_0_oseer" && psql lagerhaus < member_class_1_1_backup.sql && echo "member_class_1_1" && psql lagerhaus < member_class_1_1_oseer_backup.sql && echo "member_class_1_1_oseer" && psql lagerhaus < member_class_1_2_backup.sql && echo "member_class_1_2" && psql lagerhaus < member_class_1_2_oseer_backup.sql && echo "member_class_1_2_oseer" && psql lagerhaus < member_class_1_3_backup.sql && echo "member_class_1_3" && psql lagerhaus < member_class_1_3_oseer_backup.sql && echo "member_class_1_3_oseer" && psql lagerhaus < member_class_1_4_backup.sql && echo "member_class_1_4" && psql lagerhaus < member_class_1_4_oseer_backup.sql && echo "member_class_1_4_oseer" && psql lagerhaus < iot_backup.sql && echo "iot" && echo "iot and thus FINISHED main section!" && psql lagerhaus < geordnet_cheirrs.sql && psql lagerhaus < geordnet_cheirrs_oseer.sql && psql lagerhaus < geordnet_chubba_morris.sql && psql lagerhaus < geordnet_chubba_morris_oseer.sql && psql lagerhaus < geordnet_convey_it.sql && psql lagerhaus < geordnet_convey_it_oseer.sql && psql lagerhaus < geordnet_das_fuhrwerk.sql && psql lagerhaus < geordnet_das_fuhrwerk_oseer.sql && psql lagerhaus < geordnet_iot.sql && psql lagerhaus < geordnet_0_0.sql && psql lagerhaus < geordnet_0_0_oseer.sql && psql lagerhaus < geordnet_0_1.sql && psql lagerhaus < geordnet_0_1_oseer.sql && psql lagerhaus < geordnet_0_2.sql && psql lagerhaus < geordnet_0_2_oseer.sql && psql lagerhaus < geordnet_1_0.sql && psql lagerhaus < geordnet_1_0_oseer.sql && psql lagerhaus < geordnet_1_1.sql && psql lagerhaus < geordnet_1_1_oseer.sql && psql lagerhaus < geordnet_1_2.sql && psql lagerhaus < geordnet_1_2_oseer.sql && psql lagerhaus < geordnet_1_3.sql && psql lagerhaus < geordnet_1_3_oseer.sql && psql lagerhaus < geordnet_1_4.sql && psql lagerhaus < geordnet_1_4_oseer.sql && echo "DONE!"
+createuser gmu && createdb lagerhaus && psql lagerhaus < das_fuhrwerk_backup.sql && echo "das_fuhrwerk" && psql lagerhaus < das_fuhrwerk_oseer.sql && echo "das_fuhrwerk_oseer" && psql lagerhaus < cheirrs_backup.sql && echo "cheirrs" && psql lagerhaus < cheirrs_oseer_backup.sql && echo "cheirrs_oseer" && psql lagerhaus < chubba_morris_backup.sql && echo "chubba_morris" && psql lagerhaus < chubba_morris_oseer_backup.sql && echo "chubba_morris_oseer" && psql lagerhaus < convey_it_backup.sql && echo "convey_it" && psql lagerhaus < convey_it_oseer_backup.sql && echo "convey_it_oseer" && psql lagerhaus < iot_backup.sql && echo "iot" && psql lagerhaus < member_class_0_0_backup.sql && echo "member_class_0_0" && psql lagerhaus < member_class_0_0_oseer_backup.sql && echo "member_class_0_0_oseer" && psql lagerhaus < member_class_0_1_backup.sql && echo "member_class_0_1" && psql lagerhaus < member_class_0_1_oseer_backup.sql && echo "member_class_0_1_oseer" && psql lagerhaus < member_class_0_2_backup.sql && echo "member_class_0_2" && psql lagerhaus < member_class_0_2_oseer_backup.sql && echo "member_class_0_2_oseer" && psql lagerhaus < member_class_1_0_backup.sql && echo "member_class_1_0" && psql lagerhaus < member_class_1_0_oseer_backup.sql && echo "member_class_1_0_oseer" && psql lagerhaus < member_class_1_1_backup.sql && echo "member_class_1_1" && psql lagerhaus < member_class_1_1_oseer_backup.sql && echo "member_class_1_1_oseer" && psql lagerhaus < member_class_1_2_backup.sql && echo "member_class_1_2" && psql lagerhaus < member_class_1_2_oseer_backup.sql && echo "member_class_1_2_oseer" && psql lagerhaus < member_class_1_3_backup.sql && echo "member_class_1_3" && psql lagerhaus < member_class_1_3_oseer_backup.sql && echo "member_class_1_3_oseer" && psql lagerhaus < member_class_1_4_backup.sql && echo "member_class_1_4" && psql lagerhaus < member_class_1_4_oseer_backup.sql && echo "member_class_1_4_oseer" && psql lagerhaus < iot_backup.sql && echo "iot" && echo "iot and thus FINISHED main section!" && echo "DONE!"
 
 ```
 
@@ -422,123 +422,7 @@ Next create a "bucordo" folder next to "essentials".
 
 Then add the following set of files (in correspondence with the schemata in "essentials" 
 but prefixed with "bucordo_" as a set of names. 
-A typical PostgreSQL backup of a bucordo file is as follows:
-
-```
---
--- PostgreSQL database dump
---
-
--- Dumped from database version 13.5 (Debian 13.5-1.pgdg110+1)
--- Dumped by pg_dump version 13.5 (Debian 13.5-1.pgdg110+1)
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
---
--- Name: bucordo_0_0; Type: SCHEMA; Schema: -; Owner: postgres
---
-
-CREATE SCHEMA bucordo_0_0;
-
-
-ALTER SCHEMA bucordo_0_0 OWNER TO postgres;
-
-SET default_tablespace = '';
-
-SET default_table_access_method = heap;
-
---
--- Name: blocks; Type: TABLE; Schema: bucordo_0_0; Owner: postgresapiVersion: v1
-
-kind: PersistentVolume
-
-metadata:
-    name: postgres-pv-volume
-    labels:
-        type: local
-spec:
-    storageClassName: openebs-jiva-csi-default
-    capacity:
-        storage: 5Gi
-    accessModes:
-    - ReadWriteOnce
-    hostPath:
-        path: "/mnt/data"
---
-
-CREATE TABLE bucordo_0_0.blocks (
-    id bigint NOT NULL,
-    tx_set json NOT NULL,
-    consensus_metadata json NOT NULL,
-    prev_block_hash character varying(256) NOT NULL,
-    curr_block_hash_a_b_c_d character varying(256) NOT NULL,
-    sig_on_hash_curr_block_by_order_node character varying(256) NOT NULL
-);
-
-
-ALTER TABLE bucordo_0_0.blocks OWNER TO postgres;
-
---
--- Name: transactions; Type: TABLE; Schema: bucordo_0_0; Owner: postgres
---
-
-CREATE TABLE bucordo_0_0.transactions (
-    client_uname character varying(128) NOT NULL,
-    proc_and_args json NOT NULL,
-    block_id bigint NOT NULL,
-    hash_a_b_c character varying(256) NOT NULL,
-    sig_a_b_c_d_client_priv_key character varying(256) NOT NULL
-);
-
-
-ALTER TABLE bucordo_0_0.transactions OWNER TO postgres;
-
---
--- Data for Name: blocks; Type: TABLE DATA; Schema: bucordo_0_0; Owner: postgres
---
-
-COPY bucordo_0_0.blocks (id, tx_set, consensus_metadata, prev_block_hash, curr_block_hash_a_b_c_d, sig_on_hash_curr_block_by_order_node) FROM stdin;
-\.
-
-
---
--- Data for Name: transactions; Type: TABLE DATA; Schema: bucordo_0_0; Owner: postgres
---
-
-COPY bucordo_0_0.transactions (client_uname, proc_and_args, block_id, hash_a_b_c, sig_a_b_c_d_client_priv_key) FROM stdin;
-\.
-
-
---
--- Name: blocks blocks_pkey; Type: CONSTRAINT; Schema: bucordo_0_0; Owner: postgres
---
-
-ALTER TABLE ONLY bucordo_0_0.blocks
-    ADD CONSTRAINT blocks_pkey PRIMARY KEY (id);
-
-
---
--- Name: transactions transactions_pkey; Type: CONSTRAINT; Schema: bucordo_0_0; Owner: postgres
---
-
-ALTER TABLE ONLY bucordo_0_0.transactions
-    ADD CONSTRAINT transactions_pkey PRIMARY KEY (hash_a_b_c);
-
-
---
--- PostgreSQL database dump complete
---
-
-```
+A typical PostgreSQL backup of a bucordo file can be found in this repo at "bucordo.schema":
 
 These files should be created by editing and replacing the schema name repeatedly, then "saving as".
 
@@ -638,7 +522,7 @@ The next step is to investigate how to involve the Ordering Service in the order
 The above code needs to be copied (as for the previous set) to the overall parent Project Directory, but only over the "services \ db-z: .. etc" section, in the existing docker-compose.yml file, leaving the first (network definition) section and pg-admin4 sections intact so as to preserve the pgadmin4 and static network settings. 
 
 
-When the databases from this "partition" are rolled out they will have a structure of schemata, tables and columns identical to each other, but the ordering nodes have a much simpler set of 2 tables per server ("Transactions" & "Blocks"), (identical) in each schema. eg of one schema might be "geordnet_member_class_z" schema with 2 tables, 1. transactions, and 2. blocks. 
+When the databases from this "partition" are rolled out they will have a structure of schemata, tables and columns identical to each other, but the ordering nodes have a different set of tables per server (including "Transactions" & "Blocks"), (identical) in each schema. eg of one schema might be "geordnet_member_class_z" schema. 
 
 Transactions has a. username of client b. procedure executed and arguments (json) c. block_id d. Unique identifier == hash (a, b, c) e. Signature on hash(a, b, c, d) using client's private key. 
 
