@@ -3,12 +3,14 @@ bucordo - a table-based replication system
 DESCRIPTION:
 ------------
 
-This is version 5.6.0 of bucordo.
+This is version 0.0.1 of bucordo.
 
 COPYRIGHT:
 ----------
 
     Copyright (c) 2005-2022 Greg Sabino Mullane <greg@turnstep.com>
+    And:
+    Copyright (c) 2022 John Lloyd Olsen <john@itotchaincloud.com.au>
 
 REQUIREMENTS:
 -------------
@@ -347,7 +349,7 @@ services:
       static-network:
         ipv4_address: 172.20.128.43
     volumes:
-      - ./data_46:/var/lib/postgresql/data2
+      - ./data_46:/var/lib/postgresql/data
     ports:
       - "5473:5432"
 
@@ -356,15 +358,15 @@ services:
 There also needs to be a set of replicating/ordering servers (one for each member-class schema) set out as follows:
 
 ```
-  db-order-0_0:
+  db-bucordo-0_0:
     container_name: bucordo_0_0
     image: postgis/postgis
     restart: always
     environment:
       - POSTGRES_USER=bucordo
       - POSTGRES_PASSWORD=your_password
-      - APP_DB_USER=gmu
-      - APP_DB_PASS=gmu
+      - APP_DB_USER=bucordo
+      - APP_DB_PASS=bucordo
       - APP_DB_NAME=bucordo
     networks:
       static-network:
@@ -375,7 +377,7 @@ There also needs to be a set of replicating/ordering servers (one for each membe
       - "5481:5432"
 ```
 
-These containers need to be run in turn by entering the all-sub-projects parent folder and always including the pgadmin4 container but altering the db and db-order containers copied and pasted from their sub-project folders (dummy docker-compose.yml files) one at a time in separate terminals (all located at the sub-projects' parent directory (where all "docker-compose up" commands are run) to enable multi-threading.
+These containers need to be run in turn by entering the all-sub-projects parent folder and always including the pgadmin4 container but altering the db and db-bucordo containers copied and pasted from their sub-project folders (dummy docker-compose.yml files) one at a time in separate terminals (all located at the sub-projects' parent directory (where all "docker-compose up" commands are run) to enable multi-threading.
 
 Before running the elastos run script you would usually need to restore the schemata you have in the form of 
 schema-backups (safest in .sql format). Consistent with following text, we show how our company has developed 
@@ -395,7 +397,7 @@ Insert the following content, follow the pattern,  and adapt as required to your
 
 # docker_dbase_resetup.sh script
 
-createuser gmu && createdb lagerhaus && psql lagerhaus < das_fuhrwerk_backup.sql && echo "das_fuhrwerk" && psql lagerhaus < das_fuhrwerk_oseer.sql && echo "das_fuhrwerk_oseer" && psql lagerhaus < cheirrs_backup.sql && echo "cheirrs" && psql lagerhaus < cheirrs_oseer_backup.sql && echo "cheirrs_oseer" && psql lagerhaus < chubba_morris_backup.sql && echo "chubba_morris" && psql lagerhaus < chubba_morris_oseer_backup.sql && echo "chubba_morris_oseer" && psql lagerhaus < convey_it_backup.sql && echo "convey_it" && psql lagerhaus < convey_it_oseer_backup.sql && echo "convey_it_oseer" && psql lagerhaus < iot_backup.sql && echo "iot" && psql lagerhaus < member_class_0_0_backup.sql && echo "member_class_0_0" && psql lagerhaus < member_class_0_0_oseer_backup.sql && echo "member_class_0_0_oseer" && psql lagerhaus < member_class_0_1_backup.sql && echo "member_class_0_1" && psql lagerhaus < member_class_0_1_oseer_backup.sql && echo "member_class_0_1_oseer" && psql lagerhaus < member_class_0_2_backup.sql && echo "member_class_0_2" && psql lagerhaus < member_class_0_2_oseer_backup.sql && echo "member_class_0_2_oseer" && psql lagerhaus < member_class_1_0_backup.sql && echo "member_class_1_0" && psql lagerhaus < member_class_1_0_oseer_backup.sql && echo "member_class_1_0_oseer" && psql lagerhaus < member_class_1_1_backup.sql && echo "member_class_1_1" && psql lagerhaus < member_class_1_1_oseer_backup.sql && echo "member_class_1_1_oseer" && psql lagerhaus < member_class_1_2_backup.sql && echo "member_class_1_2" && psql lagerhaus < member_class_1_2_oseer_backup.sql && echo "member_class_1_2_oseer" && psql lagerhaus < member_class_1_3_backup.sql && echo "member_class_1_3" && psql lagerhaus < member_class_1_3_oseer_backup.sql && echo "member_class_1_3_oseer" && psql lagerhaus < member_class_1_4_backup.sql && echo "member_class_1_4" && psql lagerhaus < member_class_1_4_oseer_backup.sql && echo "member_class_1_4_oseer" && psql lagerhaus < iot_backup.sql && echo "iot" && echo "iot and thus FINISHED main section!" && psql lagerhaus < geordnet_cheirrs.sql && psql lagerhaus < geordnet_cheirrs_oseer.sql && psql lagerhaus < geordnet_chubba_morris.sql && psql lagerhaus < geordnet_chubba_morris_oseer.sql && psql lagerhaus < geordnet_convey_it.sql && psql lagerhaus < geordnet_convey_it_oseer.sql && psql lagerhaus < geordnet_das_fuhrwerk.sql && psql lagerhaus < geordnet_das_fuhrwerk_oseer.sql && psql lagerhaus < geordnet_iot.sql && psql lagerhaus < geordnet_0_0.sql && psql lagerhaus < geordnet_0_0_oseer.sql && psql lagerhaus < geordnet_0_1.sql && psql lagerhaus < geordnet_0_1_oseer.sql && psql lagerhaus < geordnet_0_2.sql && psql lagerhaus < geordnet_0_2_oseer.sql && psql lagerhaus < geordnet_1_0.sql && psql lagerhaus < geordnet_1_0_oseer.sql && psql lagerhaus < geordnet_1_1.sql && psql lagerhaus < geordnet_1_1_oseer.sql && psql lagerhaus < geordnet_1_2.sql && psql lagerhaus < geordnet_1_2_oseer.sql && psql lagerhaus < geordnet_1_3.sql && psql lagerhaus < geordnet_1_3_oseer.sql && psql lagerhaus < geordnet_1_4.sql && psql lagerhaus < geordnet_1_4_oseer.sql && echo "DONE!"
+createuser gmu && createdb lagerhaus && psql lagerhaus < das_fuhrwerk_backup.sql && echo "das_fuhrwerk" && psql lagerhaus < das_fuhrwerk_oseer.sql && echo "das_fuhrwerk_oseer" && psql lagerhaus < cheirrs_backup.sql && echo "cheirrs" && psql lagerhaus < cheirrs_oseer_backup.sql && echo "cheirrs_oseer" && psql lagerhaus < chubba_morris_backup.sql && echo "chubba_morris" && psql lagerhaus < chubba_morris_oseer_backup.sql && echo "chubba_morris_oseer" && psql lagerhaus < convey_it_backup.sql && echo "convey_it" && psql lagerhaus < convey_it_oseer_backup.sql && echo "convey_it_oseer" && psql lagerhaus < iot_backup.sql && echo "iot" && psql lagerhaus < member_class_0_0_backup.sql && echo "member_class_0_0" && psql lagerhaus < member_class_0_0_oseer_backup.sql && echo "member_class_0_0_oseer" && psql lagerhaus < member_class_0_1_backup.sql && echo "member_class_0_1" && psql lagerhaus < member_class_0_1_oseer_backup.sql && echo "member_class_0_1_oseer" && psql lagerhaus < member_class_0_2_backup.sql && echo "member_class_0_2" && psql lagerhaus < member_class_0_2_oseer_backup.sql && echo "member_class_0_2_oseer" && psql lagerhaus < member_class_1_0_backup.sql && echo "member_class_1_0" && psql lagerhaus < member_class_1_0_oseer_backup.sql && echo "member_class_1_0_oseer" && psql lagerhaus < member_class_1_1_backup.sql && echo "member_class_1_1" && psql lagerhaus < member_class_1_1_oseer_backup.sql && echo "member_class_1_1_oseer" && psql lagerhaus < member_class_1_2_backup.sql && echo "member_class_1_2" && psql lagerhaus < member_class_1_2_oseer_backup.sql && echo "member_class_1_2_oseer" && psql lagerhaus < member_class_1_3_backup.sql && echo "member_class_1_3" && psql lagerhaus < member_class_1_3_oseer_backup.sql && echo "member_class_1_3_oseer" && psql lagerhaus < member_class_1_4_backup.sql && echo "member_class_1_4" && psql lagerhaus < member_class_1_4_oseer_backup.sql && echo "member_class_1_4_oseer" && psql lagerhaus < iot_backup.sql && echo "iot" && echo "iot and thus FINISHED main section!" && echo "DONE!"
 
 ```
 
@@ -421,7 +423,10 @@ Next create a "bucordo" folder next to "essentials".
 
 Then add the following set of files (in correspondence with the schemata in "essentials" 
 but prefixed with "bucordo_" as a set of names. 
-A typical PostgreSQL backup of a bucordo file is as follows:
+
+
+{A PostgreSQL backup of our contribution to the original bucardo file, now refactored to "bucordo",
+and preparing to cope with organising transactions into Blocks, is as follows:
 
 ```
 --
@@ -443,38 +448,22 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: bucordo_0_0; Type: SCHEMA; Schema: -; Owner: postgres
+-- Name: bucordo; Type: SCHEMA; Schema: -; Owner: postgres
 --
 
-CREATE SCHEMA bucordo_0_0;
+CREATE SCHEMA bucordo;
 
 
-ALTER SCHEMA bucordo_0_0 OWNER TO postgres;
+ALTER SCHEMA bucordo OWNER TO postgres;
 
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
 --
--- Name: blocks; Type: TABLE; Schema: bucordo_0_0; Owner: postgresapiVersion: v1
+-- Name: blocks; Type: TABLE; Schema: bucordo; Owner: postgres
 
-kind: PersistentVolume
-
-metadata:
-    name: postgres-pv-volume
-    labels:
-        type: local
-spec:
-    storageClassName: openebs-jiva-csi-default
-    capacity:
-        storage: 5Gi
-    accessModes:
-    - ReadWriteOnce
-    hostPath:
-        path: "/mnt/data"
---
-
-CREATE TABLE bucordo_0_0.blocks (
+CREATE TABLE bucordo.blocks (
     id bigint NOT NULL,
     tx_set json NOT NULL,
     consensus_metadata json NOT NULL,
@@ -484,13 +473,13 @@ CREATE TABLE bucordo_0_0.blocks (
 );
 
 
-ALTER TABLE bucordo_0_0.blocks OWNER TO postgres;
+ALTER TABLE bucordo.blocks OWNER TO postgres;
 
 --
--- Name: transactions; Type: TABLE; Schema: bucordo_0_0; Owner: postgres
+-- Name: transactions; Type: TABLE; Schema: bucordo; Owner: postgres
 --
 
-CREATE TABLE bucordo_0_0.transactions (
+CREATE TABLE bucordo.transactions (
     client_uname character varying(128) NOT NULL,
     proc_and_args json NOT NULL,
     block_id bigint NOT NULL,
@@ -499,37 +488,37 @@ CREATE TABLE bucordo_0_0.transactions (
 );
 
 
-ALTER TABLE bucordo_0_0.transactions OWNER TO postgres;
+ALTER TABLE bucordo.transactions OWNER TO postgres;
 
 --
--- Data for Name: blocks; Type: TABLE DATA; Schema: bucordo_0_0; Owner: postgres
+-- Data for Name: blocks; Type: TABLE DATA; Schema: bucordo; Owner: postgres
 --
 
-COPY bucordo_0_0.blocks (id, tx_set, consensus_metadata, prev_block_hash, curr_block_hash_a_b_c_d, sig_on_hash_curr_block_by_order_node) FROM stdin;
+COPY bucordo.blocks (id, tx_set, consensus_metadata, prev_block_hash, curr_block_hash_a_b_c_d, sig_on_hash_curr_block_by_order_node) FROM stdin;
 \.
 
 
 --
--- Data for Name: transactions; Type: TABLE DATA; Schema: bucordo_0_0; Owner: postgres
+-- Data for Name: transactions; Type: TABLE DATA; Schema: bucordo; Owner: postgres
 --
 
-COPY bucordo_0_0.transactions (client_uname, proc_and_args, block_id, hash_a_b_c, sig_a_b_c_d_client_priv_key) FROM stdin;
+COPY bucordo.transactions (client_uname, proc_and_args, block_id, hash_a_b_c, sig_a_b_c_d_client_priv_key) FROM stdin;
 \.
 
 
 --
--- Name: blocks blocks_pkey; Type: CONSTRAINT; Schema: bucordo_0_0; Owner: postgres
+-- Name: blocks blocks_pkey; Type: CONSTRAINT; Schema: bucordo; Owner: postgres
 --
 
-ALTER TABLE ONLY bucordo_0_0.blocks
+ALTER TABLE ONLY bucordo.blocks
     ADD CONSTRAINT blocks_pkey PRIMARY KEY (id);
 
 
 --
--- Name: transactions transactions_pkey; Type: CONSTRAINT; Schema: bucordo_0_0; Owner: postgres
+-- Name: transactions transactions_pkey; Type: CONSTRAINT; Schema: bucordo; Owner: postgres
 --
 
-ALTER TABLE ONLY bucordo_0_0.transactions
+ALTER TABLE ONLY bucordo.transactions
     ADD CONSTRAINT transactions_pkey PRIMARY KEY (hash_a_b_c);
 
 
@@ -538,6 +527,8 @@ ALTER TABLE ONLY bucordo_0_0.transactions
 --
 
 ```
+}
+
 
 These files should be created by editing and replacing the schema name repeatedly, then "saving as".
 
@@ -566,7 +557,7 @@ db-0_0:
       static-network:
         ipv4_address: 172.20.128.43
     volumes:
-      - ./data_46:/var/lib/postgresql/data2
+      - ./data_46:/var/lib/postgresql/data
     ports:
       - "5473:5432"
 
@@ -576,21 +567,21 @@ db-0_0:
 The ordering nodes require a different docker-compose fragment (from above):
 
 ```
-  db-order-0_0:
+  db-bucordo-0_0:
     container_name: bucordo_0_0
     image: postgis/postgis
     restart: always
     environment:
       - POSTGRES_USER=bucordo
       - POSTGRES_PASSWORD=your_password
-      - APP_DB_USER=gmu
-      - APP_DB_PASS=gmu
+      - APP_DB_USER=bucordo
+      - APP_DB_PASS=bucordo
       - APP_DB_NAME=bucordo
     networks:
       static-network:
         ipv4_address: 172.20.128.51
     volumes:
-      - ./data_54:/var/lib/postgresql/data2
+      - ./data_54:/var/lib/postgresql/data
     ports:
       - "5481:5432"
 ```
@@ -623,13 +614,45 @@ Then:
 
 So, in each non-ordering server proceed as follows.
 
-`docker exec -it postgis_container_x_y bash`
+`docker exec -it bucordo_x_y bash`
 
-`su postgres`
+`adduser bucordo`
+
+`docker exec -it <container-name-bucordo-x-y>`
+
+`apt install postgresql-plperl-13`
+
+`perl -MCPAN -e 'install Bundle::DBI'`
+
+`perl -MCPAN -e 'install DBD::Pg'`
+
+`perl -MCPAN -e 'install DBIx::Safe'`
+
+`su bucordo`
+
+`psql bucordo`
+
+`CREATE EXTENSION plperl;`
+
+`\q`
+
+Ensure the existing "bucordo.schema" file (from this repo) is copied (docker cp) to each ordering server.
+
+In each server:
+
+`su bucordo`
+
+In the folder to which you copied bucordo.schema:
+
+`psql bucordo < bucordo.schema`
 
 Each bucordo node must be 'subscribed' to its own Member Class server (only).
 
-The next step is to investigate how to involve the Ordering Service in the ordering of transactions by consensus from the other servers, and propogating the finalised Blocks throughout the system. We require a partitioned set of Order_Member_Class_x servers including on the database "lagerhaus".
+The other bucordo servers will be updating each other with current transactions from the substrate databases.
+
+There then will need to be an Ordering Process (Consensus Seeking) to determine the order in which the current block of transactions will be committed. Please refer to the above-mentioned IBM article.
+
+The next step is to investigate how to involve the Ordering Service in the ordering of transactions by consensus from the other servers, and propogating the finalised Blocks throughout the system. We require a partitioned set of Bucordo_Member_Class_x servers.
 
 
 # About the docker-compose.yml file to run:
@@ -743,7 +766,7 @@ print("Done!")
 
 ```
 
-Finally, we are in a position to issue the command (from <project_root>/elastos-smartweb-service/):
+Finally, we are in a position to issue the command (from <project_root>/elastos-smartweb-service/, or possibly from each of a set of containers built from an elastos webserver docker image, committed from a running, say, debian base container):
 
 `./run.sh`
 
@@ -852,17 +875,19 @@ You may need to re-run the above command at the end to finish cleanly
 When all units are deployed except possibly the master (control-plane) and/or 
 worker is in a wait state (but with ports assigned):
 
-`juju deploy postgresql pg-wodehouse`
+`juju deploy postgresql pg-lagerhaus`
 
 (single Master)
 
 `juju deploy postgresql bucordo`
 
-(single Master)
+(single Master on each node)
 
 When settled, enter bucordo machine:
 
 `juju ssh <machine-number-bucordo>`
+
+`adduser bucordo`
 
 `apt install postgresql-plperl-12`
 
@@ -874,9 +899,7 @@ When settled, enter bucordo machine:
 
 Create 'bucordo' database:
 
-`sudo passwd postgres`
-
-`su postgres`
+`su bucardo`
 
 `createdb bucordo`
 
@@ -886,6 +909,10 @@ Create 'bucordo' database:
 
 `\q`
 
+In location onboard each bucordo server, containing "bucordo.schema" file copied from this repo:
+
+`psql bucordo < bucordo.schema`
+
 `exit`
 
 `exit`
@@ -894,7 +921,7 @@ Now back on node-x.
 
 _______________________________________________________________________________________________
 
-The database structure for 'bucordo' is non-existent presently.
+The database structure for 'bucordo' is incomplete presently.
 
 Since Postgres does not natively provide for multi-master logical replication there is an existing open-source, 
 Multi-Master replication system on a site called www.bucordo.org, however it relies on a single replicating 
@@ -1031,7 +1058,7 @@ logging.basicConfig(
 )
 
 # Connect to the database
-db_name = 'wodehouse'
+db_name = 'lagerhaus'
 db_user = 'gmu'
 db_password = 'gmu'
 db_host = 'ip-addr'
@@ -1050,7 +1077,7 @@ hook = hooks.hook
 
 @hook
 def db_relation_joined():
-    relation_set('database', 'wodehouse')  # Explicit database name
+    relation_set('database', 'lagerhaus')  # Explicit database name
     relation_set('roles', 'reporting,standard')  # DB roles required
     relation_set('extensions', 'postgis,osm2pgrouting') # Get PostGIS
 @hook('db-relation-changed', 'db-relation-departed')
@@ -1168,7 +1195,7 @@ and put all backups and scripts into a single folder, and copied '*' to postgres
 
 ## Getting PostGIS and Open Street Maps
 	
-	As user 'ubuntu' in each vm's pg-wodehouse master:
+	As user 'ubuntu' in each vm's pg-lagerhaus master:
 	
 	Inside postgres vm's as user ubuntu:
 
@@ -1178,13 +1205,13 @@ and put all backups and scripts into a single folder, and copied '*' to postgres
 	
 	Now on node-x:
 	
-`juju scp dbase_setup_2.sh <machine number pg-wodehouse>:/`
+`juju scp dbase_setup_2.sh <machine number pg-lagerhaus>:/`
 	
-`juju scp dbase_setup_3.sh <machine number pg-wodehouse>:/`
+`juju scp dbase_setup_3.sh <machine number pg-lagerhaus>:/`
 	
-`juju ssh <machine-number-pg-wodehouse>`
+`juju ssh <machine-number-pg-lagerhaus>`
 	
-	Inside pg-wodehouse, again as 'ubuntu':
+	Inside pg-lagerhaus, again as 'ubuntu':
 
 `./dbase_setup_2.sh`
 	
@@ -1192,7 +1219,7 @@ and put all backups and scripts into a single folder, and copied '*' to postgres
 	
 `./dbase_setup_3.sh`
 	
-This completes pg-wodehouse database setup.
+This completes pg-lagerhaus database setup.
 
                                                                                                                 
 _______________________________________________________________
