@@ -296,7 +296,7 @@ however you can use the "redis" bundle (see below).
 
 The predominant language used to code for this project is Python (here, mainly version 3.8). The Front End dApp is in typescript, a version of javascript. On the full-fledged Kubernetes version, the IoT system ("node-red") is written in node.js, a server-compataible version of javascript, both for edge and server machines. Both the Front End dApp and the IoT system communicate with the smart-web blockchain-and-database server using the python gRPC protocol buffers, which can be found in the python-grpc-adenine github repo by cyber-republic (https://github.com/cyber-republic/python-grpc-adenine). All communications between sites and servers are protected by the Elastos 'Carrier" ultra-security system.
 
-##  DOCKER-BASED DEVELOPMENT (Using pgadmin4_container to bind to postgis_container with database development & administration on localhost:5050)
+##  DOCKER-BASED DEVELOPMENT (Using pgadmin4_container to bind to postgis_container with database development & administration on 0.0.0.0:5050)
 
 Proceed as follows:
 
@@ -648,7 +648,7 @@ In the folder to which you copied bucordo.schema:
 
 Each bucordo node must be 'subscribed' to its own Member Class server (only).
 
-The other bucordo servers will be updating each other with current transactions from the substrate databases.
+All the bucordo servers will be updating each other with current transactions from their own substrate databases.
 
 There then will need to be an Ordering Process (Consensus Seeking) to determine the order in which the current block of transactions will be committed. Please refer to the above-mentioned IBM article.
 
