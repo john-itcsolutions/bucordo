@@ -10,9 +10,9 @@ This is version 0.0.1 of bucordo.
 COPYRIGHT:
 ----------
 
-    Copyright (c) 2005-2022 Greg Sabino Mullane <greg@turnstep.com>
+    Copyright (c) 2005-2022 Greg Sabino Mullane <greg@turnstep.com> (Bucardo)
     And:
-    Copyright (c) 2022 John Lloyd Olsen <john@itotchaincloud.com.au> on behalf of IT/OT Chain & Cloud Australia.
+    Copyright (c) 2022 John Lloyd Olsen <john@itotchaincloud.com.au> on behalf of IT/OT Chain & Cloud Australia. (Bucordo)
 
 REQUIREMENTS:
 -------------
@@ -30,14 +30,14 @@ REQUIREMENTS:
 WEBSITE:
 --------
 
-Please visit https://bucordo.org for complete documentation of the original Project.
+Please visit https://bucardo.org for complete documentation of the original Project.
 
 DEVELOPMENT:
 ------------
 
-To follow or participate in the development of bucordo, use:
+To follow or participate in the development of bucardo, use:
 
-git clone git@github.com:bucordo/bucordo.git
+git clone git@github.com:bucardo/bucardo.git
 
 GETTING HELP:
 -------------
@@ -48,7 +48,7 @@ the mailing list anyway, so help save time for everyone by posting there directl
 
 Post, subscribe, and see previous archives here:
 
-https://bucordo.org/mailman/listinfo/bucordo-general
+https://bucardo.org/mailman/listinfo/bucardo-general
 
 ______________________________________________________________________________________________________________________
 
