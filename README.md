@@ -42,7 +42,7 @@ git clone git@github.com:bucardo/bucardo.git
 GETTING HELP:
 -------------
 
-For general questions and troubleshooting, please use the bucordo-general@bucordo.org
+For general questions and troubleshooting, please use the bucardo-general@bucardo.org
 mailing list.  GitHub issues which are support-oriented will be closed and referred to
 the mailing list anyway, so help save time for everyone by posting there directly.
 
