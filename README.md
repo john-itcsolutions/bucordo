@@ -207,7 +207,7 @@ Currently (July 2021) the Elastos Developer Documentation does not address devel
 
 Our dApp Front End (Ionic-alone version) looks like this at the current stage of development:
 
-<img src="./Screenshot from 2021-06-17 18-11-23.png">
+<img src="./cheirrs_1.png">
 
 
 Our dApp for general internetworked supply and trading business situations looks like this (The General):
@@ -215,7 +215,7 @@ Our dApp for general internetworked supply and trading business situations looks
 The source code (such as it is), is at https://github.com/john-itcsolutions/a-general
 
 
-<img src="./Screenshot from 2022-05-31 21-39-09.png">
+<img src="./a-general.png">
 
 
 
