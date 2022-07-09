@@ -107,7 +107,7 @@ m == member-class id. Within member classes there may be many (or few) actual in
 
 # BlockBases or DataChains
 
-This is a schematic of our 3 + 1 node development setup.
+This is a schematic of our 3 + 1 node (Kubernetes) development setup.
 
 <img src="./devel-schematic-03-07-2022C.png">
 
