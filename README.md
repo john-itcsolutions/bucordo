@@ -1,6 +1,6 @@
 bucordo - a table-based replication system: descended from bucardo https://github.com/bucardo/bucardo
         - This adaptation aimed at achieving Automated Trust - with the immutability and automatic Trust of a Blockchain:
-	But with no mining.
+	With heaps of data capacity, yet with no mining.
 
 DESCRIPTION:
 ------------
@@ -42,7 +42,7 @@ git clone git@github.com:bucardo/bucardo.git
 GETTING HELP:
 -------------
 
-For general questions and troubleshooting, please use the bucardo-general@bucardo.org
+For general questions and troubleshooting for bucardo, please use the bucardo-general@bucardo.org
 mailing list.  GitHub issues which are support-oriented will be closed and referred to
 the mailing list anyway, so help save time for everyone by posting there directly.
 
