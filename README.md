@@ -1,4 +1,6 @@
-bucordo - a table-based replication system
+bucordo - a table-based replication system: descended from bucardo https://github.com/bucardo/bucardo
+        - This adaptation aimed at achieving Automated Trust - with the immutability and automatic Trust of a Blockchain:
+	But with no mining
 
 DESCRIPTION:
 ------------
@@ -10,7 +12,7 @@ COPYRIGHT:
 
     Copyright (c) 2005-2022 Greg Sabino Mullane <greg@turnstep.com>
     And:
-    Copyright (c) 2022 John Lloyd Olsen <john@itotchaincloud.com.au>
+    Copyright (c) 2022 John Lloyd Olsen <john@itotchaincloud.com.au> on behalf of IT/OT Chain & Cloud Australia.
 
 REQUIREMENTS:
 -------------
@@ -25,25 +27,10 @@ REQUIREMENTS:
     Target databases may need PL/pgSQL.
 
 
-INSTALLATION:
--------------
-
-To install this module type the following:
-
-   perl Makefile.PL
-   make
-   make test (but see below first)
-   make install
-
-EXAMPLES:
----------
-
-See the test suite in the t/ subdirectory for some examples.
-
 WEBSITE:
 --------
 
-Please visit https://bucordo.org for complete documentation.
+Please visit https://bucordo.org for complete documentation of the original Project.
 
 DEVELOPMENT:
 ------------
@@ -69,7 +56,7 @@ ________________________________________________________________________________
 
 ## THE NEW BUCORDO
 
-This project is based on  Lxd, Juju, Charms and Kubernetes; merged with Cyber Republic's Elastos Smartweb gRPC-based Blockchain and Database Server. Database ORM, reflection (at initialisation) and querying uses SQLAlchemy. Although there has been a major shift in the foundations of 'cheirrs', with a new discovery by us of research by IBM from 2019 which could potentially remove the need of our customers to actually invest any more than a modicum of Trust in ITOTCCA, with the concept of "Blockchain meets Database". The blockchain end of a transaction still occurs first, followed by writing or reading of data to or from Postgres, via the "etcd" (or you can use redis) cluster on the Kubernetes installation. However our intention is to follow the lead of research from IBM in India, where apparently a practical way of making a database as immutable and tamper-proof as a blockchain, has been discovered, for the purposes of Smart Contract Trading and any internetworked transactions. The paper, Blockchain Meets Database: Design and Implementation of a Blockchain Relational Database
+This project is based on  Docker and the Debian/Ubuntu branch of Linux, as well as Lxd, Juju, Charms and Kubernetes; merged with Cyber Republic's Elastos Smartweb gRPC-based Blockchain and Database Server. Database ORM, reflection (at initialisation) and querying uses SQLAlchemy. There has been a major shift in the foundations of our seminal Repo 'cheirrs' (https://github.com/john-itcsolutions/cheirrs), with a new discovery by us, of research by IBM from 2019, which could potentially remove the need for our customers to actually invest any more than a modicum of Trust in ITOTCCA (quite transparently), with the concept of "Blockchain meets Database". The blockchain end of a transaction still occurs first, followed by writing or reading of data to or from Postgres, via the "etcd" (or you can use redis) cluster on the Kubernetes installation. However our intention is to follow the lead of research from IBM in India, where apparently a practical way of making a database as immutable and tamper-proof as a blockchain, has been discovered, for the purposes of Smart Contract Trading and any internetworked (or non-internetworked) transactions. The paper, Blockchain Meets Database: Design and Implementation of a Blockchain Relational Database
 ∗
 Senthil Nathan 1 , Chander Govindarajan 1 , Adarsh Saraf 1 ,
 Manish Sethi 2 , and Praveen Jayachandran 1
