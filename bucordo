@@ -5,7 +5,9 @@
 ##
 ## Copyright 2006-2022 Greg Sabino Mullane <greg@turnstep.com>
 ##
-## Please see https://bucordo.org/ for full documentation
+## Copyright 2022 John Lloyd Olsen <john@itotchaincloud.com.au>
+##
+## Please see https://bucardo.org/ for full documentation of parent project
 ##
 ## Run with a --help argument for some basic instructions
 
@@ -32,7 +34,7 @@ Getopt::Long::Configure(qw/ no_ignore_case pass_through no_autoabbrev /);
 
 require I18N::Langinfo;
 
-our $VERSION = '5.6.0';
+our $VERSION = '0.0.1';
 
 ## For the tests, we want to check that it compiles without actually doing anything
 return 1 if $ENV{bucordo_TEST};
@@ -52,7 +54,7 @@ use vars qw/$dbh $SQL $sth %sth $count $info %global $SYNC $GOAT $TABLE $SEQUENC
             $CUSTOMCODE $CUSTOMNAME $CUSTOMCOLS $CLONE /;
 
 ## How to show dates from the database, e.g. start time of a sync
-my $DATEFORMAT       = $ENV{bucordo_DATEFORMAT} || q{Mon DD, YYYY HH24:MI:SS};
+my $DATEFORMAT       = $ENV{bucordo_DATEFORMAT} || q{DD, Mon, YYYY HH24:MI:SS};
 my $SHORTDATEFORMAT  = $ENV{bucordo_SHORTDATEFORMAT} || q{HH24:MI:SS};
 
 ## How long (in seconds) we hang out between checks after a kick - or when waiting for notices
@@ -3992,7 +3994,7 @@ sub list_tables {
         return -1;
     }
 
-    ## If not doing all, keep track of which to show
+    ## If not doing all, keep track of which to show 
     my %matchtable;
 
     my @filters = grep { /^db=/ } @nouns;
@@ -9861,7 +9863,7 @@ sub standardize_rdbms_name {
     ## Returns: modified name
 
     my $name = shift;
-
+     
     $name =~ s/postgres.*/postgres/io;
     $name =~ s/pg.*/postgres/io;
     $name =~ s/driz?zle.*/drizzle/io;
@@ -10100,7 +10102,7 @@ bucordo - utility script for controlling the bucordo program
 
 =head1 VERSION
 
-This document describes version 5.6.0 of bucordo
+This document describes version 0.0.1 of bucordo
 
 =head1 USAGE
 
