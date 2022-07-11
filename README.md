@@ -600,7 +600,30 @@ The ordering nodes require a different docker-compose fragment (from above):
       - "5481:5432"
 ```
 
-Now we have a running database on each port 54xy but if you go to localhost:5050 (pg-admin4) each database server will be on 5432 since pg-admin works with in-container ports. To see each database we need to register a server for each member_class database copy, making the name of the server correspond to the directory name of each member-class. Insert ip address (but always use port 54xy:5432 here, varying x and y uniquely) from the appropriate docker-compose.yml. 
+Or, for trusted workers:
+
+
+```
+  db-bucordo-0_0:
+    container_name: bucordo_0_0
+    image: johnitcsolutionscomau/bucordo-db
+    restart: always
+    environment:
+      - POSTGRES_USER=bucordo
+      - POSTGRES_PASSWORD=your_password
+      - APP_DB_USER=bucordo
+      - APP_DB_PASS=bucordo
+      - APP_DB_NAME=bucordo
+    networks:
+      static-network:
+        ipv4_address: 172.20.128.51
+    volumes:
+      - ./data_54:/var/lib/postgresql/data
+    ports:
+      - "5481:5432"
+```
+
+Now we have a running database on each port 54xy but if you go to 0.0.0.0:5050 (pg-admin4) each database server will be on 5432 since pg-admin works with in-container ports. To see each database we need to register a server for each member_class database copy, making the name of the server correspond to the directory name of each member-class. Insert ip address (but always use port 54xy:5432 here, varying x and y uniquely) from the appropriate docker-compose.yml. 
 
 So, in the parent folder of "essentials" compress the folder with:
 
@@ -608,7 +631,7 @@ So, in the parent folder of "essentials" compress the folder with:
 
 Then "docker cp" essentials.tar.gz to every db container .
 
-Inside each container - 
+Inside each non-ordering container - 
 
 `docker exec -it container_name bash`
 
@@ -626,7 +649,8 @@ And wait until complete.
 
 Then:
 
-So, in each non-ordering server proceed as follows.
+in each ordering server proceed as follows (unless you have access to the "trusted workers'" docker image,
+in which case the container is already set up).
 
 `docker exec -it bucordo_x_y bash`
 
@@ -652,7 +676,7 @@ So, in each non-ordering server proceed as follows.
 
 Ensure the existing "bucordo.schema" file (from this repo) is copied (docker cp) to each ordering server.
 
-In each server:
+Then, in each server:
 
 `su bucordo`
 
@@ -660,13 +684,13 @@ In the folder to which you copied bucordo.schema:
 
 `psql bucordo < bucordo.schema`
 
-Each bucordo node must be 'subscribed' to its own Member Class server (only).
+Each bucordo node must be 'subscribed' to its own Member Class server (only), to receive update notifications, yet configured to broadcast updates to the other bucordo servers (only) in the node-cluster.
 
 All the bucordo servers will be updating each other with current transactions from their own substrate databases.
 
 There then will need to be an Ordering Process (Consensus Seeking) to determine the order in which the current block of transactions will be committed. Please refer to the above-mentioned IBM article.
 
-The next step is to investigate how to involve the Ordering Service in the ordering of transactions by consensus from the other servers, and propogating the finalised Blocks throughout the system. We require a partitioned set of Bucordo_Member_Class_x servers.
+The next step is to investigate how to involve the Ordering Service in the ordering of transactions by consensus from the other servers, and propogating the finalised Blocks throughout the system.
 
 
 # About the docker-compose.yml file to run:
@@ -674,16 +698,18 @@ The next step is to investigate how to involve the Ordering Service in the order
 The above code needs to be copied (as for the previous set) to the overall parent Project Directory, but only over the "services \ db-z: .. etc" section, in the existing docker-compose.yml file, leaving the first (network definition) section and pg-admin4 sections intact so as to preserve the pgadmin4 and static network settings. 
 
 
-When the databases from this "partition" are rolled out they will have a structure of schemata, tables and columns identical to each other, but the ordering nodes have a much simpler set of 2 tables per server ("Transactions" & "Blocks"), (identical) in each schema. eg of one schema might be "geordnet_member_class_z" schema with 2 tables, 1. transactions, and 2. blocks. 
+When the databases from this "partition" are rolled out they will have a structure of schemata, tables and columns identical to each other, but the ordering nodes have a much simpler set corresponding to the existing "Bucardo" system but with an extra 2 tables per server ("Transactions" & "Blocks"), (identical) in each schema.
 
 Transactions has a. username of client b. procedure executed and arguments (json) c. block_id d. Unique identifier == hash (a, b, c) e. Signature on hash(a, b, c, d) using client's private key. 
 
 Block Table has a. Block-id b. set of transactions (json) c. metadata associated with the consensus protocol d.hash of the previous block e. hash of the current block, i.e., hash (a, b, c, d) f. Digital signature on the hash of the current block by the orderer node.
 
+At the current stage the remaining Bucordo tables correspond exactly to the Bucardo tables.
+
 ________________________________________________________________________________________________________________________
 
 
-Our final (nearly!) Docker Installation of 26 (= 2 x 13) servers linked to a pgadmin4 container looks like:
+Our final (nearly!) Docker Installation of 26 (= 2 x 12 + "iot" +"public"  -  where iot and public have no "oseer" schemata, but the others do) servers linked to a pgadmin4 container looks like:
 
 <img src="./Docker_3.png">
 
@@ -937,21 +963,23 @@ ________________________________________________________________________________
 
 The database structure for 'bucordo' is incomplete presently.
 
+_______________________________________________________________________________________________
+
 Since Postgres does not natively provide for multi-master logical replication there is an existing open-source, 
-Multi-Master replication system on a site called www.bucordo.org, however it relies on a single replicating 
-bucordo master server to handle all replication using PLperl functions on a Postgres database. The present structure of 
-that software is such that users must invest their trust in the superuser of the bucordo system. This is counter 
-to our own principles of developing Automated Trust in our systems. To counteract this weakness in bucordo we are 
-intending to develop an Open Source adaptation of the system that will use similar Perl functions as bucordo, however
+Multi-Master replication system on a site called www.bucardo.org, however it relies on a single replicating 
+bucardo master server to handle all replication using PLperl functions on a Postgres database. The present structure of 
+that software is such that users must invest their trust in the superuser of the bucardo system. This is counter 
+to our own principles of developing Automated Trust in our systems. To counteract this weakness in bucardo we are 
+intending to develop an Open Source adaptation of the system that will use similar Perl functions as bucardo, however
 will be employing as many "Bucordo" servers as there are Member-Class base-level database servers (as opposed to the 
-single bucordo server). The Bucordo servers will be informed of updates only on "their own" database base-level servers 
+single bucardo server). The Bucordo servers will be informed of updates only on "their own" database base-level servers 
 and will then update the remaining Bucordo servers which will then update "their own" base-level database servers. The 
 remaining work will involve an Ordering Process for each Block of transactions (similar to a Blockchain), designed to 
 determine the "agreed" order in which transactions are to be committed after a consensus-seeking process between the 
 Bucordo servers, following the method detailed in the above-mentioned IBM research paper. The process is completed with 
 a checkpointing procedure as detailed in the paper, and readily available on Postgres.
 
-## COMMUNICATION TO bucordo-general mailing list:
+## MY COMMUNICATION TO bucordo-general mailing list:
 
 Hi everyone,
 
@@ -1202,7 +1230,7 @@ their associated base servers, themselves connected to an elastos-smartweb-servi
 In our case, if a single member-class network existed solo (such as any of our Real Estate Property dApps) we would be required 
 to separate the existing networks into 3 (to provide a 'Mexican Standoff' arrangement) servers designed to keep everyone honest. Das_Fuhrwerk would provide one extra, with any third member acting as a dummy policing server only (if necessary due to lack of second customer).
 	
-The ordering services will run alongside the main system.	
+The ordering services will run alongside (in parallel with) the main system.	
 
 In our case, with The General, we started the process of building the main databases from 3 schema backup .sql files,
 and put all backups and scripts into a single folder, and copied '*' to postgres masters.
@@ -1295,7 +1323,7 @@ ________________________________________________________________________________
 To be continued ..
 _____________________________________________________________
  
-## In node-0, node-1, and node-2 enter worker-0, to set-up an IoT server with Python-gRPC, 
+## In node-0, node-1, and node-2 (in turn) enter worker-0, to set-up an IoT server with Python-gRPC, 
 ## node-red-industrial, Carrier and IOTA client.
      
 `juju ssh <kubernetes-worker-0>`
