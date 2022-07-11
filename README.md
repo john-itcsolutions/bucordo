@@ -294,13 +294,17 @@ Get Docker and Docker-compose (see above). Pull 2 container images:
 
 `docker pull postgis/postgis`
 
+For our trusted collaborators, you can pull our docker bucordo image (1.05GB)
+
+`docker pull johnitcsolutionscomau/bucordo-db`
+
 create one home folder for each of your "member_class_x" projects `mkdir path/to/my-project-x && cd path/to/my-project-x`
 
 Make a set of files all called docker-compose.yml in each my-project-x folder:
 
 `nano docker-compose.yml`
 
-Insert the following text, varying "x" and the names in each folder:
+Insert the following text, varying "x" and the names of the "db" container, in each folder:
 ```
 version: '3.3'
 networks:
@@ -364,6 +368,28 @@ There also needs to be a set of replicating/ordering servers (one for each membe
     ports:
       - "5481:5432"
 ```
+Or, for trusted workers:
+
+```
+  db-bucordo-0_0:
+    container_name: bucordo_0_0
+    image: johnitcsolutionscomau/bucordo-db
+    restart: always
+    environment:
+      - POSTGRES_USER=bucordo
+      - POSTGRES_PASSWORD=your_password
+      - APP_DB_USER=bucordo
+      - APP_DB_PASS=bucordo
+      - APP_DB_NAME=bucordo
+    networks:
+      static-network:
+        ipv4_address: 172.20.128.51
+    volumes:
+      - ./data_54:/var/lib/postgresql/data
+    ports:
+      - "5481:5432"
+```
+
 
 These containers need to be run in turn by entering the all-sub-projects parent folder and always including the pgadmin4 container but altering the db and db-bucordo containers copied and pasted from their sub-project folders (dummy docker-compose.yml files) one at a time in separate terminals (all located at the sub-projects' parent directory (where all "docker-compose up" commands are run) to enable multi-threading.
 
