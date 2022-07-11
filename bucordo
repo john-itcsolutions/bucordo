@@ -3,9 +3,9 @@
 
 ## Script to control bucordo
 ##
-## Copyright 2006-2022 Greg Sabino Mullane <greg@turnstep.com>
+## Copyright 2006-2022 Greg Sabino Mullane <greg@turnstep.com> - Bucardo
 ##
-## Copyright 2022 John Lloyd Olsen <john@itotchaincloud.com.au>
+## Copyright 2022 John Lloyd Olsen <john@itotchaincloud.com.au> - Bucordo
 ##
 ## Please see https://bucardo.org/ for full documentation of parent project
 ##
@@ -12267,7 +12267,7 @@ L<email|john@itotchaincloud.com.au>.
 
 =head1 SEE ALSO
 
-bucardo/bucordo
+bucardo/bucardo
 
 =head1 COPYRIGHT
 
