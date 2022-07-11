@@ -12259,17 +12259,18 @@ The bucordo script uses I<$ENV{HOME}> to look for a F<.bucordorc> file.
 =head1 BUGS
 
 Bug reports and feature requests are always welcome, please visit
-L<bucordo.org|https://bucordo.org>, file L<GitHub
-Issues|http://github.com/bucordo/bucordo/issues>, or post to our
-L<email list|https://bucordo.org/mailman/listinfo/bucordo-general>.
+L|https://itotchaincloud.com.au>, file L<GitHub
+Issues|http://github.com/john-itcsolutions/bucordo/issues>, or post to 
+L<email|john@itotchaincloud.com.au>.
 
 =head1 SEE ALSO
 
-bucordo
+bucardo/bucordo
 
 =head1 COPYRIGHT
 
 Copyright 2006-2022 Greg Sabino Mullane <greg@turnstep.com>
+Copyright 2022 John Lloyd Olsen <john@itotchaincloud.com.au>
 
 This program is free to use, subject to the limitations in the LICENSE file.
 
