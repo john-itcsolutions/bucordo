@@ -1,3 +1,17 @@
+## PLEASE NOTE THAT THIS REPO HAS MOVED TO:
+
+https://bitbucket.org/itotcca/bucordo
+
+Thanks.
+
+
+
+
+
+
+
+
+
 Bucordo - a table-based replication system: descended from bucardo https://github.com/bucardo/bucardo
         - This adaptation aimed at achieving Automated Trust - with the immutability and automatic Trust of a Blockchain:
 	With heaps of data capacity, yet with no mining.
